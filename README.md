@@ -16,7 +16,7 @@ Application consists of 5 modules:
 
 To set up the development environment, use `docker-compose.dev.yml`, which runs the vector database alongside Ollama with the embedded model.
 
-### Running the Backend
+### Running the Gitmate-Backend
 
 To start the GitMate backend in development mode, follow these steps:
 
@@ -26,17 +26,29 @@ npm install
 npm run start:dev
 ```
 
-### Running the Gitmate Bot
-To build and start the GitMate bot, execute the following commands:
+### Guide to Register Your Bot on GitHub and Configure the Gitmate-bot
 
+#### 1. Register Your Bot on GitHub
 ```bash
 cd gitmate-bot
-npm install 
+npm install  
 npm run build
 npm run start
 ```
+1. Next follow instructions to visit http://localhost:3000 (or your custom Glitch URL).
+2. Go ahead and click the Register a GitHub App button.
+3. Next, you'll get to decide on an app name that isn't already taken. Note: if you see a message "Name is already in use" although no such app exists, it means that a GitHub organization with that name exists and cannot be used as an app name.
+4. After registering your GitHub App, you'll be redirected to install the app on any repositories. At the same time, you can check your local .env and notice it will be populated with values GitHub sends us in the course of that redirect.
+5. Stop the server in your terminal
+6. Configure the following environment variables in `.env`:
+   - `LLM_API_KEY`: Your OpenAI API key. You can obtain this key by visiting [OpenAI Platform](https://platform.openai.com/).
+   - `LLM_MODEL_NAME`: The name of the model you intend to use (by default `gpt-4o-mini`).
+   - `BACKEND_URL`: The URL for your backend service. (by default `http://localhost:8081/v1`).
+7. Start the server in you terminal with `npm run start`:
+8. Install the app on your repositories.
+9. Try triggering a webhook to activate the bot!
 
-### Populating the Database with Data Chunks
+### Gitmate-Loader - Populating the Database with Data Chunks. 
 
 ```markdown
 Usage: gitmate-cli [options] [command]
