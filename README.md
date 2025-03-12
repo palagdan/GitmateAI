@@ -69,7 +69,7 @@ help [command]          display help for command
 cd gitmate-loader-cli
 npm install
 npm run build
-npm run start [options] [command] # You can you just gitmate-cli
+npm run start [options] [command] 
 ```
 If you wish to exclude specific file extensions from being retrieved and stored, add them to the `.gitmateignore` file.
 
