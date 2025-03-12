@@ -1,0 +1,58 @@
+
+services:
+
+  gitmate-bot:
+    build:
+      context: ./gitmate-bot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+
+
+  gitmate-backend:
+    build:
+      context: ./gitmate-backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "3000"
+
+  weaviate:
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - '8080'
+      - --scheme
+      - http
+    image: cr.weaviate.io/semitechnologies/weaviate:1.29.0
+    expose:
+      - "8080"
+      - "50051"
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    restart: unless-stopped
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      ENABLE_API_BASED_MODULES: 'true'
+      ENABLE_MODULES: 'text2vec-ollama'
+      CLUSTER_HOSTNAME: 'node1'
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434"
+    volumes:
+      -  ollama_data:/root/.ollama
+      - ./ollama/entrypoint.sh:/entrypoint.sh
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    entrypoint: [ "/usr/bin/bash", "/entrypoint.sh" ]
+
+volumes:
+  weaviate_data:
+  ollama_data:
+

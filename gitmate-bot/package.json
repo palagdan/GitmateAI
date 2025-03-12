@@ -1,0 +1,39 @@
+{
+  "name": "GitMate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "k. AI-driven chatbots can automate tasks such as issue tracking, pull request management, and code reviews, streamlining the development process. A prototype AI assistant should be developed and evaluated, demonstrating improvements in workflow efficiency, collaboration, and developer satisfaction.",
+  "author": "Daniil Palagin",
+  "license": "ISC",
+  "homepage": "https://github.com//",
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app"
+  ],
+  "scripts": {
+    "build": "npm run copy-config && tsc",
+    "copy-config": "../scripts/copy_files_by_format.sh src/config lib/config .md .json .txt",
+    "start": "probot run ./lib/index.js",
+    "test": "vitest",
+    "clean": "rm -rf node_modules"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.42",
+    "@langchain/textsplitters": "^0.1.0",
+    "axios": "^1.8.2",
+    "ollama": "^0.5.14",
+    "probot": "^13.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "nock": "^14.0.0-beta.5",
+    "smee-client": "^2.0.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.1"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "type": "module"
+}

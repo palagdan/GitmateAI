@@ -1,0 +1,10 @@
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+*.iws
+
+# Ignore workspace-related files
+workspace.xml
+tasks.xml
+
+.env
