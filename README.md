@@ -48,10 +48,24 @@ npm run start
 8. Install the app on your repositories.
 9. Try triggering a webhook to activate the bot!
 
-### Gitmate-Loader - Populating the Database with Data Chunks. 
+### Gitmate-Loader-CLI - Populating the Database with Data Chunks. 
+```bash
+cd gitmate-loader-cli
+```
+Before running the scripts, you need to configure the .env file with the required environment variables. 
+This includes setting the backend URL where all the information will be pushed and providing your GitHub access token.
+
+To generate a GitHub access token, follow these steps:
+1. In the upper-right corner of any page on GitHub, click your profile photo, then click  Settings.
+
+2. In the left sidebar, click  Developer settings.
+
+3. In the left sidebar, under  Personal access tokens, click Fine-grained tokens.
+
+4. Click Generate new token.
 
 ```markdown
-Usage: gitmate-cli [options] [command]
+Usage: gitmate-loader-cli [options] [command]
 
 CLI tool to fetch and process GitHub repositories
 
@@ -65,6 +79,7 @@ user <username>         Load repositories for a specific GitHub user and send al
 repo <name> <repoName>  Retrieve a specific repository from a user or an organization and send all its details to the specified backend.
 help [command]          display help for command
 ```
+> **🚨 Important:** To use the `gitmate-loader-cli` command, you must install it globally. Otherwise, use the commands provided below.
 ```bash
 cd gitmate-loader-cli
 npm install
@@ -72,6 +87,8 @@ npm run build
 npm run start [options] [command] 
 ```
 If you wish to exclude specific file extensions from being retrieved and stored, add them to the `.gitmateignore` file.
+
+
 
 ## Production Setup
 For production deployment, use docker-compose.prod.yml, which sets up all necessary services.
