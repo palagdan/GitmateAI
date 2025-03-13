@@ -52,7 +52,7 @@ npm run start
 ```bash
 cd gitmate-loader-cli
 ```
-Before running the scripts, you need to configure the .env file with the required environment variables. 
+Before running the scripts, you need to configure the .env file with the required environment variables, see [.env.example](gitmate-loader-cli/.env.example).
 This includes setting the backend URL where all the information will be pushed and providing your GitHub access token.
 
 To generate a GitHub access token, follow these steps:
@@ -63,6 +63,8 @@ To generate a GitHub access token, follow these steps:
 3. In the left sidebar, under  Personal access tokens, click Fine-grained tokens.
 
 4. Click Generate new token.
+
+5. Assign this token to the 'GITHUB_TOKEN' variable.
 
 ```markdown
 Usage: gitmate-loader-cli [options] [command]
