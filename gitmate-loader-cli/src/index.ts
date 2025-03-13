@@ -5,6 +5,7 @@ import "dotenv/config";
 import { loadGitmateIgnore } from "./gitmate-ignore.js";
 import { getOrgRepositories, getRepoContents, getRepositoriesForUser } from "./github-code-loaders.js";
 import logger from "./logger.js";
+import {getRepoIssuesWithComments} from "./github-issues-loaders.js";
 
 const program = new Command();
 
@@ -29,6 +30,7 @@ program
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${orgName}/${repo}`);
             await getRepoContents(orgName, repo, "", ignorePatterns);
+            await getRepoIssuesWithComments(orgName, repo);
         }
     });
 
@@ -48,6 +50,7 @@ program
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${username}/${repo}`);
             await getRepoContents(username, repo, "", ignorePatterns);
+            await getRepoIssuesWithComments(username, repo);
         }
     });
 
@@ -56,11 +59,12 @@ program
     .description("Retrieve a specific repository from a user or an organization and send all its details to the specified backend.")
     .argument("<name>", "Organization name or the user's username")
     .argument("<repoName>", "The repository name")
-    .action(async (username, repoName) => {
+    .action(async (username, repo) => {
         const ignorePatterns = loadGitmateIgnore();
         logger.info("Loaded .gitmateignore:", ignorePatterns);
-        logger.info(`📂 Processing repository: ${username}/${repoName}`);
-        await getRepoContents(username, repoName, "", ignorePatterns);
+        logger.info(`📂 Processing repository: ${username}/${repo}`);
+        await getRepoContents(username, repo, "", ignorePatterns);
+        await getRepoIssuesWithComments(username, repo);
     });
 
 
