@@ -28,7 +28,7 @@ npm run start:dev
 
 ### Guide to Register Your Bot on GitHub and Configure the Gitmate-bot
 
-#### 1. Register Your Bot on GitHub
+Register Your Bot on GitHub and install: 
 ```bash
 cd gitmate-bot
 npm install  
