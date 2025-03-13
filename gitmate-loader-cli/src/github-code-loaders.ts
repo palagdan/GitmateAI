@@ -28,6 +28,7 @@ export async function fetchAndPushFileContent(owner: string, repo: string, fileP
         logger.error(`Error fetching file: ${filePath} in ${repo}`, fetchError);
     }
 }
+
 export async function getRepoContents(owner: string, repo: string, path: string = '', ignorePatterns: string[] = []) {
     try {
         const response = await octokit.rest.repos.getContent({ owner, repo, path });
@@ -59,22 +60,3 @@ export async function getRepoContents(owner: string, repo: string, path: string 
     }
 }
 
-export async function getOrgRepositories(org: string): Promise<string[]> {
-    try {
-        const response = await octokit.rest.repos.listForOrg({org, per_page: 100});
-        return response.data.map(repo => repo.name);
-    } catch (error) {
-        logger.error("Error fetching repositories:", error);
-        return [];
-    }
-}
-
-export async function getRepositoriesForUser(username: string): Promise<string[]> {
-    try {
-        const response = await octokit.rest.repos.listForUser({ username, per_page: 100 });
-        return response.data.map(repo => repo.name);
-    } catch (error) {
-        logger.error(`Error fetching repositories for ${username}:`, error);
-        return [];
-    }
-}

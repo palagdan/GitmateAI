@@ -3,9 +3,10 @@
 import { Command } from "commander";
 import "dotenv/config";
 import { loadGitmateIgnore } from "./gitmate-ignore.js";
-import { getOrgRepositories, getRepoContents, getRepositoriesForUser } from "./github-code-loaders.js";
+import { getRepoContents } from "./github-code-loaders.js";
 import logger from "./logger.js";
 import {getRepoIssuesWithComments} from "./github-issues-loaders.js";
+import {getOrgRepositories, getRepositoriesForUser} from "./github-repos-loaders.js";
 
 const program = new Command();
 
