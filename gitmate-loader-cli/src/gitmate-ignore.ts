@@ -1,11 +1,12 @@
 import path from "path";
 import fs from "fs";
+import logger from "./logger.js";
 
 
 export function loadGitmateIgnore(): string[] {
     const ignoreFilePath = path.resolve(".gitmateignore");
     if (!fs.existsSync(ignoreFilePath)) {
-        console.log(".gitmateignore not found, proceeding without ignore rules.");
+        logger.info(".gitmateignore not found, proceeding without ignore rules.");
         return [];
     }
 

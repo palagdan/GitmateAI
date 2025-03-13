@@ -6,13 +6,8 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
-
-    /* Additional Checks */
-
-
     "moduleResolution": "Node16",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/"],
   "compileOnSave": false
