@@ -1,5 +1,32 @@
+# Package files
 package-lock.json
+yarn.lock
 
 # images
 .jpg
+.jpeg
 .png
+.gif
+.bmp
+.tiff
+.tif
+.webp
+.svg
+.ico
+
+# Configs
+.yaml
+.yml
+.json
+
+# Documentation files
+.md
+.markdown
+.txt
+.rtf
+
+# Build artifacts
+.dist
+.min.js
+.min.css
+.bundle.js
