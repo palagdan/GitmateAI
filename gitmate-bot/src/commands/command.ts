@@ -14,7 +14,7 @@ class Command {
      * Regular expression to match slash commands.
      */
     get matcher(): RegExp {
-        return /^\/([\w]+)\b *(.*)?$/m;
+        return new RegExp(`^\/${process.env.PREFIX}\\s+([\\w]+)\\b *(.*)?$`, 'm');
     }
 
     /**
