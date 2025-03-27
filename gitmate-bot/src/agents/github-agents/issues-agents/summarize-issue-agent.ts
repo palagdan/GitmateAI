@@ -2,10 +2,11 @@ import {LLMAgent} from "../../llm-agent.js";
 import {Context} from "probot";
 import OpenAI from "openai";
 import {GitHubService} from "../../../services/github-service.js";
+import llmClient from "../../../llm-client.js";
 
 export class SummarizeIssueAgent extends LLMAgent<Context, void> {
 
-    constructor(llmClient: any, private gitHubService: GitHubService) {
+    constructor(private gitHubService: GitHubService) {
         const prompt: string = `
         Summarize the following GitHub issue based on its title, description, and comments. Focus on the key points, problems, and solutions discussed.
 
@@ -20,7 +21,7 @@ export class SummarizeIssueAgent extends LLMAgent<Context, void> {
         2. Key points discussed in the comments.
         3. Any proposed solutions or next steps.
         `;
-        super(llmClient, prompt);
+        super(prompt);
     }
 
     async handleEvent(event: Context): Promise<void> {
@@ -44,7 +45,7 @@ export class SummarizeIssueAgent extends LLMAgent<Context, void> {
             model: process.env.LLM_MODEL_NAME|| "gpt-4o-mini",
         };
 
-        const chatCompletion = await this.llmClient.chat.completions.create(params);
+        const chatCompletion = await llmClient.chat.completions.create(params);
         const responseText: string = chatCompletion.choices[0]?.message?.content?.trim() || "No summary generated.";
 
         await this.gitHubService.createComment(event, responseText);

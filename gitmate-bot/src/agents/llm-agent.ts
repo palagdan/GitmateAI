@@ -2,11 +2,9 @@ import {BaseAgent} from "./base-agent.js";
 
 export abstract class LLMAgent<I, O> implements BaseAgent<I, O> {
 
-    protected llmClient: any;
     protected promptTemplate: any;
 
-    constructor(llmClient: any, promptTemplate: any) {
-        this.llmClient = llmClient;
+    constructor(promptTemplate: any) {
         this.promptTemplate = promptTemplate;
     }
 

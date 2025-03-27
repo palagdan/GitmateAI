@@ -11,17 +11,16 @@ import {SaveIssueAgent} from "./agents/github-agents/issues-agents/save-issue-ag
 import CreateIssueCommentAgent from "./agents/github-agents/issues-agents/create-issue-comment-agent.js";
 import {PrReviewAgent} from "./agents/github-agents/pull-requests-agents/pr-review-agent.js";
 
-const llmClient = new OpenAI({apiKey: process.env.LLM_API_KEY});
 const githubService = new OctokitGitHubService();
-const issueLabelAgent = new IssueLabelAgent(llmClient, githubService);
+const issueLabelAgent = new IssueLabelAgent(githubService);
 const helpAgent = new HelpAgent();
-const summarizeIssueAgent = new SummarizeIssueAgent(llmClient, githubService);
-const similarIssuesAgent = new SimilarIssuesDetectorAgent(llmClient);
+const summarizeIssueAgent = new SummarizeIssueAgent(githubService);
+const similarIssuesAgent = new SimilarIssuesDetectorAgent();
 const deleteIssueAgent = new DeleteIssueAgent();
 const saveIssueAgent = new SaveIssueAgent();
 
 const createIssueCommentAgent = new CreateIssueCommentAgent();
-const reviewAgent = new PrReviewAgent(llmClient, githubService);
+const reviewAgent = new PrReviewAgent(githubService);
 
 
 const webhooks = (app) =>{

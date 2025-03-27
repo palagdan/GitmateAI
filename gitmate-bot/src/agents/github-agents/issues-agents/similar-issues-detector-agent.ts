@@ -3,11 +3,12 @@ import OpenAI from "openai";
 import {LLMAgent} from "../../llm-agent.js";
 import gitmate from "../../../api/gitmate-rest.js";
 import {getErrorMsg} from "../../../messages/messages.js";
+import llmClient from "../../../llm-client.js";
 
 
 export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
 
-    constructor(llmClient: OpenAI) {
+    constructor() {
         const prompt = `
         You are a GitHub assistant specializing in identifying similar past issues to help users efficiently. Your task is to analyze a newly created issue and determine if any past issues share relevant similarities. 
         **You must only use the information provided in the context below and must not generate any information outside of it.**
@@ -41,7 +42,7 @@ export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
       
         There are no similar issues found in the database.
 `
-        super(llmClient, prompt);
+        super(prompt);
     }
 
     async handleEvent(context: Context): Promise<string> {
@@ -70,7 +71,7 @@ export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
                 model: process.env.LLM_MODEL_NAME || "gpt-4o-mini",
             };
 
-            const chatCompletion = await this.llmClient.chat.completions.create(params);
+            const chatCompletion = await llmClient.chat.completions.create(params);
             const responseText = chatCompletion.choices[0]?.message?.content?.trim() || "{}";
 
             let responseBody: string;

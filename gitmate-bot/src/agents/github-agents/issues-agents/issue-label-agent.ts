@@ -3,11 +3,12 @@ import OpenAI from "openai";
 import {LLMAgent} from "../../llm-agent.js";
 import {GitHubService} from "../../../services/github-service.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
+import llmClient from "../../../llm-client.js";
 
 
 export class IssueLabelAgent extends LLMAgent<Context, string> {
 
-    constructor(llmClient: any, private gitHubService: GitHubService) {
+    constructor(private gitHubService: GitHubService) {
         const prompt = `
         You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
         The issue details are:
@@ -26,7 +27,7 @@ export class IssueLabelAgent extends LLMAgent<Context, string> {
 
         Please provide your response strictly in the specified format, with a list of labels that should be added to the issue. If no labels are appropriate, return an empty list.
         `;
-        super(llmClient, prompt);
+        super(prompt);
     }
 
     async handleEvent(event: Context): Promise<string> {
@@ -45,7 +46,7 @@ export class IssueLabelAgent extends LLMAgent<Context, string> {
                 model: process.env.LLM_MODEL_NAME || "gpt-4o-mini",
             };
 
-            const chatCompletion = await this.llmClient.chat.completions.create(params);
+            const chatCompletion = await llmClient.chat.completions.create(params);
             const responseText: string = chatCompletion.choices[0]?.message?.content?.trim() || "";
             const parsedResponse = JSON.parse(responseText);
             const labels: string[] = parsedResponse.labels || [];
