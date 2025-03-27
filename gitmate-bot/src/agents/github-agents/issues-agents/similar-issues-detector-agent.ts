@@ -4,6 +4,7 @@ import {LLMAgent} from "../../llm-agent.js";
 import gitmate from "../../../api/gitmate-rest.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import llmClient from "../../../llm-client.js";
+import logger from "../../../logger.js";
 
 
 export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
@@ -79,13 +80,13 @@ export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
                 const parsed = JSON.parse(responseText);
                 responseBody = parsed.response || "No relevant response generated.";
             } catch (e) {
-                context.log.warn("LLM response not in expected JSON format, using raw text.");
+                logger.warn("LLM response not in expected JSON format, using raw text.");
                 responseBody = responseText;
             }
 
             return responseBody;
         } catch (error) {
-            context.log.error(`Error in SimilarIssuesDetectorAgent: ${(error as Error).message}`);
+            logger.error(`Error in SimilarIssuesDetectorAgent: ${(error as Error).message}`);
             return getErrorMsg(this.constructor.name, error);
         }
     }

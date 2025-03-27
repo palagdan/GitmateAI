@@ -4,6 +4,7 @@ import {LLMAgent} from "../../llm-agent.js";
 import {GitHubService} from "../../../services/github-service.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
 import llmClient from "../../../llm-client.js";
+import logger from "../../../logger.js";
 
 
 export class IssueLabelAgent extends LLMAgent<Context, string> {
@@ -53,14 +54,14 @@ export class IssueLabelAgent extends LLMAgent<Context, string> {
 
             if (labels.length > 0) {
                 await this.gitHubService.addLabels(event, labels);
-                event.log.info(`Labels added: ${labels.join(", ")}`);
+                logger.info(`Labels added: ${labels.join(", ")}`);
                 return  formatMessage(`
                 ### IssueLabelAgent Report🤖
                 Following labels were added based on the provided information: ${labels.map(label => `**${label}**`).join(", ")}`
                 );
 
             } else {
-                event.log.info("No labels suggested to add. A comment was added to the issue.");
+                logger.info("No labels suggested to add. A comment was added to the issue.");
                 return  formatMessage(`
                 ### IssueLabelAgent Report🤖
 
@@ -71,7 +72,7 @@ export class IssueLabelAgent extends LLMAgent<Context, string> {
 
 
         } catch (error) {
-            event.log.error(`Error occurred: ${(error as Error).message}`);
+            logger.error(`Error occurred: ${(error as Error).message}`);
             return getErrorMsg(this.constructor.name, error);
         }
     }
