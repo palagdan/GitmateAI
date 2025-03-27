@@ -5,30 +5,13 @@ import {GitHubService} from "../../../services/github-service.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
 import llmClient from "../../../llm-client.js";
 import logger from "../../../logger.js";
+import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 
 
 export class IssueLabelAgent extends LLMAgent<Context, string> {
 
     constructor(private gitHubService: GitHubService) {
-        const prompt = `
-        You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
-        The issue details are:
-    
-        Issue Title: "{{issueTitle}}"
-        Issue Body: "{{issueBody}}"
-
-        Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
-
-        If none of the labels are appropriate based on the issue details, respond with an empty list: []
-
-        Response Format:
-        {
-            "labels": ["label1", "label2", ...]
-        }
-
-        Please provide your response strictly in the specified format, with a list of labels that should be added to the issue. If no labels are appropriate, return an empty list.
-        `;
-        super(prompt);
+        super();
     }
 
     async handleEvent(event: Context): Promise<string> {
@@ -36,7 +19,7 @@ export class IssueLabelAgent extends LLMAgent<Context, string> {
             const issue = await this.gitHubService.getIssue(event);
             const availableLabels = await this.gitHubService.listLabelsForRepo(event);
 
-            const prompt = this.createPrompt({
+            const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.LABEL_ISSUE,{
                 issueTitle: issue.data.title,
                 issueBody: issue.data.body || "",
                 availableLabels: availableLabels.data.map((label: any) => label.name).join(", "),

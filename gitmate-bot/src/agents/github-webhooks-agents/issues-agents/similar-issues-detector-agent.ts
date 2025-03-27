@@ -5,45 +5,13 @@ import gitmate from "../../../api/gitmate-rest.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import llmClient from "../../../llm-client.js";
 import logger from "../../../logger.js";
+import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 
 
 export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
 
     constructor() {
-        const prompt = `
-        You are a GitHub assistant specializing in identifying similar past issues to help users efficiently. Your task is to analyze a newly created issue and determine if any past issues share relevant similarities. 
-        **You must only use the information provided in the context below and must not generate any information outside of it.**
-
-        ### **New Issue Details**
-        **Title:** "{{issueTitle}}"
-        **Description:** "{{issueBody}}"
-
-        ### **Similar Past Issues**
-        {{similarIssues}}
-
-        ### **Response Instructions**
-        - **Strictly base your response on the provided context.** Do not infer, assume, or generate any information not explicitly provided in the context.
-        - If relevant past issues exist, summarize their connection to the new issue in a **concise** and **clear** manner.
-        - **Strictly reference** past issues using the format: owner/repo#issue_id (e.g., palagdan/actions_test_repo#59).
-        - If no similar issues exist, explicitly state: "There are no similar issues found in the database."
-        - **Do not** suggest solutions unless the user explicitly requests one.
-        - **Do not** add any additional commentary, explanations, or information beyond what is required in the response format.
-
-        ### **Response Format (Strict)**
-        Your response **must** be in the following **markdown format** if there are similar issues:
-
-        ### SimilarIssuesDetectorAgent Report 🤖
-
-        {{Your summary of the similar issues here, referencing past issues using the format owner/repo#issue_id.}}
-
-        ### **Response Format (Strict)**
-        Your response **must** be in the following **markdown format** if there are no similar issues:
-       
-        ### SimilarIssuesDetectorAgent Report 🤖
-      
-        There are no similar issues found in the database.
-`
-        super(prompt);
+        super();
     }
 
     async handleEvent(context: Context): Promise<string> {
@@ -60,8 +28,7 @@ export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
 
             const formattedIssues = this.formatSimilarIssues(similarIssues.data);
 
-            // Generate LLM response
-            const prompt = this.createPrompt({
+            const prompt = this.createPrompt( ISSUE_AGENT_PROMPTS.SEARCH_SIMILAR_ISSUES,{
                 issueTitle: issue.data.title,
                 issueBody: issue.data.body || "",
                 similarIssues: formattedIssues,

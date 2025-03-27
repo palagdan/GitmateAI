@@ -2,14 +2,14 @@ import command from "./commands/command.js";
 import {isPullRequest} from "./utils/github-utils.js";
 import OpenAI from "openai";
 import {OctokitGitHubService} from "./services/github-service.js";
-import {IssueLabelAgent} from "./agents/github-agents/issues-agents/issue-label-agent.js";
-import {HelpAgent} from "./agents/github-agents/help-agent.js";
-import {SummarizeIssueAgent} from "./agents/github-agents/issues-agents/summarize-issue-agent.js";
-import {SimilarIssuesDetectorAgent} from "./agents/github-agents/issues-agents/similar-issues-detector-agent.js";
-import {DeleteIssueAgent} from "./agents/github-agents/issues-agents/delete-issue-agent.js";
-import {SaveIssueAgent} from "./agents/github-agents/issues-agents/save-issue-agent.js";
-import CreateIssueCommentAgent from "./agents/github-agents/issues-agents/create-issue-comment-agent.js";
-import {PrReviewAgent} from "./agents/github-agents/pull-requests-agents/pr-review-agent.js";
+import {IssueLabelAgent} from "./agents/github-webhooks-agents/issues-agents/issue-label-agent.js";
+import {HelpAgent} from "./agents/github-webhooks-agents/help-agent.js";
+import {SummarizeIssueAgent} from "./agents/github-webhooks-agents/issues-agents/summarize-issue-agent.js";
+import {SimilarIssuesDetectorAgent} from "./agents/github-webhooks-agents/issues-agents/similar-issues-detector-agent.js";
+import {DeleteIssueAgent} from "./agents/github-webhooks-agents/issues-agents/delete-issue-agent.js";
+import {SaveIssueAgent} from "./agents/github-webhooks-agents/issues-agents/save-issue-agent.js";
+import CreateIssueCommentAgent from "./agents/github-webhooks-agents/issues-agents/create-issue-comment-agent.js";
+import {PrReviewAgent} from "./agents/github-webhooks-agents/pull-requests-agents/pr-review-agent.js";
 
 const githubService = new OctokitGitHubService();
 const issueLabelAgent = new IssueLabelAgent(githubService);
@@ -20,7 +20,7 @@ const deleteIssueAgent = new DeleteIssueAgent();
 const saveIssueAgent = new SaveIssueAgent();
 
 const createIssueCommentAgent = new CreateIssueCommentAgent();
-const reviewAgent = new PrReviewAgent(githubService);
+const reviewAgent = new PrReviewAgent();
 
 
 const webhooks = (app) =>{

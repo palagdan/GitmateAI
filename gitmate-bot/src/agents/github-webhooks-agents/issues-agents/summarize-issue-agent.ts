@@ -4,25 +4,12 @@ import OpenAI from "openai";
 import {GitHubService} from "../../../services/github-service.js";
 import llmClient from "../../../llm-client.js";
 import logger from "../../../logger.js";
+import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 
 export class SummarizeIssueAgent extends LLMAgent<Context, void> {
 
     constructor(private gitHubService: GitHubService) {
-        const prompt: string = `
-        Summarize the following GitHub issue based on its title, description, and comments. Focus on the key points, problems, and solutions discussed.
-
-        **Issue Title**: {title}
-        **Issue Description**: {description}
-
-        **Comments**:
-        {comments}
-
-        Provide a concise summary of the issue, including:
-        1. The main problem or feature request.
-        2. Key points discussed in the comments.
-        3. Any proposed solutions or next steps.
-        `;
-        super(prompt);
+        super();
     }
 
     async handleEvent(event: Context): Promise<void> {
@@ -36,7 +23,7 @@ export class SummarizeIssueAgent extends LLMAgent<Context, void> {
                 .map((comment: any) => `Comment by ${comment.user.login}: ${comment.body}`)
                 .join("\n");
 
-            const prompt = this.createPrompt({
+            const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.SUMMARIZE_ISSUE,{
                 title: issueTitle,
                 description: issueDescription,
                 comments: commentsText,
