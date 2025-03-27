@@ -35,7 +35,7 @@ npm install
 npm run build
 npm run start
 ```
-1. Next follow instructions to visit http://localhost:3001 (or your custom Glitch URL).
+1. Next follow instructions to visit http://localhost:3000 (or your custom Glitch URL).
 2. Go ahead and click the Register a GitHub App button.
 3. Next, you'll get to decide on an app name that isn't already taken. Note: if you see a message "Name is already in use" although no such app exists, it means that a GitHub organization with that name exists and cannot be used as an app name.
 4. After registering your GitHub App, you'll be redirected to install the app on any repositories. At the same time, you can check your local .env and notice it will be populated with values GitHub sends us in the course of that redirect.
