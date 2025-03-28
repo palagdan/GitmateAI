@@ -1,9 +1,9 @@
-import { BaseAgent } from "../base-agent.js";
+import { BaseAgent } from "../base.agent.js";
 import { Context } from "probot";
 import {helpMessage} from "../../config/config.js";
 
 
-export class HelpAgent implements BaseAgent<Context, void> {
+export class HelpWebhookAgent implements BaseAgent<Context, void> {
 
     async handleEvent(event: Context): Promise<void> {
         const {owner, repo, issue_number} = event.issue();

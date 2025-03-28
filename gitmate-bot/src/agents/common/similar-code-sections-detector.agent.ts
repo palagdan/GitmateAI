@@ -1,36 +1,25 @@
-import { Context } from "probot";
+import {LlmAgent} from "../llm.agent.js";
+import gitmate from "../../api/gitmate-rest.js";
+import {ISSUE_AGENT_PROMPTS} from "../../prompts.js";
 import OpenAI from "openai";
-import {LLMAgent} from "../../llm-agent.js";
-import gitmate from "../../../api/gitmate-rest.js";
-import {getErrorMsg} from "../../../messages/messages.js";
-import llmClient from "../../../llm-client.js";
-import logger from "../../../logger.js";
-import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
+import llmClient from "../../llm-client.js";
+import logger from "../../logger.js";
+import {getErrorMsg} from "../../messages/messages.js";
 
 
-export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
+class SimilarCodeSectionsDetectorAgent extends LlmAgent<string, string> {
 
-    constructor() {
-        super();
-    }
-
-    async handleEvent(context: Context): Promise<string> {
+    async handleEvent(context: string): Promise<string> {
         try {
-            const { owner, repo, issue_number } = context.issue();
-            const issue = await context.octokit.issues.get({ owner, repo, issue_number });
-
-            const issueText = `${issue.data.title}\n\n${issue.data.body || ""}`;
-
-            const similarIssues = await gitmate.issueChunks.search({
-                content: issueText,
-                limit: 10
+            const similarIssues = await gitmate.codeChunks.search({
+                content: context,
+                file
             });
 
             const formattedIssues = this.formatSimilarIssues(similarIssues.data);
 
             const prompt = this.createPrompt( ISSUE_AGENT_PROMPTS.SEARCH_SIMILAR_ISSUES,{
-                issueTitle: issue.data.title,
-                issueBody: issue.data.body || "",
+                context: context,
                 similarIssues: formattedIssues,
             });
 
@@ -71,3 +60,5 @@ export class SimilarIssuesDetectorAgent extends LLMAgent<Context, string> {
             .join("\n\n");
     }
 }
+
+export default SimilarCodeSectionsDetectorAgent;

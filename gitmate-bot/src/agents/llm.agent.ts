@@ -1,6 +1,6 @@
-import {BaseAgent} from "./base-agent.js";
+import {BaseAgent} from "./base.agent.js";
 
-export abstract class LLMAgent<I, O> implements BaseAgent<I, O> {
+export abstract class LlmAgent<I, O> implements BaseAgent<I, O> {
 
     abstract handleEvent(event: I): Promise<O>;
 

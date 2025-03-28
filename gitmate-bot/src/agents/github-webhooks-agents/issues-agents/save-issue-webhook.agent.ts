@@ -1,11 +1,11 @@
-import {BaseAgent} from "../../base-agent.js";
+import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
 import gitmate from "../../../api/gitmate-rest.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
 import logger from "../../../logger.js";
 
 
-export class SaveIssueAgent implements BaseAgent<Context, string>{
+export class SaveIssueWebhookAgent implements BaseAgent<Context, string>{
 
     async handleEvent(event: Context): Promise<string> {
         try{

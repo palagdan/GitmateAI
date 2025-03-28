@@ -1,10 +1,10 @@
-import {BaseAgent} from "../../base-agent.js";
+import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
 import gitmate from "../../../api/gitmate-rest.js";
 import logger from "../../../logger.js";
 
 
-export class DeleteIssueAgent implements BaseAgent<Context, void>{
+export class DeleteIssueWebhookAgent implements BaseAgent<Context, void>{
 
     async handleEvent(event: Context): Promise<void> {
         try{

@@ -1,6 +1,6 @@
 /**
  * Generates a standardized error message in markdown format.
- * @param agentName - The name of the agent (e.g., "IssueLabelAgent").
+ * @param agentName - The name of the agent (e.g., "IssueLabelWebhookAgent").
  * @param errorMessage - The specific error message from the caught error.
  * @returns A formatted error message in markdown.
  */

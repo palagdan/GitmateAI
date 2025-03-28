@@ -3,12 +3,12 @@
 
 
 export const ISSUE_AGENT_PROMPTS = {
-    SEARCH_SIMILAR_ISSUES: `You are a GitHub assistant specializing in identifying similar past issues to help users efficiently. Your task is to analyze a newly created issue and determine if any past issues share relevant similarities. 
+    SEARCH_SIMILAR_ISSUES: `
+        You are a GitHub assistant specializing in identifying similar past issues to help users efficiently. Your task is to analyze a newly created issue and determine if any past issues share relevant similarities. 
         **You must only use the information provided in the context below and must not generate any information outside of it.**
 
         ### **New Issue Details**
-        **Title:** "{{issueTitle}}"
-        **Description:** "{{issueBody}}"
+        {{context}}
 
         ### **Similar Past Issues**
         {{similarIssues}}
@@ -35,13 +35,10 @@ export const ISSUE_AGENT_PROMPTS = {
       
         There are no similar issues found in the database.`,
 
-    SUMMARIZE_ISSUE: `Summarize the following GitHub issue based on its title, description, and comments. Focus on the key points, problems, and solutions discussed.
+    SUMMARIZE_ISSUE: `
+        Summarize the following GitHub issue based on its title, description, and comments. Focus on the key points, problems, and solutions discussed.
 
-        **Issue Title**: {title}
-        **Issue Description**: {description}
-
-        **Comments**:
-        {comments}
+        {{context}}
 
         Provide a concise summary of the issue, including:
         1. The main problem or feature request.
@@ -52,8 +49,7 @@ export const ISSUE_AGENT_PROMPTS = {
         You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
         The issue details are:
     
-        Issue Title: "{{issueTitle}}"
-        Issue Body: "{{issueBody}}"
+        {{context}}
 
         Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
 
@@ -72,8 +68,7 @@ export const COPILOT_AGENT_PROMPTS = {
     RETRIEVE_SERVICES: `
         You are a service matching assistant. Your task is to analyze the user's request and determine which of our available services it matches. 
         Available services:
-        1. "Search for similar issues or pull request" - For requests about finding similar GitHub issues, PRs, or discussions
-        2. "Search for similar code snippets" - For requests about finding similar code examples or implementations
+        {{availableServices}}
 
         Instructions:
         - Carefully read the user's request
