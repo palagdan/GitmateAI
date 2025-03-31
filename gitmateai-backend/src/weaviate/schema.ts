@@ -28,5 +28,16 @@ export const CodeChunksSchema = {
     })
 }
 
-export default [IssueChunkSchema, CodeChunksSchema];
+export const ConventionChunkSchema = {
+    name: "ConventionChunks",
+    properties: [
+        { "name": "content", "dataType": "text"},
+    ],
+    vectorizers: vectorizer.text2VecOllama({
+        apiEndpoint: 'http://host.docker.internal:11434',
+        model: 'nomic-embed-text',
+    })
+}
+
+export default [IssueChunkSchema, CodeChunksSchema, ConventionChunkSchema];
 
