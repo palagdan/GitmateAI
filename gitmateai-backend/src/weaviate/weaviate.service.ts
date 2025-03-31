@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {Injectable, Logger, OnModuleInit} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import weaviate, {generative, vectorizer, WeaviateClient} from 'weaviate-client';
 import schemas from './schema'
@@ -6,6 +6,7 @@ import schemas from './schema'
 @Injectable()
 export class WeaviateService implements OnModuleInit {
     private client: any;
+    private readonly logger = new Logger(WeaviateService.name);
 
     constructor(private readonly configService: ConfigService) {
     }
@@ -22,12 +23,12 @@ export class WeaviateService implements OnModuleInit {
                 const collectionExists = await this.client.collections.exists(schema.name);
                 if (!collectionExists) {
                     await this.client.collections.create(schema);
-                    console.log(`Collection "${schema.name}" created successfully.`);
+                    this.logger.log(`Collection "${schema.name}" created successfully.`);
                 } else {
-                    console.log(`Collection "${schema.name}" already exists.`);
+                    this.logger.log(`Collection "${schema.name}" already exists.`);
                 }
             } catch (error) {
-                console.error('Error initializing collections:', error);
+                this.logger.error('Error initializing collections:', error);
                 throw error;
             }
         }
