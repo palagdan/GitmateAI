@@ -3,18 +3,25 @@ services:
 
   gitmate-bot:
     build:
-      context: ./gitmate-bot
+      context: gitmateai-bot
       dockerfile: Dockerfile
+    environment:
+      BACKEND_URL: "http://gitmate-backend:8080/"
+      LLM_API_KEY: "${LLM_API_KEY}"
+      LLM_MODEL_NAME: "${LLM_API_NAME:-gpt-4o-mini}"
     restart: unless-stopped
 
 
   gitmate-backend:
     build:
-      context: ./gitmate-backend
+      context: gitmateai-backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    environment:
+      PORT: "3001"
+      DATABASE_URL: "http://weaviate:8080/"
     expose:
-      - "3000"
+      - "8081"
 
   weaviate:
     command:

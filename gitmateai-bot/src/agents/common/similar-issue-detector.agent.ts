@@ -1,5 +1,5 @@
 import {LlmAgent} from "../llm.agent.js";
-import gitmate from "../../api/gitmate-rest.js";
+import gitmate from "../../api/gitmateai-rest.js";
 import {ISSUE_AGENT_PROMPTS} from "../../prompts.js";
 import OpenAI from "openai";
 import llmClient from "../../llm-client.js";
@@ -7,13 +7,13 @@ import logger from "../../logger.js";
 import {getErrorMsg} from "../../messages/messages.js";
 
 
-class SimilarCodeSectionsDetectorAgent extends LlmAgent<string, string> {
+class SimilarIssuesDetectorAgent extends LlmAgent<string, string> {
 
     async handleEvent(context: string): Promise<string> {
         try {
-            const similarIssues = await gitmate.codeChunks.search({
+            const similarIssues = await gitmate.issueChunks.search({
                 content: context,
-                file
+                limit: 10
             });
 
             const formattedIssues = this.formatSimilarIssues(similarIssues.data);
@@ -61,4 +61,4 @@ class SimilarCodeSectionsDetectorAgent extends LlmAgent<string, string> {
     }
 }
 
-export default SimilarCodeSectionsDetectorAgent;
+export default SimilarIssuesDetectorAgent;
