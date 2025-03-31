@@ -1,14 +1,14 @@
 
-# GitMate
+# GitmateAI
 
 AI-driven github bot can automate tasks such as issue tracking, pull request management, and code reviews, streamlining the development process.
 
 
 ## Application Overview
 Application consists of 5 modules: 
-- `gitmate-backend` - Manages information chunks for issues, pull requests (PRs), code base, rules, and conventions.
-- `gitmate-bot` - Github bot that assists issue tracking, pull request management, and code reviews, streamlining the development process.
-- `gitmate-loader-cli` - A CLI tool that retrieves content from specific organizations, repositories, or users and populates the backend database with this information.
+- `gitmateai-backend` - Manages information chunks for issues, pull requests (PRs), code base, rules, and conventions.
+- `gitmateai-bot` - Github bot that assists issue tracking, pull request management, and code reviews, streamlining the development process.
+- `gitmateai-loader-cli` - A CLI tool that retrieves content from specific organizations, repositories, or users and populates the backend database with this information.
 - `weaviate` - An open-source vector database that stores both objects and vectors, enabling the combination of vector search with structured filtering. It offers the fault tolerance and scalability of a cloud-native database.
 - `ollama` - : A lightweight, extensible framework for building and running language models on a local machine. It provides a simple API for creating, running, and managing models, along with a library of pre-built models for various applications.
 
@@ -18,19 +18,20 @@ To set up the development environment, use `docker-compose.dev.yml`, which runs 
 
 ### Running the Gitmate-Backend
 
-To start the GitMate backend in development mode, follow these steps:
+To start the GitmateAI backend in development mode, follow these steps:
 
 ```bash
-cd gitmate-backend
+cd gitmateai-backend
 npm install  
 npm run start:dev
 ```
+Backend runs on `http://localhost:3001/v1` by default. You can change port in the `.env` file.
 
-### Guide to Register Your Bot on GitHub and Configure the Gitmate-bot
+### Guide to Register Your Bot on GitHub and Configure the GitmateAI-bot
 
 Register Your Bot on GitHub and install: 
 ```bash
-cd gitmate-bot
+cd gitmateai-bot
 npm install  
 npm run build
 npm run start
@@ -48,11 +49,11 @@ npm run start
 8. Install the app on your repositories.
 9. Try triggering a webhook to activate the bot!
 
-### Gitmate-Loader-CLI - Populating the Database with Data Chunks. 
+### GitmateAI-Loader-CLI - Populating the Database with Data Chunks. 
 ```bash
-cd gitmate-loader-cli
+cd gitmateai-loader-cli
 ```
-Before running the scripts, you need to configure the .env file with the required environment variables, see [.env.example](gitmate-loader-cli/.env.example).
+Before running the scripts, you need to configure the .env file with the required environment variables, see [.env.example](gitmateai-loader-cli/.env.example).
 This includes setting the backend URL where all the information will be pushed and providing your GitHub access token.
 
 To generate a GitHub access token, follow these steps:
@@ -83,7 +84,7 @@ help [command]          display help for command
 ```
 > **🚨 Important:** To use the `gitmate-loader-cli` command, you must install it globally. Otherwise, use the commands provided below.
 ```bash
-cd gitmate-loader-cli
+cd gitmateai-loader-cli
 npm install
 npm run build
 npm run start [options] [command] 

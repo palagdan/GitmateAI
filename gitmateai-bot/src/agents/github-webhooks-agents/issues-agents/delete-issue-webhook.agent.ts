@@ -1,6 +1,6 @@
 import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
-import gitmate from "../../../api/gitmate-rest.js";
+import gitmate from "../../../api/gitmateai-rest.js";
 import logger from "../../../logger.js";
 
 

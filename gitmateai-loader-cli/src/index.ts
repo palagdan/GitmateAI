@@ -11,7 +11,7 @@ import {getOrgRepositories, getRepositoriesForUser} from "./github-repos-loaders
 const program = new Command();
 
 program
-    .name("gitmate-loader-cli")
+    .name("gitmateai-loader-cli")
     .description("CLI tool to fetch and process GitHub repositories")
     .version("1.0.0");
 

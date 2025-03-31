@@ -1,8 +1,8 @@
 {
-  "name": "GitMate",
+  "name": "GitmateAI",
   "version": "1.0.0",
   "private": true,
-  "description": "k. AI-driven chatbots can automate tasks such as issue tracking, pull request management, and code reviews, streamlining the development process. A prototype AI assistant should be developed and evaluated, demonstrating improvements in workflow efficiency, collaboration, and developer satisfaction.",
+  "description": "",
   "author": "Daniil Palagin",
   "license": "ISC",
   "homepage": "https://github.com//",
