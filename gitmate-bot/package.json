@@ -19,10 +19,15 @@
     "clean": "rm -rf node_modules"
   },
   "dependencies": {
+    "@copilot-extensions/preview-sdk": "^5.0.1",
     "@langchain/core": "^0.3.42",
     "@langchain/textsplitters": "^0.1.0",
     "axios": "^1.8.2",
+    "express": "^4.21.2",
+    "octokit": "^4.1.2",
     "ollama": "^0.5.14",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
     "probot": "^13.0.1"
   },
   "devDependencies": {

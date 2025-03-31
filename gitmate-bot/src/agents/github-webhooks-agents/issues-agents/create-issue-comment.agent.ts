@@ -1,4 +1,4 @@
-import {BaseAgent} from "../../base-agent.js";
+import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
 
 interface CreateIssueComment{
