@@ -1,22 +1,22 @@
 import command from "./commands/command.js";
 import {isPullRequest} from "./utils/github-utils.js";
 import {OctokitGitHubService} from "./services/github-service.js";
-import {IssueLabelWebhookAgent} from "./agents/github-webhooks-agents/issues-agents/issue-label-webhook.agent.js";
+import {WebhookIssueLabelAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-issue-label.agent.js";
 import {HelpWebhookAgent} from "./agents/github-webhooks-agents/help-webhook.agent.js";
-import {SummarizeIssueWebhookAgent} from "./agents/github-webhooks-agents/issues-agents/summarize-issue-webhook.agent.js";
-import {SimilarIssuesDetectorWebhookAgent} from "./agents/github-webhooks-agents/issues-agents/similar-issues-detector-webhook.agent.js";
-import {DeleteIssueWebhookAgent} from "./agents/github-webhooks-agents/issues-agents/delete-issue-webhook.agent.js";
-import {SaveIssueWebhookAgent} from "./agents/github-webhooks-agents/issues-agents/save-issue-webhook.agent.js";
+import {WebhookSummarizeIssueAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-summarize-issue.agent.js";
+import {WebhookSearchIssuesAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-search-issues.agent.js";
+import {WebhookDeleteIssueAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-delete-issue.agent.js";
+import {WebhookSaveIssueAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-save-issue.agent.js";
 import CreateIssueCommentAgent from "./agents/github-webhooks-agents/issues-agents/create-issue-comment.agent.js";
 import {PrReviewAgent} from "./agents/github-webhooks-agents/pull-requests-agents/pr-review-agent.js";
 
 const githubService = new OctokitGitHubService();
-const issueLabelAgent = new IssueLabelWebhookAgent(githubService);
+const issueLabelAgent = new WebhookIssueLabelAgent(githubService);
 const helpAgent = new HelpWebhookAgent();
-const summarizeIssueAgent = new SummarizeIssueWebhookAgent(githubService);
-const similarIssuesAgent = new SimilarIssuesDetectorWebhookAgent();
-const deleteIssueAgent = new DeleteIssueWebhookAgent();
-const saveIssueAgent = new SaveIssueWebhookAgent();
+const summarizeIssueAgent = new WebhookSummarizeIssueAgent(githubService);
+const similarIssuesAgent = new WebhookSearchIssuesAgent();
+const deleteIssueAgent = new WebhookDeleteIssueAgent();
+const saveIssueAgent = new WebhookSaveIssueAgent();
 
 const createIssueCommentAgent = new CreateIssueCommentAgent();
 const reviewAgent = new PrReviewAgent();

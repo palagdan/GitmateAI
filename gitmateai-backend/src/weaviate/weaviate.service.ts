@@ -1,6 +1,6 @@
 import {Injectable, Logger, OnModuleInit} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import weaviate, {generative, vectorizer, WeaviateClient} from 'weaviate-client';
+import weaviate from 'weaviate-client';
 import schemas from './schema'
 
 @Injectable()
@@ -12,7 +12,18 @@ export class WeaviateService implements OnModuleInit {
     }
 
     async onModuleInit() {
-        this.client = await weaviate.connectToLocal();
+        const url = this.configService.get<string>("DATABASE_URL") || 'http://localhost:8080';
+        try {
+            const parsedUrl = new URL(url);
+            const host = parsedUrl.hostname;
+            const port =  parseInt(parsedUrl.port, 10);
+            this.client = await weaviate.connectToLocal({
+                host: host,
+                port: port,
+            })
+        } catch (error) {
+            throw new Error(`Invalid URL: ${url}`);
+        }
         await this.client.isReady();
         await this.initializeCollections();
     }

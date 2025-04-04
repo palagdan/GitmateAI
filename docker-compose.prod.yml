@@ -1,27 +1,35 @@
 
 services:
 
-  gitmate-bot:
+  gitmateai-bot:
     build:
       context: gitmateai-bot
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
     environment:
-      BACKEND_URL: "http://gitmate-backend:8080/"
+      APP_ID: "${APP_ID}"
+      PRIVATE_KEY: "${PRIVATE_KEY}"
+      WEBHOOK_SECRET: "${WEBHOOK_SECRET}"
+      GITHUB_CLIENT_ID: "${GITHUB_CLIENT_ID}"
+      GITHUB_CLIENT_SECRET: "${GITHUB_CLIENT_SECRET}"
+      BACKEND_URL: "${BACKEND_URL:-http://gitmateai-backend:3001/}"
       LLM_API_KEY: "${LLM_API_KEY}"
       LLM_MODEL_NAME: "${LLM_API_NAME:-gpt-4o-mini}"
+      PREFIX: "${PREFIX:-gitmateai}"
     restart: unless-stopped
 
-
-  gitmate-backend:
+  gitmateai-backend:
     build:
       context: gitmateai-backend
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      PORT: "3001"
-      DATABASE_URL: "http://weaviate:8080/"
-    expose:
-      - "8081"
+      DATABASE_URL: "${DATABASE_URL:-http://weaviate:8080/}"
+      OLLAMA_URL: "${OLLAMA_URL:-http://ollama:11434/}"
+      OLLAMA_EMBEDDING_MODEL: "${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}"
+    ports:
+      - "3001:3001"
 
   weaviate:
     command:
@@ -48,7 +56,7 @@ services:
 
   ollama:
     image: ollama/ollama:latest
-    ports:
+    expose:
       - "11434"
     volumes:
       -  ollama_data:/root/.ollama

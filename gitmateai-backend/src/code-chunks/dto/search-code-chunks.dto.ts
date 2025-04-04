@@ -6,10 +6,6 @@ export class SearchCodeChunksDto {
     @IsNotEmpty()
     content: string;
 
-    @IsString()
-    @IsOptional()
-    filePath: string;
-
     @IsOptional()
     @IsNumber()
     @IsPositive()

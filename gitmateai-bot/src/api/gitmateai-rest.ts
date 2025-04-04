@@ -1,10 +1,11 @@
 import api from "./api.js";
-import {CreateCodeChunks, CreateIssueChunks, SearchChunks, SearchCodeChunks} from "./types.js";
+import {Content, CreateCodeChunks, CreateIssueChunks} from "./types.js";
+import {SearchQuery} from "../agents/common/types.js";
 
 
 
 
-const gitmate = {
+const gitmateai = {
     issueChunks: {
         async getAll() {
             return await api.get("/issue-chunks");
@@ -22,7 +23,7 @@ const gitmate = {
             return await api.post('issue-chunks', createIssueChunks);
         },
 
-        async search(searchChunks: SearchChunks) {
+        async search(searchChunks: SearchQuery) {
             return await api.post('issue-chunks/search', searchChunks);
         }
 
@@ -61,10 +62,28 @@ const gitmate = {
             return await api.post(`/code-chunks/`, createCodeChunks);
         },
 
-        async search(searchCodeChunks: SearchCodeChunks){
+        async search(searchCodeChunks: SearchQuery){
             return await api.post('/code-chunks/search', searchCodeChunks);
+        }
+    },
+
+    conventionChunks: {
+        async getAll() {
+            return await api.get(`/convention-chunks`);
+        },
+
+        async deleteAll() {
+            return await api.delete(`/convention-chunks`);
+        },
+
+        async insert(createConventionChunks: Content){
+            return await api.post(`/convention-chunks`, createConventionChunks);
+        },
+
+        async search(searchConvention: SearchQuery) {
+            return await api.post(`/convention-chunks/search`, searchConvention);
         }
     }
 }
 
-export default gitmate;
+export default gitmateai;
