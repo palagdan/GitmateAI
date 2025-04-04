@@ -1,6 +1,6 @@
 import {IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString} from "class-validator";
 
-export class SearchCodeChunksDto {
+export class SearchConventionChunksDto {
 
     @IsString()
     @IsNotEmpty()

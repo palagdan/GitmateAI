@@ -1,12 +1,10 @@
 import {Context} from "probot";
-import {LlmAgent} from "../../llm.agent.js";
-
+import {LLMAgent} from "../../LLMAgent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import logger from "../../../logger.js";
-import SimilarIssuesDetectorAgent from "../../common/similar-issue-detector.agent.js";
+import SearchIssuesAgent from "../../common/issues-agents/search-issues.agent.js";
 
-
-export class SimilarIssuesDetectorWebhookAgent extends LlmAgent<Context, string> {
+export class WebhookSearchIssuesAgent extends LLMAgent<Context, string> {
 
     constructor() {
         super();
@@ -19,9 +17,11 @@ export class SimilarIssuesDetectorWebhookAgent extends LlmAgent<Context, string>
 
             const issueText = `${issue.data.title}\n\n${issue.data.body || ""}`;
 
-            const similarIssueDetectorAgent = new SimilarIssuesDetectorAgent();
-
-            return await similarIssueDetectorAgent.handleEvent(issueText);
+            const searchIssuesAgent = new SearchIssuesAgent();
+            return await searchIssuesAgent.handleEvent({
+                content: issueText,
+                limit: 20
+            });
         } catch (error) {
             logger.error(`Error in SimilarIssuesDetectorAgent: ${(error as Error).message}`);
             return getErrorMsg(this.constructor.name, error);

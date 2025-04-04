@@ -9,8 +9,8 @@ export const IssueChunkSchema =  {
         { "name": "issue", "dataType": "int", "skipVectorization": true }
     ],
     vectorizers: vectorizer.text2VecOllama({
-        apiEndpoint: 'http://host.docker.internal:11434',
-        model: 'nomic-embed-text',
+        apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
+        model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
     })
 };
 
@@ -23,10 +23,21 @@ export const CodeChunksSchema = {
         { "name": "filePath", "dataType": "text", "skipVectorization": true},
     ],
     vectorizers: vectorizer.text2VecOllama({
-        apiEndpoint: 'http://host.docker.internal:11434',
-        model: 'nomic-embed-text',
+        apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
+        model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
     })
 }
 
-export default [IssueChunkSchema, CodeChunksSchema];
+export const ConventionChunkSchema = {
+    name: "ConventionChunks",
+    properties: [
+        { "name": "content", "dataType": "text"},
+    ],
+    vectorizers: vectorizer.text2VecOllama({
+        apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
+        model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
+    })
+}
+
+export default [IssueChunkSchema, CodeChunksSchema, ConventionChunkSchema];
 

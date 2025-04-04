@@ -1,18 +1,18 @@
 import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
-import gitmate from "../../../api/gitmateai-rest.js";
+import gitmateai from "../../../api/gitmateai-rest.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
 import logger from "../../../logger.js";
 
 
-export class SaveIssueWebhookAgent implements BaseAgent<Context, string>{
+export class WebhookSaveIssueAgent implements BaseAgent<Context, string>{
 
     async handleEvent(event: Context): Promise<string> {
         try{
             const {owner, repo, issue_number} = event.issue();
             const issue = await event.octokit.issues.get({ owner, repo, issue_number });
             const issueText = `${issue.data.title}\n\n${issue.data.body || ""}`;
-            await gitmate.issueChunks.insert({
+            await gitmateai.issueChunks.insert({
                 content: issueText,
                 owner: owner,
                 repo: repo,

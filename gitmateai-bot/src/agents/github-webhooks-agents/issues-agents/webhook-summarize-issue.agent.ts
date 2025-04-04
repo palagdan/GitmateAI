@@ -1,10 +1,10 @@
-import {LlmAgent} from "../../llm.agent.js";
+import {LLMAgent} from "../../LLMAgent.js";
 import {Context} from "probot";
 import {GitHubService} from "../../../services/github-service.js";
 import logger from "../../../logger.js";
 import SummarizeIssueAgent from "../../common/summarize-issue.agent.js";
 
-export class SummarizeIssueWebhookAgent extends LlmAgent<Context, void> {
+export class WebhookSummarizeIssueAgent extends LLMAgent<Context, void> {
 
     constructor(private gitHubService: GitHubService) {
         super();
@@ -32,4 +32,4 @@ export class SummarizeIssueWebhookAgent extends LlmAgent<Context, void> {
     }
 }
 
-export default SummarizeIssueWebhookAgent;
+export default WebhookSummarizeIssueAgent;

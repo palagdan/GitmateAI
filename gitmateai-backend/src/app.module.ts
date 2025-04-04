@@ -5,6 +5,7 @@ import { WeaviateModule } from './weaviate/weaviate.module';
 import {IssueChunksModule} from "./issue-chunks/issue-chunks.module";
 import {ConfigModule} from "@nestjs/config";
 import { CodeChunksModule } from './code-chunks/code-chunks.module';
+import { ConventionChunksModule } from './convention-chunks/convention-chunks.module';
 
 @Module({
   imports: [WeaviateModule, CodeChunksModule ,IssueChunksModule, ConfigModule.forRoot(
@@ -12,7 +13,7 @@ import { CodeChunksModule } from './code-chunks/code-chunks.module';
         isGlobal: true,
         envFilePath: '.env',
       }
-  ), CodeChunksModule],
+  ), CodeChunksModule, ConventionChunksModule],
   controllers: [AppController],
   providers: [AppService],
 })

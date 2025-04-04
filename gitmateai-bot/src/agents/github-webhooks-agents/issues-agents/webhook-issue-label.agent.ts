@@ -1,13 +1,13 @@
 import {Context} from "probot";
-import {LlmAgent} from "../../llm.agent.js";
+import {LLMAgent} from "../../LLMAgent.js";
 import {GitHubService} from "../../../services/github-service.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
 import logger from "../../../logger.js";
-import IssueLabelAgent from "../../common/issue-label.agent.js";
+import IssueLabelAgent from "../../common/issues-agents/issue-label.agent.js";
 
 
 
-export class IssueLabelWebhookAgent extends LlmAgent<Context, void> {
+export class WebhookIssueLabelAgent extends LLMAgent<Context, void> {
 
     constructor(private gitHubService: GitHubService) {
         super();

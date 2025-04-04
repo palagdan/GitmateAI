@@ -1,8 +1,8 @@
-
+import  { Request, Response } from "express";
 
 export interface CopilotOrchestratorAgentInput {
-    req: any;
-    res: any;
+    req: Request;
+    res: Response;
 }
 
 export interface CopilotAgentInput {

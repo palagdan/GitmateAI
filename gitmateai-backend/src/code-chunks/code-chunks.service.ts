@@ -60,20 +60,12 @@ export class CodeChunksService {
     }
 
     async search(searchCodeChunksDto: SearchCodeChunksDto) {
-        const { content, filePath, limit, fields } = searchCodeChunksDto;
-        this.logger.log(`Searching code chunks with filePath: ${filePath} ,limit: ${limit}, fields: ${JSON.stringify(fields)}`);
+        const { content, limit, fields } = searchCodeChunksDto;
+        this.logger.log(`Searching code chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 
-        const chunks = filePath ? await splitCode(content, filePath) : await splitText(content);
+        const result: any = await this.repository.search(content, { limit, fields });
 
-        this.logger.log(`Split search content into ${chunks.length} chunks`);
-
-        let allResults: any = [];
-        for (const chunk of chunks) {
-            const chunkResult: any = await this.repository.search(chunk, { limit, fields });
-            allResults.push(chunkResult);
-        }
-
-        const sortedResults = Array.from(new Map(allResults.map(r => [r.uuid, r])).values())
+        const sortedResults = Array.from(new Map(result.map(r => [r.uuid, r])).values())
             .sort((a: any, b: any) => a.metadata.distance - b.metadata.distance)
             .slice(0, limit);
 
