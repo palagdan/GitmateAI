@@ -1,6 +1,7 @@
-import {LLMAgent} from "../../../lib/agents/llm-agent.js";
+
 import OpenAI from "openai";
 import llmClient from "../../llm-client.js";
+import {LLMAgent} from "../LLMAgent.js";
 
 
 class LLMQueryAgent extends LLMAgent<string, string> {
