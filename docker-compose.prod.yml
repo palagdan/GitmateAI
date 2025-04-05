@@ -25,7 +25,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      DATABASE_URL: "${DATABASE_URL:-http://weaviate:8080/}"
+      DATABASE_HOST: "${DATABASE_HOST:-weaviate}"
+      DATABASE_PORT: "${DATABASE_PORT:-8080}"
       OLLAMA_URL: "${OLLAMA_URL:-http://ollama:11434/}"
       OLLAMA_EMBEDDING_MODEL: "${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}"
     ports:
@@ -40,9 +41,9 @@ services:
       - --scheme
       - http
     image: cr.weaviate.io/semitechnologies/weaviate:1.29.0
-    expose:
-      - "8080"
-      - "50051"
+    ports:
+        - "8080:8080"
+        - "50051:50051"
     volumes:
       - weaviate_data:/var/lib/weaviate
     restart: unless-stopped

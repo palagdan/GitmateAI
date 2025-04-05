@@ -12,18 +12,18 @@ export class WeaviateService implements OnModuleInit {
     }
 
     async onModuleInit() {
-        const url = this.configService.get<string>("DATABASE_URL") || 'http://localhost:8080';
-        try {
-            const parsedUrl = new URL(url);
-            const host = parsedUrl.hostname;
-            const port =  parseInt(parsedUrl.port, 10);
-            this.client = await weaviate.connectToLocal({
-                host: host,
-                port: port,
-            })
-        } catch (error) {
-            throw new Error(`Invalid URL: ${url}`);
-        }
+
+        const host = this.configService.get<string>("DATABASE_HOST") || 'localhost';
+        const port = this.configService.get<string>("DATABASE_PORT") || '8080';
+        this.client = await weaviate.connectToCustom({
+                httpHost: host,
+                httpPort: parseInt(port),
+                httpSecure: false,
+                grpcHost: host,
+                grpcPort: 50051,
+                grpcSecure: false,
+        })
+
         await this.client.isReady();
         await this.initializeCollections();
     }
