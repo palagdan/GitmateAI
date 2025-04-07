@@ -1,0 +1,48 @@
+name: Build and Push Docker Images for Gitmate-bot and Gitmate-backend
+
+on:
+  push:
+    branches: [main] 
+
+jobs:
+  build-and-push-gitmateai-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./gitmateai-backend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/gitmateai-backend:latest
+
+    
+  build-and-push-gitmateai-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./gitmateai-bot
+          push: true
+          tags: ghcr.io/${{ github.repository }}/gitmateai-bot:latest
+    
