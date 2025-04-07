@@ -2,9 +2,8 @@ import {Context} from "probot";
 import {LLMAgent} from "../../LLMAgent.js";
 import {GitHubService} from "../../../services/github-service.js";
 import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
-import logger from "../../../logger.js";
 import IssueLabelAgent from "../../common/issues-agents/issue-label.agent.js";
-
+import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 
 
 export class WebhookIssueLabelAgent extends LLMAgent<Context, void> {
@@ -14,6 +13,7 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context, void> {
     }
 
     async handleEvent(event: Context): Promise<void> {
+        const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
             const issue = await this.gitHubService.getIssue(event);
             const context = `${issue.data.title}\n\n${issue.data.body || ""}`;
@@ -27,25 +27,32 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context, void> {
                 availableLabels: availableLabels
             })
 
+            let message;
+
             if (retrievedLabels.length > 0) {
                 await this.gitHubService.addLabels(event, retrievedLabels);
-                logger.info(`Labels added: ${retrievedLabels.join(", ")}`);
-                formatMessage(`
+                this.agentLogger.info(`Labels added: ${retrievedLabels.join(", ")}`);
+                message = formatMessage(`
                 ### IssueLabelAgent Report🤖
                 Following labels were added based on the provided information: ${retrievedLabels.map(label => `**${label}**`).join(", ")}`
                 );
 
             } else {
-                logger.info("No labels suggested to add. A comment was added to the issue.");
-                formatMessage(`
+                this.agentLogger.info("No labels suggested to add. A comment was added to the issue.");
+                message = formatMessage(`
                 ### IssueLabelAgent Report🤖
 
                 No labels were added based on the provided information.
                 `);
             }
 
+            await createIssueCommentAgent.handleEvent({
+                context: event,
+                value: message
+            })
+
         } catch (error) {
-            logger.error(`Error occurred: ${(error as Error).message}`);
+            this.agentLogger.error(`Error occurred: ${(error as Error).message}`);
             getErrorMsg(this.constructor.name, error);
         }
     }

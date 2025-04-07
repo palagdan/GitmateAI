@@ -25,9 +25,9 @@ const reviewAgent = new PrReviewAgent();
 const webhooks = (app) =>{
 
     app.on(["issues.opened", "issues.edited"], async (context) => {
-        const labelAgentResponse = await issueLabelAgent.handleEvent(context);
-        const similarIssueAgentResponse = await similarIssuesAgent.handleEvent(context);
-        const saveIssueAgentResponse = await saveIssueAgent.handleEvent(context);
+        await issueLabelAgent.handleEvent(context);
+        await similarIssuesAgent.handleEvent(context);
+        await saveIssueAgent.handleEvent(context);
     });
 
     app.on(["pull_request.opened", "pull_request.edited"], async (context) => {
