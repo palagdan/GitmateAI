@@ -1,12 +1,12 @@
 import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
 
-interface CreateIssueComment{
+interface CreateIssueComment {
     context: Context,
     value: string
 }
 
-class CreateIssueCommentAgent implements BaseAgent<CreateIssueComment, void>{
+class CreateIssueCommentAgent implements BaseAgent<CreateIssueComment, void> {
 
     async handleEvent(event: CreateIssueComment): Promise<void> {
 
@@ -17,9 +17,11 @@ class CreateIssueCommentAgent implements BaseAgent<CreateIssueComment, void>{
             issue_number,
         });
 
-        const botComments = comments.data.filter(comment =>
-            comment.user?.type === process.env.APP_NAME
+        const botComments = comments.data.filter(comment => {
+               return comment.user?.login === `${process.env.APP_NAME.toLowerCase()}[bot]`
+            }
         );
+
 
         if (botComments.length > 0) {
             const botCommentBody = botComments[0].body;
