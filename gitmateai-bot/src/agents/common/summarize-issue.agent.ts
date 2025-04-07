@@ -1,9 +1,5 @@
 import {LLMAgent} from "../LLMAgent.js";
 import {ISSUE_AGENT_PROMPTS} from "../../prompts.js";
-import OpenAI from "openai";
-import llmClient from "../../llm-client.js";
-import logger from "../../logger.js";
-import {getErrorMsg} from "../../messages/messages.js";
 import LLMQueryAgent from "./llm-query.agent.js";
 
 

@@ -1,13 +1,10 @@
-import {BaseAgent} from "../base.agent.js";
 import {CopilotAgentInput} from "./types.js";
 import SearchConventionAgent from "../common/conventions-agents/search-convention.agent.js";
 import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import {getErrorMsg} from "../../messages/messages.js";
-import logger from "../../logger.js";
+import {LLMAgent} from "../LLMAgent.js";
 
-class CopilotSearchConventionAgent implements BaseAgent<CopilotAgentInput, void> {
-
-    private agentLogger = logger.child({ agent: this.constructor.name});
+class CopilotSearchConventionAgent extends LLMAgent<CopilotAgentInput, void> {
 
     async handleEvent(input: CopilotAgentInput): Promise<void> {
         try{

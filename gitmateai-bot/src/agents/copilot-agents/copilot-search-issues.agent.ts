@@ -3,11 +3,8 @@ import {CopilotAgentInput} from "./types.js";
 import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import SearchIssuesAgent from "../common/issues-agents/search-issues.agent.js";
 import {getErrorMsg} from "../../messages/messages.js";
-import logger from "../../logger.js";
 
 export class CopilotSearchIssuesAgent extends LLMAgent<CopilotAgentInput, void> {
-
-    private agentLogger = logger.child({ agent: this.constructor.name});
 
     async handleEvent(input: CopilotAgentInput): Promise<void> {
         try{

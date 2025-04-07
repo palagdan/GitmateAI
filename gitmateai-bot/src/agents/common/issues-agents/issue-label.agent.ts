@@ -8,7 +8,6 @@ interface LabelContext {
     availableLabels: string[],
 }
 
-
 export class IssueLabelAgent extends LLMAgent<LabelContext, string[]> {
 
     async handleEvent(context: LabelContext): Promise<string[]> {

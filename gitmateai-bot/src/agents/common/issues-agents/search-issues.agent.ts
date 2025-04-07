@@ -3,11 +3,8 @@ import gitmateai from "../../../api/gitmateai-rest.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 import {SearchQuery} from "../types.js";
-import logger from "../../../logger.js";
 
 class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
-
-    private agentLogger = logger.child({ agent: this.constructor.name });
 
     async handleEvent(input: SearchQuery): Promise<string> {
         const {content, limit, fields} = input;

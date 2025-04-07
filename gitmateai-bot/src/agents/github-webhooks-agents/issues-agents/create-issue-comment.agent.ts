@@ -3,14 +3,37 @@ import {Context} from "probot";
 
 interface CreateIssueComment{
     context: Context,
-    values: string[]
+    value: string
 }
 
 class CreateIssueCommentAgent implements BaseAgent<CreateIssueComment, void>{
 
     async handleEvent(event: CreateIssueComment): Promise<void> {
+
         const {owner, repo, issue_number} = event.context.issue();
-        const body = event.values.join('\n');
+        const comments = await event.context.octokit.issues.listComments({
+            owner,
+            repo,
+            issue_number,
+        });
+
+        const botComments = comments.data.filter(comment =>
+            comment.user?.type === process.env.APP_NAME
+        );
+
+        if (botComments.length > 0) {
+            const botCommentBody = botComments[0].body;
+            const updatedBody = botCommentBody + '\n' + event.value;
+            await event.context.octokit.issues.updateComment({
+                owner,
+                repo,
+                comment_id: botComments[0].id,
+                body: updatedBody
+            });
+            return;
+        }
+
+        const body = event.value;
         await event.context.octokit.issues.createComment({
             owner,
             repo,

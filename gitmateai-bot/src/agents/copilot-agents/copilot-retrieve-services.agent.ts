@@ -1,13 +1,10 @@
 import {LLMAgent} from "../LLMAgent.js";
-import logger from "../../logger.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 import {availableCopilotServicesToString} from "./copilot-available-services.js";
 import LLMQueryAgent from "../common/llm-query.agent.js";
 
 
 class CopilotRetrieveServicesAgent extends LLMAgent<string, string[]> {
-
-    private agentLogger = logger.child({ agent: this.constructor.name});
 
     async handleEvent(input: string): Promise<string[]> {
         try {
