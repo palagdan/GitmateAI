@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-push-gitmateai-backend:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,11 +26,14 @@ jobs:
         with:
           context: ./gitmateai-backend
           push: true
-          tags: ghcr.io/${{ github.repository }}/gitmateai-backend:latest
+          tags: ghcr.io/${{ github.repository_owner }}/gitmateai-backend:latest
 
     
   build-and-push-gitmateai-bot:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -44,5 +50,5 @@ jobs:
         with:
           context: ./gitmateai-bot
           push: true
-          tags: ghcr.io/${{ github.repository }}/gitmateai-bot:latest
+          tags: ghcr.io/${{ github.repository_owner }}/gitmateai-bot:latest
     
