@@ -52,10 +52,11 @@ Your task is to analyze input and determine if any found issues in a vector data
 
 ## SearchIssuesAgent Report 🤖
 
-*Most Relevant:**
+**Most Relevant🔥**
 - **Reference:** https://github.com/{owner}/{repo}/issues/{issue}
 - **Content:** {content}
 - **Reason:** {brief explanation of why this is relevant}
+---
 
 - If no relevant past issues are found (or none were provided), return:
    
