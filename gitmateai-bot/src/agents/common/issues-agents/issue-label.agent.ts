@@ -13,12 +13,13 @@ export class IssueLabelAgent extends LLMAgent<LabelContext, string[]> {
     async handleEvent(context: LabelContext): Promise<string[]> {
         const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.LABEL_ISSUE, {
             context: context.issueInformation,
-            availableLabels: context.availableLabels.map((label: any) => label.name).join(", ")
+            availableLabels: context.availableLabels.join(", ")
         });
 
         const llmQueryAgent: LLMQueryAgent = new LLMQueryAgent();
         const labels = await llmQueryAgent.handleEvent(prompt);
-        return JSON.parse(labels);
+        const parsedLabels = JSON.parse(labels);
+        return parsedLabels.labels;
     }
 
 }

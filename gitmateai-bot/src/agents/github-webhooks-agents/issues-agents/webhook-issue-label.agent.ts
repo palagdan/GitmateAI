@@ -18,16 +18,15 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context, void> {
             const issue = await this.gitHubService.getIssue(event);
             const context = `${issue.data.title}\n\n${issue.data.body || ""}`;
 
-            const availableLabels: string[] = await this.gitHubService.listLabelsForRepo(event);
+            const availableLabels = await this.gitHubService.listLabelsForRepo(event);
 
             const labelIssueAgent = new IssueLabelAgent();
-
             const retrievedLabels = await labelIssueAgent.handleEvent({
                 issueInformation: context,
-                availableLabels: availableLabels
+                availableLabels: availableLabels.data.map(label  => label.name)
             })
 
-            let message;
+            let message: string;
 
             if (retrievedLabels.length > 0) {
                 await this.gitHubService.addLabels(event, retrievedLabels);
