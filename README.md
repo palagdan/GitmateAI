@@ -25,7 +25,7 @@ cd gitmateai-backend
 npm install  
 npm run start:dev
 ```
-Backend runs on `http://localhost:3001/v1` by default. You can change port in the `.env` file.
+Backend runs on `http://localhost:3001/v1` by default. If tested in a browser it will most-likely return `{"message":"Cannot GET /v1","error":"Not Found","statusCode":404}`. You can change port in the `.env` file.
 
 ### Guide to Register Your Bot on GitHub and Configure the GitmateAI-bot
 
@@ -44,10 +44,9 @@ npm run start
 6. Configure the following environment variables in `.env`:
    - `LLM_API_KEY`: Your OpenAI API key. You can obtain this key by visiting [OpenAI Platform](https://platform.openai.com/).
    - `LLM_MODEL_NAME`: The name of the model you intend to use (by default `gpt-4o-mini`).
-   - `BACKEND_URL`: The URL for your backend service. (by default `http://localhost:8081/v1`).
+   - `BACKEND_URL`: The URL for your backend service. (by default `http://localhost:3001/v1`).
 7. Start the server in you terminal with `npm run start`:
-8. Install the app on your repositories.
-9. Try triggering a webhook to activate the bot!
+8. Try triggering a webhook to activate the bot!
 
 ### GitmateAI-Loader-CLI - Populating the Database with Data Chunks. 
 ```bash
