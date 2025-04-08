@@ -13,10 +13,10 @@
   ],
   "scripts": {
     "build": "npm run copy-config && tsc",
-    "copy-config": "./scripts/copy_files_by_format.sh src/config lib/config .md .json .txt",
-    "start": "probot run ./lib/index.js",
+    "copy-config": "./scripts/copy_files_by_format.sh src/config dist/config .md .json .txt",
+    "start": "probot run ./dist/index.js",
     "test": "vitest",
-    "clean": "rm -rf node_modules"
+    "clean": "rm -rf node_modules dist"
   },
   "dependencies": {
     "@copilot-extensions/preview-sdk": "^5.0.1",
