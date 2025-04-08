@@ -4,7 +4,7 @@ services:
   gitmateai-bot:
     image: ghcr.io/palagdan/gitmateai-bot:latest
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - gitmateai-backend
       - ollama
@@ -33,7 +33,7 @@ services:
       OLLAMA_URL: "${OLLAMA_URL:-http://ollama:11434/}"
       OLLAMA_EMBEDDING_MODEL: "${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}"
     ports:
-      - "3001:3001"
+      - "127.0.0.1:3001:3001"
 
   weaviate:
     command:
@@ -44,7 +44,7 @@ services:
       - --scheme
       - http
     image: cr.weaviate.io/semitechnologies/weaviate:1.29.0
-    ports:
+    expose:
         - "8080"
         - "50051"
     volumes:
