@@ -1,5 +1,6 @@
 import {api, octokit} from "./api.js";
 import logger from "./logger.js";
+import {Issue} from "./types.js";
 
 
 
@@ -26,53 +27,16 @@ async function getAllIssues(owner: string, repo: string): Promise<any[]> {
 }
 
 
-async function getAllComments(owner: string, repo: string, issueNumber: number): Promise<any[]> {
-    let comments: any[] = [];
-    let page = 1;
-    let hasMore = true;
-
-    while (hasMore) {
-        const response = await octokit.rest.issues.listComments({
-            owner,
-            repo,
-            issue_number: issueNumber,
-            per_page: 100,
-            page,
-        });
-
-        comments = comments.concat(response.data);
-        hasMore = response.data.length === 100;
-        page++;
-    }
-
-    return comments;
-}
-
-
-function generateIssueContent(issue: any): string {
-    let content = `Issue #${issue.number}: ${issue.title}\n`;
-    content += `Description: ${issue.body}\n`;
-    content += `Comments:\n`;
-
-    if (issue.commentsData.length > 0) {
-        issue.commentsData.forEach((comment: any) => {
-            content += `- ${comment.user.login}: ${comment.body}\n`;
-        });
-    } else {
-        content += `- No comments\n`;
-    }
-
-    return content;
-}
-
-
-async function sendIssueToBackend(issueContent: any, owner: string, repo: string, issue: number): Promise<void> {
+async function sendIssueToBackend(issue: Issue): Promise<void> {
     try {
         await api.post("/issue-chunks", {
-            content: issueContent,
-            owner: owner,
-            repo: repo,
-            issue: issue
+            content: issue.content,
+            owner: issue.owner,
+            repo: issue.repo,
+            issueId: issue.issueId,
+            type: issue.type,
+            author: issue.author,
+            commentId: issue.commentId
         });
         logger.info(`Issue #${issue} sent to backend successfully.`);
     } catch (error) {
@@ -81,20 +45,70 @@ async function sendIssueToBackend(issueContent: any, owner: string, repo: string
 }
 
 
+async function fetchAndPushIssueComments(owner: string, repo: string, issueId: number) {
 
-export async function getRepoIssuesWithComments(owner: string, repo: string): Promise<void> {
+    let page = 1;
+    let hasMore = true;
+
+    while (hasMore) {
+        const response = await octokit.rest.issues.listComments({
+            owner,
+            repo,
+            issue_number: issueId,
+            per_page: 100,
+            page,
+        });
+        const comment: any = response.data;
+
+        await sendIssueToBackend({
+            content: comment.body,
+            owner: owner,
+            repo: repo,
+            author: comment.user.login,
+            issueId: issueId,
+            type: 'comment',
+            commentId: comment.id,
+        })
+
+        hasMore = response.data.length === 100;
+        page++;
+    }
+
+}
+
+
+export async function fetchAndPushIssues(owner: string, repo: string): Promise<void> {
     try {
         const issues = await getAllIssues(owner, repo);
 
         for (const issue of issues) {
+
+            await sendIssueToBackend({
+                content: issue.title,
+                owner: issue.owner,
+                repo: issue.repo,
+                author: issue.author,
+                issueId: issue.id,
+                type: 'title',
+                commentId: undefined,
+            })
+
+            await sendIssueToBackend({
+                content: issue.body,
+                owner: issue.owner,
+                repo: issue.repo,
+                author: issue.author,
+                issueId: issue.id,
+                type: 'description',
+                commentId: undefined,
+            })
+
             if (issue.comments > 0) {
-                issue.commentsData = await getAllComments(owner, repo, issue.number);
+                issue.commentsData = await fetchAndPushIssueComments(owner, repo, issue.number);
             } else {
                 issue.commentsData = [];
             }
 
-            const issueContent = generateIssueContent(issue);
-            await sendIssueToBackend(issueContent, owner, repo, issue.number);
         }
 
         logger.info('All issues and comments processed successfully.');

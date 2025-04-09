@@ -4,12 +4,15 @@ export const IssueChunkSchema =  {
     name: "IssueChunks",
     properties: [
         { "name": "content", "dataType": "text"},
+        { "name": "type", "dataType": "text", "skipVectorization": true},
         { "name": "owner", "dataType": "text",  "skipVectorization": true},
         { "name": "repo", "dataType": "text",  "skipVectorization": true},
-        { "name": "issue", "dataType": "int", "skipVectorization": true }
+        { "name": "issueId", "dataType": "int", "skipVectorization": true },
+        { "name": "author", "dataType": "text", "skipVectorization": true},
+        { "name": "commentId", "dataType": "int", "skipVectorization": true},
     ],
     vectorizers: vectorizer.text2VecOllama({
-        apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
+        apiEndpoint: process.env.OLLAMA_URL || 'http://ollama:11434',
         model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
     })
 };
@@ -23,7 +26,7 @@ export const CodeChunksSchema = {
         { "name": "filePath", "dataType": "text", "skipVectorization": true},
     ],
     vectorizers: vectorizer.text2VecOllama({
-        apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
+        apiEndpoint: process.env.OLLAMA_URL || 'http://ollama:11434',
         model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
     })
 }
@@ -34,7 +37,7 @@ export const ConventionChunkSchema = {
         { "name": "content", "dataType": "text"},
     ],
     vectorizers: vectorizer.text2VecOllama({
-        apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
+        apiEndpoint: process.env.OLLAMA_URL || 'http://ollama:11434',
         model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
     })
 }

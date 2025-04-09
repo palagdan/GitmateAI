@@ -29,7 +29,7 @@ export async function fetchAndPushFileContent(owner: string, repo: string, fileP
     }
 }
 
-export async function getRepoContents(owner: string, repo: string, path: string = '', ignorePatterns: string[] = []) {
+export async function fetchAndPushRepoContent(owner: string, repo: string, path: string = '', ignorePatterns: string[] = []) {
     try {
         const response = await octokit.rest.repos.getContent({ owner, repo, path });
 
@@ -42,7 +42,7 @@ export async function getRepoContents(owner: string, repo: string, path: string 
                     continue;
                 }
                 if (item.type === 'dir') {
-                    await getRepoContents(owner, repo, item.path, ignorePatterns);
+                    await fetchAndPushRepoContent(owner, repo, item.path, ignorePatterns);
                 } else if (item.type === 'file') {
                     await fetchAndPushFileContent(owner, repo, item.path);
                 }

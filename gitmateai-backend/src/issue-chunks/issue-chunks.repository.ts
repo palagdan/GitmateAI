@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WeaviateService } from '../weaviate/weaviate.service';
 import { Collection, Filters } from 'weaviate-client';
+import {CreateIssueChunksDto} from "./dto/create-issue-chunks.dto";
+import {Issue, IssueChunk, IssueComment, IssueContentType} from "./types";
 
 @Injectable()
 export class IssueChunksRepository implements OnModuleInit {
@@ -16,23 +18,54 @@ export class IssueChunksRepository implements OnModuleInit {
         return this.weaviateService.getClient().collections.get('IssueChunks');
     }
 
-    async deleteByOwnerRepoIssue(owner: string, repo: string, issue: number) {
+    async deleteByOwnerRepoIssue(issue: Issue) {
         return await this.collection.data.deleteMany(
             Filters.and(
-                this.collection.filter.byProperty('owner').equal(owner),
-                this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issue').equal(issue),
+                this.collection.filter.byProperty('owner').equal(issue.owner),
+                this.collection.filter.byProperty('repo').equal(issue),
+                this.collection.filter.byProperty('issueId').equal(issue),
             ),
         );
     }
 
-    async insert(content: string, owner: string, repo: string, issue: number) {
-        return await this.collection.data.insert({
-            content: content,
-            owner: owner,
-            repo: repo,
-            issue: issue,
-        });
+    async deleteTitleByOwnerRepoIssue(issueComment: Issue) {
+        const { owner, repo, issueId } = issueComment;
+        return await this.collection.data.deleteMany(
+            Filters.and(
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issueId').equal(issueId),
+                this.collection.filter.byProperty('type').equal(IssueContentType.Title),
+            ),
+        );
+    }
+
+    async deleteDescriptionByOwnerRepoIssue(issueComment: Issue) {
+        const { owner, repo, issueId } = issueComment;
+        return await this.collection.data.deleteMany(
+            Filters.and(
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issueId').equal(issueId),
+                this.collection.filter.byProperty('type').equal(IssueContentType.Description),
+            ),
+        );
+    }
+
+    async deleteCommentByOwnerRepoIssueCommentId(issueComment: IssueComment) {
+        const { owner, repo, issueId, commentId } = issueComment;
+        return await this.collection.data.deleteMany(
+            Filters.and(
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issueId').equal(issueId),
+                this.collection.filter.byProperty('commentId').equal(commentId),
+            ),
+        );
+    }
+
+    async insert(issueChunk: IssueChunk) {
+        return await this.collection.data.insert(issueChunk);
     }
 
     async findAll() {
@@ -55,10 +88,52 @@ export class IssueChunksRepository implements OnModuleInit {
         return result.objects;
     }
 
+    async findByOwnerRepoIssueCommentId(issueComment: IssueComment) {
+        const { owner, repo, issueId, commentId } = issueComment;
+        const result = await this.collection.query.fetchObjects({
+            returnMetadata: "all",
+            filters: Filters.and(
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issue').equal(issueId),
+                this.collection.filter.byProperty('commentId').equal(commentId),
+            ),
+        });
+        return result.objects;
+    }
+
+    async findTitleByOwnerRepoIssue(issue: Issue) {
+        const { owner, repo, issueId, } = issue;
+        const result = await this.collection.query.fetchObjects({
+            returnMetadata: "all",
+            filters: Filters.and(
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issue').equal(issueId),
+                this.collection.filter.byProperty('type').equal(IssueContentType.Title),
+            ),
+        });
+        return result.objects;
+    }
+
+    async findDescriptionByOwnerRepoIssue(issue: Issue) {
+        const { owner, repo, issueId } = issue;
+        const result = await this.collection.query.fetchObjects({
+            returnMetadata: "all",
+            filters: Filters.and(
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issue').equal(issueId),
+                this.collection.filter.byProperty('type').equal(IssueContentType.Description),
+            ),
+        });
+        return result.objects;
+    }
+
     async search(content: string, filters) {
         const { limit, fields } = filters;
         const finalLimit = limit ?? 10;
-        const returnProperties = fields ?? ['content', 'owner', 'repo', 'issue'];
+        const returnProperties = fields ?? ['content', 'owner', 'repo', 'issueId', 'commentId', 'type'];
 
         const result = await this.collection.query.nearText(content, {
             returnProperties: returnProperties,

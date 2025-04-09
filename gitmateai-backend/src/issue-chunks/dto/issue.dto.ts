@@ -15,5 +15,5 @@ export class IssueDto {
     @IsNumber()
     @IsPositive()
     @IsNotEmpty()
-    issue: number;
+    issueId: number;
 }

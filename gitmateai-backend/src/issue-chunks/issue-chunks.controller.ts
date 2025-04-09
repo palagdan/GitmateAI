@@ -4,6 +4,7 @@ import {CreateIssueChunksDto} from "./dto/create-issue-chunks.dto";
 import {IssueDto} from "./dto/issue.dto";
 import {SearchChunksDto} from "../common/dto/search-chunks.dto";
 import {ApiBody, ApiOperation, ApiParam, ApiResponse} from "@nestjs/swagger";
+import {IssueCommentDto} from "./dto/issue-comment.dto";
 
 
 @Controller('issue-chunks')
@@ -28,6 +29,21 @@ export class IssueChunksController {
         return await this.issueChunkService.findByOwnerRepoIssue(issue);
     }
 
+    @Get(':owner/:repo/:issue/:commentId')
+    async getByOwnerRepoIssueCommentId(@Param() issue: IssueCommentDto) {
+        return this.issueChunkService.findByOwnerRepoIssueCommentId(issue);
+    }
+
+    @Get(':owner/:repo/:issue/title')
+    async getTitleByOwnerRepoIssue(@Param() issue: IssueDto) {
+        return this.issueChunkService.findTitleByOwnerRepoIssue(issue);
+    }
+
+    @Get(':owner/:repo/:issue/description')
+    async getDescriptionByOwnerRepoIssue(@Param() issue: IssueDto) {
+        return this.issueChunkService.findDescriptionByOwnerRepoIssue(issue);
+    }
+
     @ApiOperation({ summary: 'Delete all issue chunks by owner, repo, and issue number' })
     @ApiParam({ name: 'owner', type: 'string', description: 'Repository owner' })
     @ApiParam({ name: 'repo', type: 'string', description: 'Repository name' })
@@ -38,7 +54,6 @@ export class IssueChunksController {
     async deleteByOwnerRepoIssue(@Param() issue: IssueDto) {
         return await this.issueChunkService.deleteByOwnerRepoIssue(issue);
     }
-
 
     @ApiOperation({ summary: 'Insert a new issue chunks' })
     @ApiBody({ type: CreateIssueChunksDto, description: 'Issue chunk data' })

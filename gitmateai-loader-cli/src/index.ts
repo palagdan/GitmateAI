@@ -3,9 +3,9 @@
 import { Command } from "commander";
 import "dotenv/config";
 import { loadGitmateIgnore } from "./gitmate-ignore.js";
-import { getRepoContents } from "./github-code-loaders.js";
+import { fetchAndPushRepoContent } from "./github-code-loaders.js";
 import logger from "./logger.js";
-import {getRepoIssuesWithComments} from "./github-issues-loaders.js";
+import {fetchAndPushIssues} from "./github-issues-loaders.js";
 import {getOrgRepositories, getRepositoriesForUser} from "./github-repos-loaders.js";
 
 const program = new Command();
@@ -30,8 +30,8 @@ program
 
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${orgName}/${repo}`);
-            await getRepoContents(orgName, repo, "", ignorePatterns);
-            await getRepoIssuesWithComments(orgName, repo);
+            await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns);
+            await fetchAndPushIssues(orgName, repo);
         }
     });
 
@@ -50,8 +50,8 @@ program
 
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${username}/${repo}`);
-            await getRepoContents(username, repo, "", ignorePatterns);
-            await getRepoIssuesWithComments(username, repo);
+            await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+            await fetchAndPushIssues(username, repo);
         }
     });
 
@@ -64,8 +64,8 @@ program
         const ignorePatterns = loadGitmateIgnore();
         logger.info("Loaded .gitmateignore:", ignorePatterns);
         logger.info(`📂 Processing repository: ${username}/${repo}`);
-        await getRepoContents(username, repo, "", ignorePatterns);
-        await getRepoIssuesWithComments(username, repo);
+        await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+        await fetchAndPushIssues(username, repo);
     });
 
 
