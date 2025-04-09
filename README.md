@@ -3,6 +3,8 @@
 AI-driven github bot can automate tasks such as issue tracking, pull request management, and code reviews, streamlining
 the development process.
 
+![Architecture Diagram](images/architecture_diagram.png)
+
 ## Application Overview
 
 Application consists of 5 modules:
