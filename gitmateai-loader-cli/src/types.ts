@@ -6,5 +6,5 @@ export interface Issue {
     commentId: number;
     owner: string
     repo: string;
-    issueId: number;
+    issueNumber: number;
 }

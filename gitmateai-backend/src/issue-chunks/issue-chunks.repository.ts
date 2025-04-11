@@ -29,36 +29,36 @@ export class IssueChunksRepository implements OnModuleInit {
     }
 
     async deleteTitleByOwnerRepoIssue(issueComment: Issue) {
-        const { owner, repo, issueId } = issueComment;
+        const { owner, repo, issueNumber } = issueComment;
         return await this.collection.data.deleteMany(
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issueId').equal(issueId),
+                this.collection.filter.byProperty('issueId').equal(issueNumber),
                 this.collection.filter.byProperty('type').equal(IssueContentType.Title),
             ),
         );
     }
 
     async deleteDescriptionByOwnerRepoIssue(issueComment: Issue) {
-        const { owner, repo, issueId } = issueComment;
+        const { owner, repo, issueNumber } = issueComment;
         return await this.collection.data.deleteMany(
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issueId').equal(issueId),
+                this.collection.filter.byProperty('issueId').equal(issueNumber),
                 this.collection.filter.byProperty('type').equal(IssueContentType.Description),
             ),
         );
     }
 
     async deleteCommentByOwnerRepoIssueCommentId(issueComment: IssueComment) {
-        const { owner, repo, issueId, commentId } = issueComment;
+        const { owner, repo, issueNumber, commentId } = issueComment;
         return await this.collection.data.deleteMany(
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issueId').equal(issueId),
+                this.collection.filter.byProperty('issueId').equal(issueNumber),
                 this.collection.filter.byProperty('commentId').equal(commentId),
             ),
         );
@@ -82,20 +82,20 @@ export class IssueChunksRepository implements OnModuleInit {
             filters: Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issue').equal(issue),
+                this.collection.filter.byProperty('issueNumber').equal(issue),
             ),
         });
         return result.objects;
     }
 
     async findByOwnerRepoIssueCommentId(issueComment: IssueComment) {
-        const { owner, repo, issueId, commentId } = issueComment;
+        const { owner, repo, issueNumber, commentId } = issueComment;
         const result = await this.collection.query.fetchObjects({
             returnMetadata: "all",
             filters: Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issue').equal(issueId),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
                 this.collection.filter.byProperty('commentId').equal(commentId),
             ),
         });
@@ -103,13 +103,13 @@ export class IssueChunksRepository implements OnModuleInit {
     }
 
     async findTitleByOwnerRepoIssue(issue: Issue) {
-        const { owner, repo, issueId, } = issue;
+        const { owner, repo, issueNumber, } = issue;
         const result = await this.collection.query.fetchObjects({
             returnMetadata: "all",
             filters: Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issue').equal(issueId),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
                 this.collection.filter.byProperty('type').equal(IssueContentType.Title),
             ),
         });
@@ -117,13 +117,13 @@ export class IssueChunksRepository implements OnModuleInit {
     }
 
     async findDescriptionByOwnerRepoIssue(issue: Issue) {
-        const { owner, repo, issueId } = issue;
+        const { owner, repo, issueNumber } = issue;
         const result = await this.collection.query.fetchObjects({
             returnMetadata: "all",
             filters: Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issue').equal(issueId),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
                 this.collection.filter.byProperty('type').equal(IssueContentType.Description),
             ),
         });
@@ -133,7 +133,7 @@ export class IssueChunksRepository implements OnModuleInit {
     async search(content: string, filters) {
         const { limit, fields } = filters;
         const finalLimit = limit ?? 10;
-        const returnProperties = fields ?? ['content', 'owner', 'repo', 'issueId', 'commentId', 'type'];
+        const returnProperties = fields ?? ['content', 'owner', 'repo', 'issueNumber', 'commentId', 'type', 'author'];
 
         const result = await this.collection.query.nearText(content, {
             returnProperties: returnProperties,

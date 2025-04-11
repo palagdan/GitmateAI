@@ -64,7 +64,7 @@ program
         const ignorePatterns = loadGitmateIgnore();
         logger.info("Loaded .gitmateignore:", ignorePatterns);
         logger.info(`📂 Processing repository: ${username}/${repo}`);
-        await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+       // await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
         await fetchAndPushIssues(username, repo);
     });
 

@@ -1,7 +1,5 @@
 import {Injectable, OnModuleInit} from "@nestjs/common";
 import {WeaviateService} from "../weaviate/weaviate.service";
-import {ConventionChunkSchema} from "../weaviate/schema";
-
 
 @Injectable()
 export class ConventionChunksRepository implements OnModuleInit {
@@ -23,8 +21,9 @@ export class ConventionChunksRepository implements OnModuleInit {
    }
 
    async deleteAll() {
-       await this.weaviateService.getClient().collections.delete('ConventionChunks');
-       await this.weaviateService.getClient().collections.create(ConventionChunkSchema)
+       await this.weaviateService.getClient().collections.deleteMany(
+           this.findAll()
+       );
    }
 
     async insert(content: string) {

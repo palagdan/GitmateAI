@@ -24,22 +24,22 @@ export class IssueChunksController {
     @ApiParam({ name: 'issue', type: 'number', description: 'Issue number' })
     @ApiResponse({ status: 200, description: 'Returns the issue chunk' })
     @ApiResponse({ status: 404, description: 'Issue chunk not found' })
-    @Get(':owner/:repo/:issue')
+    @Get(':owner/:repo/:issueNumber')
     async getByOwnerRepoIssue(@Param() issue: IssueDto) {
         return await this.issueChunkService.findByOwnerRepoIssue(issue);
     }
 
-    @Get(':owner/:repo/:issue/:commentId')
+    @Get(':owner/:repo/:issueNumber/comment/:commentId')
     async getByOwnerRepoIssueCommentId(@Param() issue: IssueCommentDto) {
         return this.issueChunkService.findByOwnerRepoIssueCommentId(issue);
     }
 
-    @Get(':owner/:repo/:issue/title')
+    @Get(':owner/:repo/:issueNumber/title')
     async getTitleByOwnerRepoIssue(@Param() issue: IssueDto) {
         return this.issueChunkService.findTitleByOwnerRepoIssue(issue);
     }
 
-    @Get(':owner/:repo/:issue/description')
+    @Get(':owner/:repo/:issueNumber/description')
     async getDescriptionByOwnerRepoIssue(@Param() issue: IssueDto) {
         return this.issueChunkService.findDescriptionByOwnerRepoIssue(issue);
     }
@@ -50,7 +50,7 @@ export class IssueChunksController {
     @ApiParam({ name: 'issue', type: 'number', description: 'Issue number' })
     @ApiResponse({ status: 200, description: 'Issue chunk deleted' })
     @ApiResponse({ status: 404, description: 'Issue chunk not found' })
-    @Delete(':owner/:repo/:issue')
+    @Delete(':owner/:repo/:issueNumber')
     async deleteByOwnerRepoIssue(@Param() issue: IssueDto) {
         return await this.issueChunkService.deleteByOwnerRepoIssue(issue);
     }

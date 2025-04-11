@@ -4,11 +4,11 @@ import {IsNotEmpty, IsNumber, IsPositive, IsString} from "class-validator";
 export interface Issue {
     owner: string;
     repo: string;
-    issueId: number;
+    issueNumber: number;
 }
 
 export interface IssueComment extends Issue {
-    commentId: number;
+    commentId: number | undefined;
 }
 
 
@@ -22,8 +22,8 @@ export interface IssueChunk {
     content: string;
     type: IssueContentType;
     author: string;
-    commentId: number;
+    commentId: number | undefined;
     owner: string
     repo: string;
-    issueId: number;
+    issueNumber: number;
 }

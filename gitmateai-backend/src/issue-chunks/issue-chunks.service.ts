@@ -19,54 +19,54 @@ export class IssueChunksService {
     }
 
     async findByOwnerRepoIssue(issueDto: IssueDto) {
-        const { owner, repo, issueId } = issueDto;
-        this.logger.log(`Fetching issue chunks for owner: ${owner}, repo: ${repo}, issue: ${issueId}`);
-        return await this.repository.findByOwnerRepoIssue(owner, repo, issueId);
+        const { owner, repo, issueNumber } = issueDto;
+        this.logger.log(`Fetching issue chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
+        return await this.repository.findByOwnerRepoIssue(owner, repo, issueNumber);
     }
 
     async findByOwnerRepoIssueCommentId(issueCommentDto: IssueCommentDto){
-        const { owner, repo, issueId, commentId } = issueCommentDto;
-        this.logger.log(`Fetching issue comment chunks for owner: ${owner}, repo: ${repo}, issue: ${issueId}`);
+        const { owner, repo, issueNumber, commentId } = issueCommentDto;
+        this.logger.log(`Fetching issue comment chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findByOwnerRepoIssueCommentId({
             owner,
             repo,
-            issueId,
+            issueNumber: issueNumber,
             commentId
         });
     }
 
     async findTitleByOwnerRepoIssue(issueDto: IssueDto){
-        const { owner, repo, issueId } = issueDto;
-        this.logger.log(`Fetching issue title chunks for owner: ${owner}, repo: ${repo}, issue: ${issueId}`);
+        const { owner, repo, issueNumber } = issueDto;
+        this.logger.log(`Fetching issue title chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findTitleByOwnerRepoIssue({
             owner,
             repo,
-            issueId,
+            issueNumber: issueNumber,
         });
     }
 
     async findDescriptionByOwnerRepoIssue(issueDto: IssueDto){
-        const { owner, repo, issueId } = issueDto;
-        this.logger.log(`Fetching issue description chunks for owner: ${owner}, repo: ${repo}, issue: ${issueId}`);
+        const { owner, repo, issueNumber } = issueDto;
+        this.logger.log(`Fetching issue description chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findDescriptionByOwnerRepoIssue({
             owner,
             repo,
-            issueId
+            issueNumber: issueNumber
         });
     }
 
     async deleteByOwnerRepoIssue(issueDto: IssueDto) {
-        const { owner, repo, issueId } = issueDto;
-        this.logger.log(`Deleting issue chunks for owner: ${owner}, repo: ${repo}, issue: ${issueId}`);
+        const { owner, repo, issueNumber } = issueDto;
+        this.logger.log(`Deleting issue chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.deleteByOwnerRepoIssue({
             owner,
             repo,
-            issueId: issueId
+            issueNumber: issueNumber
         });
     }
 
     async insert(issue: CreateIssueChunksDto) {
-        this.logger.log(`Inserting issue chunks for owner: ${issue.owner}, repo: ${issue.repo}, issue: ${issue.issueId}`);
+        this.logger.log(`Inserting issue chunks for owner: ${issue.owner}, repo: ${issue.repo}, issue: ${issue.issueNumber}`);
 
         const chunks: string[] = await splitText(issue.content);
         this.logger.log(`Split issue text into ${chunks.length} chunks`);
@@ -79,32 +79,32 @@ export class IssueChunksService {
                 commentId: issue.commentId,
                 owner: issue.owner,
                 repo: issue.repo,
-                issueId: issue.issueId
+                issueNumber: issue.issueNumber
             });
         }
         this.logger.log('Insertion completed');
     }
 
     async update(createIssueChunksDto: CreateIssueChunksDto) {
-        this.logger.log(`Updating issue chunks for owner: ${createIssueChunksDto.owner}, repo: ${createIssueChunksDto.repo}, issue: ${createIssueChunksDto.issueId}`);
+        this.logger.log(`Updating issue chunks for owner: ${createIssueChunksDto.owner}, repo: ${createIssueChunksDto.repo}, issue: ${createIssueChunksDto.issueNumber}`);
         if(createIssueChunksDto.type == IssueContentType.Comment){
             await this.repository.deleteCommentByOwnerRepoIssueCommentId({
                 owner: createIssueChunksDto.owner,
                 repo: createIssueChunksDto.repo,
-                issueId: createIssueChunksDto.issueId,
+                issueNumber: createIssueChunksDto.issueNumber,
                 commentId: createIssueChunksDto.commentId
             });
         }else if(createIssueChunksDto.type == IssueContentType.Title){
             await this.repository.deleteDescriptionByOwnerRepoIssue({
                 owner: createIssueChunksDto.owner,
                 repo: createIssueChunksDto.repo,
-                issueId: createIssueChunksDto.issueId
+                issueNumber: createIssueChunksDto.issueNumber
             });
         }else if(createIssueChunksDto.type == IssueContentType.Description){
             await this.repository.deleteTitleByOwnerRepoIssue({
                 owner: createIssueChunksDto.owner,
                 repo: createIssueChunksDto.repo,
-                issueId: createIssueChunksDto.issueId
+                issueNumber: createIssueChunksDto.issueNumber
             });
         }
 

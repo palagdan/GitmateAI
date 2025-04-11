@@ -9,6 +9,7 @@ async function getAllIssues(owner: string, repo: string): Promise<any[]> {
     let page = 1;
     let hasMore = true;
 
+
     while (hasMore) {
         const response = await octokit.rest.issues.listForRepo({
             owner,
@@ -28,24 +29,31 @@ async function getAllIssues(owner: string, repo: string): Promise<any[]> {
 
 
 async function sendIssueToBackend(issue: Issue): Promise<void> {
+    if(issue.content?.length === 0 || issue.content === null || issue.content === undefined) {
+        return;
+    }
+
     try {
         await api.post("/issue-chunks", {
             content: issue.content,
             owner: issue.owner,
             repo: issue.repo,
-            issueId: issue.issueId,
+            issueNumber: issue.issueNumber,
             type: issue.type,
             author: issue.author,
             commentId: issue.commentId
         });
-        logger.info(`Issue #${issue} sent to backend successfully.`);
+        logger.info(`Issue type ${issue.type} of issue #${issue.issueNumber} sent to backend successfully.`);
     } catch (error) {
-        logger.error(`Error sending issue #${issue} to backend:`, error);
+        logger.error( {
+            msg: `Error sending issue type ${issue.type} from issue number #${issue.issueNumber} to backend:`,
+            error: error.response.data
+        });
     }
 }
 
 
-async function fetchAndPushIssueComments(owner: string, repo: string, issueId: number) {
+async function fetchAndPushIssueComments(owner: string, repo: string, issueNumber: number) {
 
     let page = 1;
     let hasMore = true;
@@ -54,21 +62,24 @@ async function fetchAndPushIssueComments(owner: string, repo: string, issueId: n
         const response = await octokit.rest.issues.listComments({
             owner,
             repo,
-            issue_number: issueId,
+            issue_number: issueNumber,
             per_page: 100,
             page,
         });
-        const comment: any = response.data;
 
-        await sendIssueToBackend({
-            content: comment.body,
-            owner: owner,
-            repo: repo,
-            author: comment.user.login,
-            issueId: issueId,
-            type: 'comment',
-            commentId: comment.id,
-        })
+        const comments: any = response.data;
+
+        for (const comment of comments) {
+            await sendIssueToBackend({
+                content: comment.body,
+                owner: owner,
+                repo: repo,
+                author: comment.user.login,
+                issueNumber: issueNumber,
+                type: 'comment',
+                commentId: comment.id,
+            });
+        }
 
         hasMore = response.data.length === 100;
         page++;
@@ -85,22 +96,22 @@ export async function fetchAndPushIssues(owner: string, repo: string): Promise<v
 
             await sendIssueToBackend({
                 content: issue.title,
-                owner: issue.owner,
-                repo: issue.repo,
-                author: issue.author,
-                issueId: issue.id,
+                owner: owner,
+                repo: repo,
+                author: issue.user.login,
+                issueNumber: issue.number,
                 type: 'title',
-                commentId: undefined,
+                commentId: null,
             })
 
             await sendIssueToBackend({
                 content: issue.body,
-                owner: issue.owner,
-                repo: issue.repo,
-                author: issue.author,
-                issueId: issue.id,
+                owner: owner,
+                repo: repo,
+                author: issue.user.login,
+                issueNumber: issue.id,
                 type: 'description',
-                commentId: undefined,
+                commentId: null,
             })
 
             if (issue.comments > 0) {
@@ -108,11 +119,13 @@ export async function fetchAndPushIssues(owner: string, repo: string): Promise<v
             } else {
                 issue.commentsData = [];
             }
-
         }
 
         logger.info('All issues and comments processed successfully.');
     } catch (error) {
-        logger.error(`Error fetching issues and comments for ${owner}/${repo}:`, error);
+        logger.error({
+            msg: `Error fetching issues and comments for ${owner}/${repo}`,
+            err: error
+        });
     }
 }
