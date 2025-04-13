@@ -27,18 +27,21 @@ export class ConventionChunksRepository implements OnModuleInit {
        await this.weaviateService.getClient().collections.create(ConventionChunkSchema)
    }
 
-    async insert(content: string) {
+    async insert(vector, content: string) {
         return await this.conventionChunksCollection.data.insert({
-            content: content,
+            vector: vector,
+            properties: {
+                content: content
+            }
         });
     }
 
-    async search(content: string, filters){
+    async search(vector, filters){
         const { limit, fields } = filters;
         const finalLimit = limit ?? 10;
         const returnProperties = fields ?? ['content'];
 
-        const result = await this.conventionChunksCollection.query.nearText(content, {
+        const result = await this.conventionChunksCollection.query.nearVector(vector, {
             returnProperties: returnProperties,
             limit: finalLimit,
             returnMetadata: "all"

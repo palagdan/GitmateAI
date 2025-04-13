@@ -20,10 +20,6 @@ export class WeaviateService implements OnModuleInit {
                 {"name": "repo", "dataType": "text", "skipVectorization": true},
                 {"name": "issue", "dataType": "int", "skipVectorization": true}
             ],
-            vectorizers: vectorizer.text2VecOllama({
-                apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
-                model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
-            })
         },
         {
             name: "CodeChunks",
@@ -33,10 +29,6 @@ export class WeaviateService implements OnModuleInit {
                 {"name": "repo", "dataType": "text", "skipVectorization": true},
                 {"name": "filePath", "dataType": "text", "skipVectorization": true},
             ],
-            vectorizers: vectorizer.text2VecOllama({
-                apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
-                model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
-            })
         },
 
         {
@@ -44,10 +36,6 @@ export class WeaviateService implements OnModuleInit {
             properties: [
                 {"name": "content", "dataType": "text"},
             ],
-            vectorizers: vectorizer.text2VecOllama({
-                apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
-                model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
-            })
         }
     ]
 
