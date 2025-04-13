@@ -3,14 +3,13 @@ import {ContentDto} from "../common/dto/content.dto";
 import { splitText} from "../utils/llm-utils";
 import {ConventionChunksRepository} from "./convention-chunks.repository";
 import {SearchConventionChunksDto} from "./dto/search-convention-chunks.dto";
-import {OllamaService} from "../embedding/ollama.service";
 
 @Injectable()
 export class ConventionChunksService {
 
     private readonly logger = new Logger(ConventionChunksService.name);
 
-    constructor(private readonly repository: ConventionChunksRepository, private readonly ollamaService: OllamaService) {}
+    constructor(private readonly repository: ConventionChunksRepository) {}
 
     async findAll() {
         this.logger.log('Fetching all convention chunks');
@@ -30,8 +29,7 @@ export class ConventionChunksService {
         this.logger.log(`Split text into ${chunks.length} chunks`);
 
         for (const chunk of chunks) {
-            const vector = await this.ollamaService.embed(chunk);
-            await this.repository.insert(vector, chunk);
+            await this.repository.insert(chunk);
         }
 
         this.logger.log('Convention chunks insertion completed');
@@ -40,8 +38,7 @@ export class ConventionChunksService {
     async search(searchChunksDto: SearchConventionChunksDto){
         const { content, limit, fields } = searchChunksDto;
         this.logger.log(`Searching convention chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
-        const vector = await this.ollamaService.embed(content);
-        const chunkResult: any = await this.repository.search(vector, { limit, fields });
+        const chunkResult: any = await this.repository.search(content, { limit, fields });
         this.logger.log(`Returning ${chunkResult.length} search results`);
         return chunkResult;
     }

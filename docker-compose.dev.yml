@@ -9,8 +9,7 @@ services:
       - '8080'
       - --scheme
       - http
-    image:  semitechnologies/weaviate
-    container_name: weaviate
+    image: cr.weaviate.io/semitechnologies/weaviate:1.29.0
     ports:
       - "8080:8080"
       - "50051:50051"
@@ -22,6 +21,7 @@ services:
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
       PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
       ENABLE_API_BASED_MODULES: 'true'
+      ENABLE_MODULES: 'text2vec-ollama'
       CLUSTER_HOSTNAME: 'node1'
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -37,6 +37,8 @@ services:
     tty: true
     restart: unless-stopped
     entrypoint: [ "/usr/bin/bash", "/entrypoint.sh" ]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   weaviate_data:

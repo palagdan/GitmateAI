@@ -4,13 +4,12 @@ import { CodeChunksRepository } from "./code-chunks.repository";
 import {splitCode, splitText} from "../utils/llm-utils";
 import {SearchChunksDto} from "../common/dto/search-chunks.dto";
 import {SearchCodeChunksDto} from "./dto/search-code-chunks.dto";
-import {OllamaService} from "../embedding/ollama.service";
 
 @Injectable()
 export class CodeChunksService {
     private readonly logger = new Logger(CodeChunksService.name);
 
-    constructor(private readonly repository: CodeChunksRepository, private readonly ollamaService: OllamaService) {}
+    constructor(private readonly repository: CodeChunksRepository) {}
 
     async findAll() {
         this.logger.log('Fetching all code chunks');
@@ -40,8 +39,7 @@ export class CodeChunksService {
         this.logger.log(`Split code into ${chunks.length} chunks`);
 
         for (const chunk of chunks) {
-            const vector = await this.ollamaService.embed(chunk);
-            await this.repository.insert(vector, chunk, owner, repo, filePath);
+            await this.repository.insert(chunk, owner, repo, filePath);
         }
         this.logger.log('Insertion completed');
     }
@@ -65,8 +63,7 @@ export class CodeChunksService {
         const { content, limit, fields } = searchCodeChunksDto;
         this.logger.log(`Searching code chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 
-        const vector = await this.ollamaService.embed(content);
-        const result: any = await this.repository.search(vector, { limit, fields });
+        const result: any = await this.repository.search(content, { limit, fields });
 
         const sortedResults = Array.from(new Map(result.map(r => [r.uuid, r])).values())
             .sort((a: any, b: any) => a.metadata.distance - b.metadata.distance)

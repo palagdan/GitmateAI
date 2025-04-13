@@ -4,13 +4,12 @@ import { CreateIssueChunksDto } from './dto/create-issue-chunks.dto';
 import { splitText } from '../utils/llm-utils';
 import { IssueDto } from './dto/issue.dto';
 import { SearchChunksDto } from "../common/dto/search-chunks.dto";
-import {OllamaService} from "../embedding/ollama.service";
 
 @Injectable()
 export class IssueChunksService {
     private readonly logger = new Logger(IssueChunksService.name);
 
-    constructor(private readonly repository: IssueChunksRepository, private readonly ollamaService: OllamaService) {}
+    constructor(private readonly repository: IssueChunksRepository) {}
 
     async findAll() {
         this.logger.log('Fetching all issue chunks');
@@ -37,10 +36,8 @@ export class IssueChunksService {
         this.logger.log(`Split issue text into ${chunks.length} chunks`);
 
         for (const chunk of chunks) {
-            const vector = await this.ollamaService.embed(chunk);
-            await this.repository.insert(vector, chunk, owner, repo, issue);
+            await this.repository.insert(chunk, owner, repo, issue);
         }
-
         this.logger.log('Insertion completed');
     }
 
@@ -53,12 +50,20 @@ export class IssueChunksService {
         const { content, limit, fields } = searchIssueChunksDto;
         this.logger.log(`Searching issue chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 
-        const vector = await this.ollamaService.embed(content);
+        const chunks: string[] = await splitText(content);
+        this.logger.log(`Split search content into ${chunks.length} chunks`);
 
+        let allResults: any = [];
+        for (const chunk of chunks) {
+            const chunkResult: any = await this.repository.search(chunk, { limit, fields });
+            allResults.push(...chunkResult);
+        }
 
-        const result: any = await this.repository.search(vector, { limit, fields });
+        const sortedResults = Array.from(new Map(allResults.map(r => [r.uuid, r])).values())
+            .sort((a: any, b: any) => a.metadata.distance - b.metadata.distance)
+            .slice(0, limit);
 
-        this.logger.log(`Returning ${result.length} search results`);
-        return result;
+        this.logger.log(`Returning ${sortedResults.length} search results`);
+        return sortedResults;
     }
 }
