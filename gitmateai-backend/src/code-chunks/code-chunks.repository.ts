@@ -84,21 +84,24 @@ export class CodeChunksRepository implements OnModuleInit{
 
 
 
-    async insert(content: string, owner: string, repo: string, filePath: string) {
+    async insert(vector, content: string, owner: string, repo: string, filePath: string) {
         return await this.codeChunksCollection.data.insert({
-            content: content,
-            owner: owner,
-            repo: repo,
-            filePath: filePath,
+            properties: {
+                content: content,
+                owner: owner,
+                repo: repo,
+                filePath: filePath
+            },
+            vectors: vector
         });
     }
 
-    async search(content: string, filters){
+    async search(vector, filters){
         const { limit, fields } = filters;
         const finalLimit = limit ?? 10;
         const returnProperties = fields ?? ['content', 'owner', 'repo', 'filePath'];
 
-        const result = await this.codeChunksCollection.query.nearText(content, {
+        const result = await this.codeChunksCollection.query.nearVector(vector, {
             returnProperties: returnProperties,
             limit: finalLimit,
             returnMetadata: "all"

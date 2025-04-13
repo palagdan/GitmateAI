@@ -4,12 +4,13 @@ import { CreateIssueChunksDto } from './dto/create-issue-chunks.dto';
 import { splitText } from '../utils/llm-utils';
 import { IssueDto } from './dto/issue.dto';
 import { SearchChunksDto } from "../common/dto/search-chunks.dto";
+import {OllamaService} from "../embedding/ollama.service";
 
 @Injectable()
 export class IssueChunksService {
     private readonly logger = new Logger(IssueChunksService.name);
 
-    constructor(private readonly repository: IssueChunksRepository) {}
+    constructor(private readonly repository: IssueChunksRepository, private readonly ollamaService: OllamaService) {}
 
     async findAll() {
         this.logger.log('Fetching all issue chunks');
@@ -36,8 +37,10 @@ export class IssueChunksService {
         this.logger.log(`Split issue text into ${chunks.length} chunks`);
 
         for (const chunk of chunks) {
-            await this.repository.insert(chunk, owner, repo, issue);
+            const vector = await this.ollamaService.embed(chunk);
+            await this.repository.insert(vector, chunk, owner, repo, issue);
         }
+
         this.logger.log('Insertion completed');
     }
 
@@ -50,20 +53,12 @@ export class IssueChunksService {
         const { content, limit, fields } = searchIssueChunksDto;
         this.logger.log(`Searching issue chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 
-        const chunks: string[] = await splitText(content);
-        this.logger.log(`Split search content into ${chunks.length} chunks`);
+        const vector = await this.ollamaService.embed(content);
 
-        let allResults: any = [];
-        for (const chunk of chunks) {
-            const chunkResult: any = await this.repository.search(chunk, { limit, fields });
-            allResults.push(...chunkResult);
-        }
 
-        const sortedResults = Array.from(new Map(allResults.map(r => [r.uuid, r])).values())
-            .sort((a: any, b: any) => a.metadata.distance - b.metadata.distance)
-            .slice(0, limit);
+        const result: any = await this.repository.search(vector, { limit, fields });
 
-        this.logger.log(`Returning ${sortedResults.length} search results`);
-        return sortedResults;
+        this.logger.log(`Returning ${result.length} search results`);
+        return result;
     }
 }
