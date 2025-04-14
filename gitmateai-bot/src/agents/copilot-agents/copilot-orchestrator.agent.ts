@@ -5,6 +5,7 @@ import CopilotRetrieveServicesAgent from "./copilot-retrieve-services.agent.js";
 import CopilotAgentsFactory from "./copilot-agents-factory.js";
 import logger from "../../logger.js";
 import {CopilotOrchestratorAgentInput} from "./types.js";
+import {availableCopilotServicesToString} from "./copilot-available-services.js";
 
 
 
@@ -23,11 +24,12 @@ class CopilotOrchestratorAgent implements BaseAgent<CopilotOrchestratorAgentInpu
             const content = messages[messages.length - 1].content;
             const retrievedServices = await serviceRetrieverAgent.handleEvent(content);
             if(retrievedServices.length == 0) {
-                res.write(createTextEvent("### Oops! 😔 I couldn’t find any services matching your request. Could you please try again or add a bit more detail? 🌟"));
+                res.write(createTextEvent("### Oops! 😔 I couldn’t find any services matching your request.\n"));
+                res.write(createTextEvent(`Available services are:\n${availableCopilotServicesToString()}`));
                 return;
             }
 
-            res.write(createTextEvent("## 🎯 Here are the services I found for you: " + retrievedServices.toString() + "\n"));
+            res.write(createTextEvent("## 🎯 Here are the services that match your request: " + retrievedServices.toString() + "\n"));
             const agents = CopilotAgentsFactory.createAgents(retrievedServices);
             for (const agent of agents) {
                 await agent.handleEvent({

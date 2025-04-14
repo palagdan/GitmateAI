@@ -5,19 +5,14 @@ import logger from "../../../logger.js";
 import SearchIssuesAgent from "../../common/issues-agents/search-issues.agent.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 
-export class WebhookSearchIssuesAgent extends LLMAgent<Context, void> {
+export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues">, void> {
 
-    constructor() {
-        super();
-    }
-
-    async handleEvent(context: Context): Promise<void> {
+    async handleEvent(event: Context<"issues">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
-            const { owner, repo, issue_number } = context.issue();
-            const issue = await context.octokit.issues.get({ owner, repo, issue_number });
+            const issue = event.payload.issue;
 
-            const issueText = `${issue.data.title}\n\n${issue.data.body || ""}`;
+            const issueText = `${issue.title}\n\n${issue.body || ""}`;
 
             const searchIssuesAgent = new SearchIssuesAgent();
 
@@ -27,13 +22,13 @@ export class WebhookSearchIssuesAgent extends LLMAgent<Context, void> {
             });
 
             await createIssueCommentAgent.handleEvent({
-                context: context,
+                context: event,
                 value: response
             })
         } catch (error) {
             logger.error(`Error in SimilarIssuesDetectorAgent: ${(error as Error).message}`);
             await createIssueCommentAgent.handleEvent({
-                context: context,
+                context: event,
                 value: getErrorMsg(this.constructor.name, error)
             })
         }

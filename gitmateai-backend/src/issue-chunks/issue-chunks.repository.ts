@@ -19,11 +19,12 @@ export class IssueChunksRepository implements OnModuleInit {
     }
 
     async deleteByOwnerRepoIssue(issue: Issue) {
+        const { owner, repo, issueNumber } = issue;
         return await this.collection.data.deleteMany(
             Filters.and(
-                this.collection.filter.byProperty('owner').equal(issue.owner),
-                this.collection.filter.byProperty('repo').equal(issue),
-                this.collection.filter.byProperty('issueId').equal(issue),
+                this.collection.filter.byProperty('owner').equal(owner),
+                this.collection.filter.byProperty('repo').equal(repo),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
             ),
         );
     }
@@ -34,7 +35,7 @@ export class IssueChunksRepository implements OnModuleInit {
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issueId').equal(issueNumber),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
                 this.collection.filter.byProperty('type').equal(IssueContentType.Title),
             ),
         );
@@ -46,7 +47,7 @@ export class IssueChunksRepository implements OnModuleInit {
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issueId').equal(issueNumber),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
                 this.collection.filter.byProperty('type').equal(IssueContentType.Description),
             ),
         );
@@ -58,7 +59,7 @@ export class IssueChunksRepository implements OnModuleInit {
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
-                this.collection.filter.byProperty('issueId').equal(issueNumber),
+                this.collection.filter.byProperty('issueNumber').equal(issueNumber),
                 this.collection.filter.byProperty('commentId').equal(commentId),
             ),
         );

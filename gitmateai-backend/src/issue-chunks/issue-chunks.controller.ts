@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Query } from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, Delete, Query, Put} from '@nestjs/common';
 import {IssueChunksService} from "./issue-chunks.service";
 import {CreateIssueChunksDto} from "./dto/create-issue-chunks.dto";
 import {IssueDto} from "./dto/issue.dto";
@@ -29,7 +29,7 @@ export class IssueChunksController {
         return await this.issueChunkService.findByOwnerRepoIssue(issue);
     }
 
-    @Get(':owner/:repo/:issueNumber/comment/:commentId')
+    @Get(':owner/:repo/:issueNumber/comments/:commentId')
     async getByOwnerRepoIssueCommentId(@Param() issue: IssueCommentDto) {
         return this.issueChunkService.findByOwnerRepoIssueCommentId(issue);
     }
@@ -55,6 +55,11 @@ export class IssueChunksController {
         return await this.issueChunkService.deleteByOwnerRepoIssue(issue);
     }
 
+    @Delete(':owner/:repo/:issueNumber/comments/:commentId')
+    async deleteCommentByOwnerRepoIssueCommentId(@Param() issueCommentDto: IssueCommentDto) {
+        return await this.issueChunkService.deleteCommentByOwnerRepoIssueCommentId(issueCommentDto);
+    }
+
     @ApiOperation({ summary: 'Insert a new issue chunks' })
     @ApiBody({ type: CreateIssueChunksDto, description: 'Issue chunk data' })
     @ApiResponse({ status: 201, description: 'Issue chunk created' })
@@ -70,4 +75,11 @@ export class IssueChunksController {
     async search(@Body() searchIssueChunksDto: SearchChunksDto ) {
         return await this.issueChunkService.search(searchIssueChunksDto);
     }
+
+    @Put()
+    async update(@Body()  updateIssueChunksDto: CreateIssueChunksDto){
+        return await this.issueChunkService.update(updateIssueChunksDto);
+    }
+
+
 }

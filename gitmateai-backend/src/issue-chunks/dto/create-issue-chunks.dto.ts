@@ -3,7 +3,6 @@ import {IssueContentType} from "../types";
 
 export class CreateIssueChunksDto {
     @IsString()
-    @IsNotEmpty()
     content: string;
 
     @IsString()

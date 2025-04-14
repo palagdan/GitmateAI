@@ -11,7 +11,8 @@ import {IssueCommentDto} from "./dto/issue-comment.dto";
 export class IssueChunksService {
     private readonly logger = new Logger(IssueChunksService.name);
 
-    constructor(private readonly repository: IssueChunksRepository) {}
+    constructor(private readonly repository: IssueChunksRepository) {
+    }
 
     async findAll() {
         this.logger.log('Fetching all issue chunks');
@@ -19,13 +20,13 @@ export class IssueChunksService {
     }
 
     async findByOwnerRepoIssue(issueDto: IssueDto) {
-        const { owner, repo, issueNumber } = issueDto;
+        const {owner, repo, issueNumber} = issueDto;
         this.logger.log(`Fetching issue chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findByOwnerRepoIssue(owner, repo, issueNumber);
     }
 
-    async findByOwnerRepoIssueCommentId(issueCommentDto: IssueCommentDto){
-        const { owner, repo, issueNumber, commentId } = issueCommentDto;
+    async findByOwnerRepoIssueCommentId(issueCommentDto: IssueCommentDto) {
+        const {owner, repo, issueNumber, commentId} = issueCommentDto;
         this.logger.log(`Fetching issue comment chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findByOwnerRepoIssueCommentId({
             owner,
@@ -35,8 +36,8 @@ export class IssueChunksService {
         });
     }
 
-    async findTitleByOwnerRepoIssue(issueDto: IssueDto){
-        const { owner, repo, issueNumber } = issueDto;
+    async findTitleByOwnerRepoIssue(issueDto: IssueDto) {
+        const {owner, repo, issueNumber} = issueDto;
         this.logger.log(`Fetching issue title chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findTitleByOwnerRepoIssue({
             owner,
@@ -45,8 +46,8 @@ export class IssueChunksService {
         });
     }
 
-    async findDescriptionByOwnerRepoIssue(issueDto: IssueDto){
-        const { owner, repo, issueNumber } = issueDto;
+    async findDescriptionByOwnerRepoIssue(issueDto: IssueDto) {
+        const {owner, repo, issueNumber} = issueDto;
         this.logger.log(`Fetching issue description chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.findDescriptionByOwnerRepoIssue({
             owner,
@@ -56,13 +57,24 @@ export class IssueChunksService {
     }
 
     async deleteByOwnerRepoIssue(issueDto: IssueDto) {
-        const { owner, repo, issueNumber } = issueDto;
+        const {owner, repo, issueNumber} = issueDto;
         this.logger.log(`Deleting issue chunks for owner: ${owner}, repo: ${repo}, issue: ${issueNumber}`);
         return await this.repository.deleteByOwnerRepoIssue({
             owner,
             repo,
-            issueNumber: issueNumber
+            issueNumber
         });
+    }
+
+    async deleteCommentByOwnerRepoIssueCommentId(issueCommentDto: IssueCommentDto) {
+        const {owner, repo, issueNumber, commentId} = issueCommentDto;
+        return await this.repository.deleteCommentByOwnerRepoIssueCommentId({
+                owner,
+                repo,
+                issueNumber,
+                commentId
+            }
+        );
     }
 
     async insert(issue: CreateIssueChunksDto) {
@@ -87,20 +99,20 @@ export class IssueChunksService {
 
     async update(createIssueChunksDto: CreateIssueChunksDto) {
         this.logger.log(`Updating issue chunks for owner: ${createIssueChunksDto.owner}, repo: ${createIssueChunksDto.repo}, issue: ${createIssueChunksDto.issueNumber}`);
-        if(createIssueChunksDto.type == IssueContentType.Comment){
+        if (createIssueChunksDto.type == IssueContentType.Comment) {
             await this.repository.deleteCommentByOwnerRepoIssueCommentId({
                 owner: createIssueChunksDto.owner,
                 repo: createIssueChunksDto.repo,
                 issueNumber: createIssueChunksDto.issueNumber,
                 commentId: createIssueChunksDto.commentId
             });
-        }else if(createIssueChunksDto.type == IssueContentType.Title){
+        } else if (createIssueChunksDto.type == IssueContentType.Title) {
             await this.repository.deleteDescriptionByOwnerRepoIssue({
                 owner: createIssueChunksDto.owner,
                 repo: createIssueChunksDto.repo,
                 issueNumber: createIssueChunksDto.issueNumber
             });
-        }else if(createIssueChunksDto.type == IssueContentType.Description){
+        } else if (createIssueChunksDto.type == IssueContentType.Description) {
             await this.repository.deleteTitleByOwnerRepoIssue({
                 owner: createIssueChunksDto.owner,
                 repo: createIssueChunksDto.repo,
@@ -112,7 +124,7 @@ export class IssueChunksService {
     }
 
     async search(searchIssueChunksDto: SearchChunksDto) {
-        const { content, limit, fields } = searchIssueChunksDto;
+        const {content, limit, fields} = searchIssueChunksDto;
         this.logger.log(`Searching issue chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 
         const chunks: string[] = await splitText(content);
@@ -120,7 +132,7 @@ export class IssueChunksService {
 
         let allResults: any = [];
         for (const chunk of chunks) {
-            const chunkResult: any = await this.repository.search(chunk, { limit, fields });
+            const chunkResult: any = await this.repository.search(chunk, {limit, fields});
             allResults.push(...chunkResult);
         }
 
@@ -131,4 +143,5 @@ export class IssueChunksService {
         this.logger.log(`Returning ${sortedResults.length} search results`);
         return sortedResults;
     }
+
 }

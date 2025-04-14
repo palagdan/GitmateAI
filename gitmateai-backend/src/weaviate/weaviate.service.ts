@@ -1,7 +1,8 @@
 import {Injectable, Logger, OnModuleInit} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import weaviate from 'weaviate-client';
-import schemas from './schema'
+import {createCodeChunksSchema, createConventionChunkSchema, createIssueChunkSchema} from "./schema";
+
 
 @Injectable()
 export class WeaviateService implements OnModuleInit {
