@@ -7,12 +7,31 @@ export interface CreateRepoChunks {
     owner: string,
     repo: string,
 }
+export enum IssueContentType {
+    Title = 'title',
+    Description = 'description',
+    Comment = 'comment',
+}
 
 export interface CreateIssueChunks extends CreateRepoChunks {
-    issue: number
+    issueNumber: number
+    type: IssueContentType,
+    author: string,
+    commentId?: number ,
 }
 
 
 export interface CreateCodeChunks extends CreateRepoChunks {
     filePath: string
 }
+
+export interface Issue {
+    owner: string;
+    repo: string;
+    issueNumber: number;
+}
+
+export interface IssueComment extends Issue {
+    commentId: number | undefined;
+}
+

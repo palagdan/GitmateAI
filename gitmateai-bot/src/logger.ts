@@ -7,6 +7,9 @@ const logger = pino({
         options: {
             colorize: true
         }
+    },
+    serializers: {
+        err: pino.stdSerializers.err
     }
 });
 

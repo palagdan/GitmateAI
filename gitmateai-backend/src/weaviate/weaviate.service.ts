@@ -1,6 +1,8 @@
 import {Injectable, Logger, OnModuleInit} from '@nestjs/common';
-import {ConfigService} from '@nestjs/config';
-import weaviate, {vectorizer} from 'weaviate-client';
+import { ConfigService } from '@nestjs/config';
+import weaviate from 'weaviate-client';
+import {createCodeChunksSchema, createConventionChunkSchema, createIssueChunkSchema} from "./schema";
+
 
 @Injectable()
 export class WeaviateService implements OnModuleInit {
@@ -10,59 +12,17 @@ export class WeaviateService implements OnModuleInit {
     constructor(private readonly configService: ConfigService) {
     }
 
-
-    private schemas = [
-        {
-            name: "IssueChunks",
-            properties: [
-                {"name": "content", "dataType": "text"},
-                {"name": "owner", "dataType": "text", "skipVectorization": true},
-                {"name": "repo", "dataType": "text", "skipVectorization": true},
-                {"name": "issue", "dataType": "int", "skipVectorization": true}
-            ],
-            vectorizers: vectorizer.text2VecOllama({
-                apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
-                model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
-            })
-        },
-        {
-            name: "CodeChunks",
-            properties: [
-                {"name": "content", "dataType": "text"},
-                {"name": "owner", "dataType": "text", "skipVectorization": true},
-                {"name": "repo", "dataType": "text", "skipVectorization": true},
-                {"name": "filePath", "dataType": "text", "skipVectorization": true},
-            ],
-            vectorizers: vectorizer.text2VecOllama({
-                apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
-                model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
-            })
-        },
-
-        {
-            name: "ConventionChunks",
-            properties: [
-                {"name": "content", "dataType": "text"},
-            ],
-            vectorizers: vectorizer.text2VecOllama({
-                apiEndpoint: process.env.OLLAMA_URL || 'http://host.docker.internal:11434',
-                model: process.env.OLLAMA_EMBEDDING_MODEL || 'nomic-embed-text',
-            })
-        }
-    ]
-
     async onModuleInit() {
 
         const host = this.configService.get<string>("DATABASE_HOST") || 'localhost';
         const port = this.configService.get<string>("DATABASE_PORT") || '8080';
-
         this.client = await weaviate.connectToCustom({
-            httpHost: host,
-            httpPort: parseInt(port),
-            httpSecure: false,
-            grpcHost: host,
-            grpcPort: 50051,
-            grpcSecure: false,
+                httpHost: host,
+                httpPort: parseInt(port),
+                httpSecure: false,
+                grpcHost: host,
+                grpcPort: 50051,
+                grpcSecure: false,
         })
 
         await this.client.isReady();
@@ -71,7 +31,18 @@ export class WeaviateService implements OnModuleInit {
 
     private async initializeCollections() {
 
-        for (const schema of this.schemas) {
+        const config = {
+            ollamaUrl: this.configService.get<string>('OLLAMA_URL', 'http://ollama:11434'),
+            ollamaEmbeddingModel: this.configService.get<string>('OLLAMA_EMBEDDING_MODEL', 'nomic-embed-text'),
+        };
+
+        const schemas = [
+            createIssueChunkSchema(config),
+            createCodeChunksSchema(config),
+            createConventionChunkSchema(config),
+        ];
+
+        for (const schema of schemas) {
             try {
                 const collectionExists = await this.client.collections.exists(schema.name);
                 if (!collectionExists) {

@@ -1,5 +1,6 @@
 import {api, octokit} from "./api.js";
 import logger from "./logger.js";
+import {Issue} from "./types.js";
 
 
 
@@ -7,6 +8,7 @@ async function getAllIssues(owner: string, repo: string): Promise<any[]> {
     let issues: any[] = [];
     let page = 1;
     let hasMore = true;
+
 
     while (hasMore) {
         const response = await octokit.rest.issues.listForRepo({
@@ -26,8 +28,33 @@ async function getAllIssues(owner: string, repo: string): Promise<any[]> {
 }
 
 
-async function getAllComments(owner: string, repo: string, issueNumber: number): Promise<any[]> {
-    let comments: any[] = [];
+async function sendIssueToBackend(issue: Issue): Promise<void> {
+    if(issue.content?.length === 0 || issue.content === null || issue.content === undefined) {
+        return;
+    }
+
+    try {
+        await api.post("/issue-chunks", {
+            content: issue.content,
+            owner: issue.owner,
+            repo: issue.repo,
+            issueNumber: issue.issueNumber,
+            type: issue.type,
+            author: issue.author,
+            commentId: issue.commentId
+        });
+        logger.info(`Issue type ${issue.type} of issue #${issue.issueNumber} sent to backend successfully.`);
+    } catch (error) {
+        logger.error( {
+            msg: `Error sending issue type ${issue.type} from issue number #${issue.issueNumber} to backend:`,
+            error: error.response.data
+        });
+    }
+}
+
+
+async function fetchAndPushIssueComments(owner: string, repo: string, issueNumber: number) {
+
     let page = 1;
     let hasMore = true;
 
@@ -40,65 +67,65 @@ async function getAllComments(owner: string, repo: string, issueNumber: number):
             page,
         });
 
-        comments = comments.concat(response.data);
+        const comments: any = response.data;
+
+        for (const comment of comments) {
+            await sendIssueToBackend({
+                content: comment.body,
+                owner: owner,
+                repo: repo,
+                author: comment.user.login,
+                issueNumber: issueNumber,
+                type: 'comment',
+                commentId: comment.id,
+            });
+        }
+
         hasMore = response.data.length === 100;
         page++;
     }
 
-    return comments;
 }
 
 
-function generateIssueContent(issue: any): string {
-    let content = `Issue #${issue.number}: ${issue.title}\n`;
-    content += `Description: ${issue.body}\n`;
-    content += `Comments:\n`;
-
-    if (issue.commentsData.length > 0) {
-        issue.commentsData.forEach((comment: any) => {
-            content += `- ${comment.user.login}: ${comment.body}\n`;
-        });
-    } else {
-        content += `- No comments\n`;
-    }
-
-    return content;
-}
-
-
-async function sendIssueToBackend(issueContent: any, owner: string, repo: string, issue: number): Promise<void> {
-    try {
-        await api.post("/issue-chunks", {
-            content: issueContent,
-            owner: owner,
-            repo: repo,
-            issue: issue
-        });
-        logger.info(`Issue #${issue} sent to backend successfully.`);
-    } catch (error) {
-        logger.error(`Error sending issue #${issue} to backend:`, error);
-    }
-}
-
-
-
-export async function getRepoIssuesWithComments(owner: string, repo: string): Promise<void> {
+export async function fetchAndPushIssues(owner: string, repo: string): Promise<void> {
     try {
         const issues = await getAllIssues(owner, repo);
 
         for (const issue of issues) {
+
+            await sendIssueToBackend({
+                content: issue.title,
+                owner: owner,
+                repo: repo,
+                author: issue.user.login,
+                issueNumber: issue.number,
+                type: 'title',
+                commentId: null,
+            })
+
+            await sendIssueToBackend({
+                content: issue.body,
+                owner: owner,
+                repo: repo,
+                author: issue.user.login,
+                issueNumber: issue.id,
+                type: 'description',
+                commentId: null,
+            })
+
             if (issue.comments > 0) {
-                issue.commentsData = await getAllComments(owner, repo, issue.number);
+                issue.commentsData = await fetchAndPushIssueComments(owner, repo, issue.number);
             } else {
                 issue.commentsData = [];
             }
-
-            const issueContent = generateIssueContent(issue);
-            await sendIssueToBackend(issueContent, owner, repo, issue.number);
         }
 
         logger.info('All issues and comments processed successfully.');
     } catch (error) {
-        logger.error(`Error fetching issues and comments for ${owner}/${repo}:`, error);
+        logger.error({
+            msg: `Error fetching issues and comments for ${owner}/${repo}`,
+            err: error
+        });
     }
 }

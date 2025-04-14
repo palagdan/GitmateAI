@@ -8,7 +8,13 @@ const load = (fn) => {
     return fs.readFileSync(configPath, 'utf-8');
 }
 
-export const  helpMessage = load("HelpMessage.md");
+const replacePrefix = (button: string, prefix: string): string => {
+    return button.replaceAll("[prefix]", prefix);
+}
+
+export const helpMessage = load("HelpMessage.md");
+
+export const commandsButton = replacePrefix(load("CommandsButton.md"), process.env.PREFIX);
 
 export const prompts = JSON.parse(load("prompts.json"));
 

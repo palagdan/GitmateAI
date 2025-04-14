@@ -1,8 +1,6 @@
 import api from "./api.js";
-import {Content, CreateCodeChunks, CreateIssueChunks} from "./types.js";
+import {Content, CreateCodeChunks, CreateIssueChunks, Issue, IssueComment} from "./types.js";
 import {SearchQuery} from "../agents/common/types.js";
-
-
 
 
 const gitmateai = {
@@ -11,12 +9,16 @@ const gitmateai = {
             return await api.get("/issue-chunks");
         },
 
-        async getByOwnerRepoIssue (owner: string, repo: string, issue: number)  {
-            return await api.get(`/issue-chunks/${owner}/${repo}/${issue}`);
+        async getByOwnerRepoIssue (issue: Issue)  {
+            return await api.get(`/issue-chunks/${issue.owner}/${issue.repo}/${issue.issueNumber}`);
         },
 
-        async deleteByOwnerRepoIssue(owner: string, repo: string, issue: number){
-            return await api.delete(`/issue-chunks/${owner}/${repo}/${issue}`);
+        async deleteByOwnerRepoIssue(issue: Issue){
+            return await api.delete(`/issue-chunks/${issue.owner}/${issue.repo}/${issue.issueNumber}`);
+        },
+
+        async deleteCommentByOwnerRepoIssueCommentId(issueComment: IssueComment){
+            return await api.delete(`/issue-chunks/${issueComment.owner}/${issueComment.repo}/${issueComment.issueNumber}/comments/${issueComment.commentId}`);
         },
 
         async insert(createIssueChunks: CreateIssueChunks){
@@ -25,7 +27,11 @@ const gitmateai = {
 
         async search(searchChunks: SearchQuery) {
             return await api.post('issue-chunks/search', searchChunks);
-        }
+        },
+
+        async update(updateIssueChunks: CreateIssueChunks){
+            return await api.put('issue-chunks', updateIssueChunks);
+        },
 
     },
 

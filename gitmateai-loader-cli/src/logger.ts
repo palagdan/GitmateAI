@@ -5,8 +5,11 @@ const logger = pino({
     transport: {
         target: 'pino-pretty',
         options: {
-            colorize: true
+            colorize: true,
         }
+    },
+    serializers: {
+        err: pino.stdSerializers.err
     }
 });
 

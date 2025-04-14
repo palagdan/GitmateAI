@@ -1,9 +1,22 @@
-import {IsString, IsNotEmpty, IsNumber, IsPositive} from 'class-validator';
+import {IsString, IsNotEmpty, IsNumber, IsPositive, IsOptional} from 'class-validator';
+import {IssueContentType} from "../types";
 
 export class CreateIssueChunksDto {
     @IsString()
-    @IsNotEmpty()
     content: string;
+
+    @IsString()
+    @IsNotEmpty()
+    type: IssueContentType;
+
+    @IsString()
+    @IsNotEmpty()
+    author: string;
+
+
+    @IsOptional()
+    @IsNumber({}, { message: 'commentId must be a number or null' })
+    commentId?: number | undefined;
 
     @IsString()
     @IsNotEmpty()
@@ -16,5 +29,5 @@ export class CreateIssueChunksDto {
     @IsNumber()
     @IsPositive()
     @IsNotEmpty()
-    issue: number;
+    issueNumber: number;
 }
