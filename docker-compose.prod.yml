@@ -30,7 +30,7 @@ services:
     environment:
       DATABASE_HOST: "${DATABASE_HOST:-weaviate}"
       DATABASE_PORT: "${DATABASE_PORT:-8080}"
-      OLLAMA_URL: "${OLLAMA_URL:-http://host.docker.internal:11434}"
+      OLLAMA_URL: "${OLLAMA_URL:-http://ollama:11434}"
       OLLAMA_EMBEDDING_MODEL: "${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}"
     ports:
       - "127.0.0.1:3001:3001"
@@ -45,7 +45,7 @@ services:
       - http
     image: cr.weaviate.io/semitechnologies/weaviate:1.30.0
     ports:
-      - "8080:8080"
+      - "8080"
     expose:
         - "8080"
         - "50051"
@@ -61,14 +61,11 @@ services:
       ENABLE_API_BASED_MODULES: 'true'
       ENABLE_MODULES: 'text2vec-ollama'
       CLUSTER_HOSTNAME: 'node1'
-    extra_hosts:
-        - "host.docker.internal:host-gateway"
-
 
   ollama:
     image: ollama/ollama:latest
     ports:
-      - "11434:11434"
+      - "11434"
     volumes:
       -  ollama_data:/root/.ollama
       - ./ollama/entrypoint.sh:/entrypoint.sh
