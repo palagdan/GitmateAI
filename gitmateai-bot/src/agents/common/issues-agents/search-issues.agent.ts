@@ -42,8 +42,15 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
 
         return similarIssues
             .map((chunk, index) => {
-                const {owner, repo, issue, content} = chunk.properties || {};
-                return `**${index + 1}.** **Owner:** ${owner || "Unknown owner"}\n**Repo:** ${repo || "Unknown repo"}\n**Issue ID:** ${issue || "Unknown ID"}\n**Content:** ${content || "No content available"}`;
+                const properties = chunk.properties || {};
+                return `**${index + 1}.** 
+                **Owner:** ${properties.owner || "Unknown owner"}\n
+                **Repo:** ${properties.repo || "Unknown repo"}\n
+                **Issue Number:** ${properties.issueNumber || "Unknown ID"}\n
+                **author**: ${properties.author || "Unknown author"}\n
+                **Type:** ${properties.type || "Unknown type"}\n
+                **Content:** ${properties.content || "No content available"}\n
+                `;
             })
             .join("\n\n");
     }

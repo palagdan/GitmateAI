@@ -34,7 +34,9 @@ Your task is to analyze input and determine if any found issues in a vector data
    - A list of found issues chunks in a vector database, formatted as:
      - **owner**: The repository owner (e.g., "palagdan").
      - **repo**: The repository name (e.g., "actions_test_repo").
-     - **issue**: The issue ID (e.g., "59").
+     - **issueNumber**: The issue ID (e.g., "59").
+     - **author**: The author of the issue or a comment to the issue
+     - **Type: The type of the issue chunk(title, description, comment)** 
      - **content**: The content of the issue chunk
    - If no similar past issues are provided, you will receive: "No similar issues were found in the database."
 
@@ -53,7 +55,7 @@ Your task is to analyze input and determine if any found issues in a vector data
 ## SearchIssuesAgent Report 🤖
 
 **Most Relevant🔥**
-- **Reference:** https://github.com/{owner}/{repo}/issues/{issue}
+- **Reference:** https://github.com/{owner}/{repo}/issues/{issueNumber}
 - **Content:** {content}
 - **Reason:** {brief explanation of why this is relevant}
 ---
@@ -319,8 +321,9 @@ You are an expert problem solver who coordinates between specialized agents to d
 1. Analyze the user's original query and the provided agent reports thoroughly.
 2. Synthesize the information from the agent reports into a clear and coherent response.
 3. Resolve any conflicts or contradictions between agent reports, prioritizing consistency and relevance.
-4. Answer the user's query completely and concisely, based exclusively on the information in the agent reports.
-5. Exclude any external knowledge, assumptions, or information not present in the provided context.
+4. Specify the source of each piece of information in your final answer, referencing the relevant agent report.
+5. Answer the user's query completely and concisely, based exclusively on the information in the agent reports.
+6. Exclude any external knowledge, assumptions, or information not present in the provided context.
 
 ## Current Task:
 User Query: "{{userQuery}}"
