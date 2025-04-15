@@ -109,7 +109,7 @@ export async function fetchAndPushIssues(owner: string, repo: string): Promise<v
                 owner: owner,
                 repo: repo,
                 author: issue.user.login,
-                issueNumber: issue.id,
+                issueNumber: issue.number,
                 type: 'description',
                 commentId: null,
             })
