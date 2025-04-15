@@ -11,7 +11,6 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
         const preprocessSearchIssuePrompt = this.createPrompt(ISSUE_AGENT_PROMPTS.PREPROCESS_SEARCH_ISSUES_QUERY_PROMPT, {context: content});
         const llmQueryAgent = new LLMQueryAgent();
         const response = await llmQueryAgent.handleEvent(preprocessSearchIssuePrompt);
-        console.log(response)
         const parsedResponse = JSON.parse(response);
         const refinedQuery = parsedResponse.refinedQuery;
 

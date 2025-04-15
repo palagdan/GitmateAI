@@ -55,7 +55,6 @@ const webhooks = (app) => {
     })
 
     app.on(["issue_comment.deleted"], async (context) => {
-        console.log("delete comment")
         await deleteIssueCommentAgent.handleEvent(context);
     });
 

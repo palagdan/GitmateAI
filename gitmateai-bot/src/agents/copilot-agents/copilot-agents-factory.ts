@@ -4,6 +4,7 @@ import CopilotSearchCodeAgent from "./copilot-search-code.agent.js";
 import CopilotValidateCodeSectionAgent from "./copilot-validate-code-section.agent.js";
 import CopilotSearchConventionAgent from "./copilot-search-convention.agent.js";
 import CopilotSearchIssuesAgent from "./copilot-search-issues.agent.js";
+import CopilotListAvailableServicesAgent from "./copilot-list-available-services.agent.js";
 
 
 class CopilotAgentsFactor {
@@ -21,6 +22,8 @@ class CopilotAgentsFactor {
                  return new CopilotSearchConventionAgent();
              case copilotAvailableServices.VALIDATE_CODE_SECTION_AGAINST_CONVENTIONS.name:
                  return new CopilotValidateCodeSectionAgent();
+             case copilotAvailableServices.LIST_AVAILABLE_SERVICES.name:
+                 return new CopilotListAvailableServicesAgent()
         }
         return null;
     }

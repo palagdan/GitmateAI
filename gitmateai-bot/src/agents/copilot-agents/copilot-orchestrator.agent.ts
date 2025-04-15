@@ -29,7 +29,9 @@ class CopilotOrchestratorAgent implements BaseAgent<CopilotOrchestratorAgentInpu
                 return;
             }
 
-            res.write(createTextEvent("## 🎯 Here are the services that match your request: " + retrievedServices.toString() + "\n"));
+            res.write(createTextEvent(`## 🔍 Found ${retrievedServices.length} matching service${retrievedServices.length !== 1 ? 's' : ''}\n\n` +
+                retrievedServices.map(service => `- ${service}`).join('\n') + '\n'));
+
             const agents = CopilotAgentsFactory.createAgents(retrievedServices);
             for (const agent of agents) {
                 await agent.handleEvent({
