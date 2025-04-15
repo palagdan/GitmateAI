@@ -1,4 +1,4 @@
-import {BaseAgent} from "../base.agent.js";
+
 import {Octokit} from "octokit";
 import { createErrorsEvent, createTextEvent} from "@copilot-extensions/preview-sdk";
 import CopilotRetrieveAgentsAgent from "./copilot-retrieve-agents.agent.js";
@@ -65,6 +65,8 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
                 userQuery: content,
                 agentsReports: messages.filter(m => m.role === "agent").map(m => m.content).join("\n\n"),
             });
+
+            console.log(prompt)
 
             const response = await llmQueryAgent.handleEvent(prompt);
 

@@ -126,9 +126,7 @@ export class IssueChunksService {
     async search(searchIssueChunksDto: SearchChunksDto) {
         const {content, limit, fields} = searchIssueChunksDto;
         this.logger.log(`Searching issue chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
-
-        const result: any = await this.repository.search(content, {limit, fields});
-
+        const result  = await this.repository.search(content, {limit, fields});
         this.logger.log(`Returning ${result.length} search results`);
         return result;
     }

@@ -1,5 +1,25 @@
 import {vectorizer} from "weaviate-client";
 
+export const createPRChunkSchema = (config: {
+    ollamaUrl: string;
+    ollamaEmbeddingModel: string;
+}) => ({
+    name: 'PRChunks',
+    properties: [
+        {name: 'content', dataType: 'text',},
+        {name: 'type', dataType: 'text', skipVectorization: true,},
+        {name: 'owner', dataType: 'text', skipVectorization: true,},
+        {name: 'repo', dataType: 'text', skipVectorization: true,},
+        {name: 'prNumber', dataType: 'int', skipVectorization: true,},
+        {name: 'author', dataType: 'text', skipVectorization: true,},
+        {name: 'commentId', dataType: 'int', skipVectorization: true},
+    ],
+    vectorizers: vectorizer.text2VecOllama({
+        apiEndpoint: config.ollamaUrl,
+        model: config.ollamaEmbeddingModel,
+    })
+});
+
 export const createIssueChunkSchema = (config: {
     ollamaUrl: string;
     ollamaEmbeddingModel: string;

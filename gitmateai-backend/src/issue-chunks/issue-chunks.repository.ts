@@ -14,10 +14,6 @@ export class IssueChunksRepository implements OnModuleInit {
         this.collection = this.weaviateService.getClient().collections.get('IssueChunks');
     }
 
-    private getCollection() {
-        return this.weaviateService.getClient().collections.get('IssueChunks');
-    }
-
     async deleteByOwnerRepoIssue(issue: Issue) {
         const { owner, repo, issueNumber } = issue;
         return await this.collection.data.deleteMany(
@@ -29,8 +25,8 @@ export class IssueChunksRepository implements OnModuleInit {
         );
     }
 
-    async deleteTitleByOwnerRepoIssue(issueComment: Issue) {
-        const { owner, repo, issueNumber } = issueComment;
+    async deleteTitleByOwnerRepoIssue(issue: Issue) {
+        const { owner, repo, issueNumber } = issue;
         return await this.collection.data.deleteMany(
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
@@ -41,8 +37,8 @@ export class IssueChunksRepository implements OnModuleInit {
         );
     }
 
-    async deleteDescriptionByOwnerRepoIssue(issueComment: Issue) {
-        const { owner, repo, issueNumber } = issueComment;
+    async deleteDescriptionByOwnerRepoIssue(issue: Issue) {
+        const { owner, repo, issueNumber } = issue;
         return await this.collection.data.deleteMany(
             Filters.and(
                 this.collection.filter.byProperty('owner').equal(owner),
@@ -70,8 +66,7 @@ export class IssueChunksRepository implements OnModuleInit {
     }
 
     async findAll() {
-        const collection: Collection = this.getCollection();
-        const result = await collection.query.fetchObjects({
+        const result = await this.collection.query.fetchObjects({
             returnMetadata: "all"
         });
         return result.objects;
