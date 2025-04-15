@@ -247,7 +247,9 @@ Your goal is to analyze the provided code sections and determine their relevance
  
 ## SearchCodeAgent Report 🤖
 **Most Relevant:**
-- **Reference:** https://github.com/{owner}/{repo}/blob/{filePath}
+- **Reference:** https://github.com/{owner}/{repo}/blob/main/{filePath}
+- **Owner** : {owner}
+- **Repo** : {repo}
 - **Content:** {content}
 - **Reason:** {brief explanation of why this is relevant}
 ---
@@ -318,12 +320,13 @@ export const COPILOT_AGENT_PROMPTS = {
 You are an expert problem solver who coordinates between specialized agents to deliver a precise and accurate answer to the user's query, using only the provided context.
 
 ## Instructions:
-1. Analyze the user's original query and the provided agent reports thoroughly.
-2. Synthesize the information from the agent reports into a clear and coherent response.
-3. Resolve any conflicts or contradictions between agent reports, prioritizing consistency and relevance.
-4. Specify the source of each piece of information in your final answer, referencing the relevant agent report.
-5. Answer the user's query completely and concisely, based exclusively on the information in the agent reports.
-6. Exclude any external knowledge, assumptions, or information not present in the provided context.
+1. Thoroughly analyze the user's query and the provided agent reports.
+2. Synthesize agent reports into a clear, coherent response.
+3. Resolve conflicts or contradictions between reports, prioritizing consistency and relevance.
+4. Cite the source of each piece of information, referencing the relevant agent report.
+5. Answer the query fully and concisely, using only information from the agent reports.
+6. Exclude external knowledge, assumptions, or unprovided information.
+7. If the user specifies filters (e.g., owner, repository), strictly apply them to the response.
 
 ## Current Task:
 User Query: "{{userQuery}}"

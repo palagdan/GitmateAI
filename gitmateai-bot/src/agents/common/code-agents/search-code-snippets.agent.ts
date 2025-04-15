@@ -41,7 +41,11 @@ class SearchCodeSnippetsAgent extends LLMAgent<SearchQuery, string> {
         return codeSections
             .map((chunk, index) => {
                 const {owner, repo, filePath, content} = chunk.properties || {};
-                return `**${index + 1}.** **Owner:** ${owner || "Unknown owner"}\n**Repo:** ${repo || "Unknown repo"}\n**FilePath:** ${filePath || "Unknown ID"}\n**Content:** ${content || "No content available"}`;
+                return `**${index + 1}.** 
+                **Owner:** ${owner || "Unknown owner"}\n
+                **Repo:** ${repo || "Unknown repo"}\n
+                **FilePath:** ${filePath || "Unknown ID"}\n
+                **Content:** ${content || "No content available"}`;
             })
             .join("\n\n");
     }
