@@ -9,5 +9,5 @@ export interface CopilotAgentInput {
     content: string;
     octokit: any;
     copilot_references: any;
-    writeFunc: any;
+    params: any;
 }

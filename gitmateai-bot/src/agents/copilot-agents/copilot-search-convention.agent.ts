@@ -4,20 +4,19 @@ import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import {getErrorMsg} from "../../messages/messages.js";
 import {LLMAgent} from "../LLMAgent.js";
 
-class CopilotSearchConventionAgent extends LLMAgent<CopilotAgentInput, void> {
+class CopilotSearchConventionAgent extends LLMAgent<CopilotAgentInput, string> {
 
-    async handleEvent(input: CopilotAgentInput): Promise<void> {
+    async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{
             const { content } = input;
             const searchConventionAgent = new SearchConventionAgent();
-            const response = await searchConventionAgent.handleEvent({
+            return await searchConventionAgent.handleEvent({
                 content: content,
                 limit: 20
             });
-            input.writeFunc(createTextEvent(response + '\n'));
         }catch(error){
             this.agentLogger.error(error)
-            input.writeFunc(createTextEvent(getErrorMsg(this.constructor.name, error)))
+            return getErrorMsg(this.constructor.name, error);
         }
     }
 }

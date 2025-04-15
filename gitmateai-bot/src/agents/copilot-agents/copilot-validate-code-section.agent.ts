@@ -6,7 +6,7 @@ class CopilotValidateCodeSectionAgent implements BaseAgent<CopilotAgentInput, vo
 
 
     async handleEvent(codeSection: CopilotAgentInput): Promise<void> {
-        const {content, octokit, copilot_references, writeFunc} = codeSection;
+        const {content, octokit, copilot_references} = codeSection;
 
         // retrieve questions for vector database search based on code and user content
 

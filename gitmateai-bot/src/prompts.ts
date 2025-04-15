@@ -273,25 +273,59 @@ No relevant code sections were found in the database for your query "{context}".
 }
 
 export const COPILOT_AGENT_PROMPTS = {
-    RETRIEVE_SERVICES: `
-        You are a service matching assistant. Your task is to analyze the user's request and determine which of our available services it matches. 
-        Available services:
-        {{availableServices}}
+    RETRIEVE_AGENTS: `
+        You are a matching agent. Your task is to analyze the user's request and determine which of our available agents it matches. 
+        1. Analyze the user's request to understand both the intent and specific parameters
+        2. Match it against our available agents
+        3. Return the matching agents with any relevant parameters extracted from the request
+
+        Available agents:
+        {{availableAgents}}
 
         Instructions:
-        - Carefully read the user's request
-        - Determine if it matches any of the available services
-        - Return ONLY an array of matching service strings (as they appear exactly in the list above)
-        - If no services match, return an empty array []
-        - Do not include any explanations or additional text
-        - Only return valid JSON arrays
+        - First, deeply analyze the user's request to understand what they're trying to accomplish
+        - For each available agent, determine if the request matches the agent's purpose (from description)
+        - When there's a match, extract any obvious parameters from the user's request that align with the agent's arguments
+        - If parameters aren't explicitly mentioned but can be reasonably inferred, include them
+        - Return only the matching agents in the exact specified format
+        - If no agents match, return an empty array
+        - Never include explanations or additional text
+        - Only return valid JSON
 
         Response Format:
+{
+    "agents": [
         {
-            "services": ["service1", "service2", ...]
+            "name": "agent_name_1",
+            "params": { 
+                "param1": "value1", 
+                "param2": "value2" 
+            }
+        },
+        {
+            "name": "agent_name_2",
+            "params": {}
         }
-
-        User request: "{{userInput}}"`,
+    ]
 }
 
+        User request: "{{userInput}}"`,
 
+    ORCHESTRATOR: `
+# Role: Orchestrator Agent
+You are an expert problem solver who coordinates between specialized agents to deliver a precise and accurate answer to the user's query, using only the provided context.
+
+## Instructions:
+1. Analyze the user's original query and the provided agent reports thoroughly.
+2. Synthesize the information from the agent reports into a clear and coherent response.
+3. Resolve any conflicts or contradictions between agent reports, prioritizing consistency and relevance.
+4. Answer the user's query completely and concisely, based exclusively on the information in the agent reports.
+5. Exclude any external knowledge, assumptions, or information not present in the provided context.
+
+## Current Task:
+User Query: "{{userQuery}}"
+
+## Agent Reports:
+{{agentsReports}}
+`
+}

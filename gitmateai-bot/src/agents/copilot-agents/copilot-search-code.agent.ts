@@ -4,20 +4,20 @@ import SearchCodeSnippetsAgent from "../common/code-agents/search-code-snippets.
 import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import {getErrorMsg} from "../../messages/messages.js";
 
-class CopilotSearchCodeAgent extends LLMAgent<CopilotAgentInput, void> {
+class CopilotSearchCodeAgent extends LLMAgent<CopilotAgentInput, string> {
 
-    async handleEvent(input: CopilotAgentInput): Promise<void> {
+    async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{
             const {content} = input;
             const codeSnippetsAgent: SearchCodeSnippetsAgent = new SearchCodeSnippetsAgent();
-            const response =   await codeSnippetsAgent.handleEvent({
+            return  await codeSnippetsAgent.handleEvent({
                 content: content,
                 limit: 20
             })
-            input.writeFunc(createTextEvent(response + '\n'));
+
         }catch(error){
             this.agentLogger.error(error);
-            input.writeFunc(createTextEvent(getErrorMsg(this.constructor.name, error)));
+            return getErrorMsg(this.constructor.name, error);
         }
     }
 }

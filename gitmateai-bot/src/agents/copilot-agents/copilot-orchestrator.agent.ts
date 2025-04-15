@@ -1,15 +1,18 @@
 import {BaseAgent} from "../base.agent.js";
 import {Octokit} from "octokit";
 import { createErrorsEvent, createTextEvent} from "@copilot-extensions/preview-sdk";
-import CopilotRetrieveServicesAgent from "./copilot-retrieve-services.agent.js";
+import CopilotRetrieveAgentsAgent from "./copilot-retrieve-agents.agent.js";
 import CopilotAgentsFactory from "./copilot-agents-factory.js";
 import logger from "../../logger.js";
 import {CopilotOrchestratorAgentInput} from "./types.js";
-import {availableCopilotServicesToString} from "./copilot-available-services.js";
+import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
+import {LLMAgent} from "../LLMAgent.js";
+import LLMQueryAgent from "../common/llm-query.agent.js";
+import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 
 
 
-class CopilotOrchestratorAgent implements BaseAgent<CopilotOrchestratorAgentInput, void> {
+class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, void> {
 
     async handleEvent(input: CopilotOrchestratorAgentInput): Promise<void> {
         const {req, res} = input;
@@ -18,30 +21,54 @@ class CopilotOrchestratorAgent implements BaseAgent<CopilotOrchestratorAgentInpu
             const tokenForUser = req.get("X-GitHub-Token");
 
             const octokit = new Octokit({auth: tokenForUser});
-            const messages = req.body.messages;
+            const copilotMessages = req.body.messages;
 
-            const serviceRetrieverAgent = new CopilotRetrieveServicesAgent();
-            const content = messages[messages.length - 1].content;
-            const retrievedServices = await serviceRetrieverAgent.handleEvent(content);
-            if(retrievedServices.length == 0) {
-                res.write(createTextEvent("### Oops! 😔 I couldn’t find any services matching your request.\n"));
-                res.write(createTextEvent(`Available services are:\n${availableCopilotServicesToString()}`));
+            const retrieveAgentsAgent = new CopilotRetrieveAgentsAgent();
+            const content = copilotMessages[copilotMessages.length - 1].content;
+
+            const messages = [{
+                role: "user",
+                content: content
+            }]
+
+            const retrievedAgents = await retrieveAgentsAgent.handleEvent(content);
+
+            if(retrievedAgents.length == 0) {
+                res.write(createTextEvent("### Oops! 😔 I couldn’t find any agents matching your request.\n\n"));
+                res.write(createTextEvent(`Available agents are:\n\n${availableCopilotAgentsToString()}`));
                 return;
             }
 
-            res.write(createTextEvent(`## 🔍 Found ${retrievedServices.length} matching service${retrievedServices.length !== 1 ? 's' : ''}\n\n` +
-                retrievedServices.map(service => `- ${service}`).join('\n') + '\n'));
+            res.write(createTextEvent(`### 🔍 Found ${retrievedAgents.length} matching agent${retrievedAgents.length !== 1 ? 's' : ''}\n\n` +
+                retrievedAgents.map(agent => `- ${agent.name}`).join('\n\n') + '\n\n'));
 
-            const agents = CopilotAgentsFactory.createAgents(retrievedServices);
-            for (const agent of agents) {
-                await agent.handleEvent({
+
+            const agents = CopilotAgentsFactory.createAgents(retrievedAgents);
+            for (const {agent, params} of agents) {
+                const response = await agent.handleEvent({
                     content: content,
                     octokit: octokit,
-                    copilot_references: messages[messages.length - 1].copilot_references,
-                    writeFunc: res.write.bind(res),
+                    copilot_references: copilotMessages[copilotMessages.length - 1].copilot_references,
+                    params: params
                 });
+
+                messages.push({
+                    role: "agent",
+                    content: response
+                })
+
             }
 
+            const llmQueryAgent = new LLMQueryAgent();
+
+            const prompt = this.createPrompt(COPILOT_AGENT_PROMPTS.ORCHESTRATOR, {
+                userQuery: content,
+                agentsReports: messages.filter(m => m.role === "agent").map(m => m.content).join("\n\n"),
+            });
+
+            const response = await llmQueryAgent.handleEvent(prompt);
+
+            res.write(createTextEvent(response))
         } catch (error) {
             logger.error(error)
             res.write(

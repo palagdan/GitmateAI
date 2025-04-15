@@ -1,23 +1,21 @@
 import {LLMAgent} from "../LLMAgent.js";
 import {CopilotAgentInput} from "./types.js";
-import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import SearchIssuesAgent from "../common/issues-agents/search-issues.agent.js";
 import {getErrorMsg} from "../../messages/messages.js";
 
-export class CopilotSearchIssuesAgent extends LLMAgent<CopilotAgentInput, void> {
+export class CopilotSearchIssuesAgent extends LLMAgent<CopilotAgentInput, string> {
 
-    async handleEvent(input: CopilotAgentInput): Promise<void> {
+    async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{
             const { content } = input;
             const searchIssuesAgent = new SearchIssuesAgent();
-            const response = await searchIssuesAgent.handleEvent({
+            return await searchIssuesAgent.handleEvent({
                 content: content,
                 limit: 20
-            });
-            input.writeFunc(createTextEvent(response + '\n'));
+            })
         }catch(error){
             this.agentLogger.error(error);
-            input.writeFunc(createTextEvent(getErrorMsg(this.constructor.name, error)));
+            return getErrorMsg(this.constructor.name, error);
         }
     }
 }
