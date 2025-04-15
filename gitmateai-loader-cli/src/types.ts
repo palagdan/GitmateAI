@@ -18,3 +18,6 @@ export interface Commit {
     sha: string,
     author: string
 }
+
+export interface PR extends Issue{
+}
