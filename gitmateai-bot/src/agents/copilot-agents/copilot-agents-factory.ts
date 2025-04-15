@@ -1,5 +1,4 @@
 import {copilotAvailableAgents} from "./copilot-available-agents.js";
-
 import CopilotSearchCodeAgent from "./copilot-search-code.agent.js";
 import CopilotValidateCodeSectionAgent from "./copilot-validate-code-section.agent.js";
 import CopilotSearchConventionAgent from "./copilot-search-convention.agent.js";
@@ -13,8 +12,6 @@ class CopilotAgentsFactor {
         switch (service) {
              case copilotAvailableAgents.SEARCH_SIMILAR_ISSUES_AGENT.name:
                  return new CopilotSearchIssuesAgent();
-             case copilotAvailableAgents.SEARCH_SIMILAR_PR_AGENT.name:
-                 break;
              case copilotAvailableAgents.SEARCH_CODE_SNIPPETS_AGENT.name:
                  return new CopilotSearchCodeAgent()
              case copilotAvailableAgents.SEARCH_CONVENTIONS_AGENT.name:

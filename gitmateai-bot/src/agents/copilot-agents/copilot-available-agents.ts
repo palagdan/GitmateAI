@@ -1,12 +1,7 @@
 export const copilotAvailableAgents = {
     SEARCH_SIMILAR_ISSUES_AGENT: {
         name: "search_similar_issues_agent",
-        description: "Finds and retrieves existing issues or bug reports in a project or repository that are similar to a given issue or problem description provided by the user. Useful for identifying duplicates or related problems.",
-        arguments: []
-    },
-    SEARCH_SIMILAR_PR_AGENT: {
-        name: "search_similar_pr_agent",
-        description: "Searches for pull requests (PRs) in a project or repository that are similar to a specified pull request or code change description. Helps users discover related PRs for comparison or context.",
+        description: "Finds and retrieves existing issues, bug reports, or pull requests (PRs) in a project or repository that are similar to a given issue or problem description provided by the user. Useful for identifying duplicates or related problems.",
         arguments: []
     },
     SEARCH_CODE_SNIPPETS_AGENT: {
@@ -24,7 +19,6 @@ export const copilotAvailableAgents = {
         description: "Validate a specific section of code against a set of coding conventions. Helps users identify potential violations or areas for improvement in their code.",
         arguments: []
     },
-
     LIST_AVAILABLE_AGENTS_AGENT: {
         name: "list_available_agents_agent",
         description: "Provides a list of all available agents along with their names and descriptions. Helps users understand what functionalities can be accessed through the agent.",
