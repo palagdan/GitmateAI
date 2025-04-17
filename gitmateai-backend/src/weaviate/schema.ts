@@ -48,3 +48,23 @@ export const createConventionChunkSchema = (config: {
         model: config.ollamaEmbeddingModel,
     }),
 });
+
+export const createCommitChunksSchema = (config: {
+    ollamaUrl: string;
+    ollamaEmbeddingModel: string;
+}) => ({
+    name: 'CommitChunks',
+    properties: [
+        { name: 'content', dataType: 'text' },
+        { name: 'fileName', dataType: 'text', skipVectorization: true },
+        { name: 'commitMessage', dataType: 'text'},
+        { name: 'owner', dataType: 'text', skipVectorization: true },
+        { name: 'repo', dataType: 'text', skipVectorization: true },
+        { name: 'sha', dataType: 'text', skipVectorization: true },
+        { name: 'author', dataType: 'text', skipVectorization: true },
+    ],
+    vectorizers: vectorizer.text2VecOllama({
+        apiEndpoint: config.ollamaUrl,
+        model: config.ollamaEmbeddingModel,
+    })
+});
