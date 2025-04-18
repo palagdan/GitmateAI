@@ -27,7 +27,7 @@ class SearchCodeSnippetsAgent extends LLMAgent<SearchQuery, string> {
         });
 
         this.agentLogger.info({
-            codeSectionsCount: codeSnippets.data?.length || 0
+            codeChunksCount: codeSnippets.data?.length || 0
         }, "Search completed successfully");
 
         return await llmQueryAgent.handleEvent(prompt);

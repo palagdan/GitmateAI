@@ -35,3 +35,15 @@ export interface IssueComment extends Issue {
     commentId: number | undefined;
 }
 
+export interface Commit {
+    owner: string;
+    repo: string;
+    sha: string;
+}
+
+export interface CreateCommitChunks extends CreateRepoChunks {
+    sha: string,
+    author: string,
+    fileName: string,
+    commitMessage: string,
+}

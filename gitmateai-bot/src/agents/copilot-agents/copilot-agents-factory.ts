@@ -4,28 +4,31 @@ import CopilotValidateCodeSectionAgent from "./copilot-validate-code-section.age
 import CopilotSearchConventionAgent from "./copilot-search-convention.agent.js";
 import CopilotSearchIssuesAgent from "./copilot-search-issues.agent.js";
 import CopilotListAvailableAgentsAgent from "./copilot-list-available-agents.agent.js";
+import CopilotSearchCommitsAgent from "./copilot-search-commits.agent.js";
 
 
 class CopilotAgentsFactor {
 
     static createAgent(service: string) {
         switch (service) {
-             case copilotAvailableAgents.SEARCH_SIMILAR_ISSUES_AGENT.name:
-                 return new CopilotSearchIssuesAgent();
-             case copilotAvailableAgents.SEARCH_CODE_SNIPPETS_AGENT.name:
-                 return new CopilotSearchCodeAgent()
-             case copilotAvailableAgents.SEARCH_CONVENTIONS_AGENT.name:
-                 return new CopilotSearchConventionAgent();
-             case copilotAvailableAgents.VALIDATE_CODE_SECTION_AGAINST_CONVENTIONS_AGENT.name:
-                 return new CopilotValidateCodeSectionAgent();
-             case copilotAvailableAgents.LIST_AVAILABLE_AGENTS_AGENT.name:
-                 return new CopilotListAvailableAgentsAgent()
+            case copilotAvailableAgents.SEARCH_SIMILAR_ISSUES_AGENT.name:
+                return new CopilotSearchIssuesAgent();
+            case copilotAvailableAgents.SEARCH_CODE_SNIPPETS_AGENT.name:
+                return new CopilotSearchCodeAgent()
+            case copilotAvailableAgents.SEARCH_CONVENTIONS_AGENT.name:
+                return new CopilotSearchConventionAgent();
+            case copilotAvailableAgents.VALIDATE_CODE_SECTION_AGAINST_CONVENTIONS_AGENT.name:
+                return new CopilotValidateCodeSectionAgent();
+            case copilotAvailableAgents.LIST_AVAILABLE_AGENTS_AGENT.name:
+                return new CopilotListAvailableAgentsAgent()
+            case copilotAvailableAgents.SEARCH_COMMITS_AGENT.name:
+                return new CopilotSearchCommitsAgent();
         }
         return null;
     }
 
     static createAgents(agents: { name: string; params: any }[]) {
-        return agents.map(({ name, params }) => ({
+        return agents.map(({name, params}) => ({
             agent: this.createAgent(name),
             params
         }));

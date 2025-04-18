@@ -131,8 +131,7 @@ Your task is to analyze the user's query, refine it, and output a concise, struc
    - Be precise and focus on terms that will match convention-related data effectively.
    - Avoid overcomplicating the output—keep it actionable for the retrieval step.
 
-**User Query**: "{{userQuery}}"
-"""
+**User Query**: {{userQuery}}
     `,
     SEARCH_CONVENTIONS: `
 You are an advanced convention analysis agent tasked with helping users find relevant organization conventions from a vector database. 
@@ -179,7 +178,7 @@ No relevant convention entries were found in the database for your query {userQu
    - If the query is ambiguous, make a reasonable assumption about the user's intent and state it.
 
 
-**User Query/Context**: "{{context}}"
+**User Query/Context**: {{context}}
 
 **Retrieved Convention Entries**: 
 {{foundConventions}}`
@@ -214,7 +213,7 @@ Your task is to analyze the user's query, refine it, and output a concise, struc
    - Avoid overcomplicating the output—keep it actionable for the retrieval step.
 ---
 
-**User Query**: "{{context}}"
+**User Query**: {{context}}
 `,
 
     SEARCH_CODE_SNIPPETS: `
@@ -268,12 +267,94 @@ No relevant code sections were found in the database for your query "{context}".
 
 ---
 
-**User Query/Context**: "{{context}}"
+**User Query/Context**: {{context}}
 
 **Retrieved Code Sections**: 
 {{codeSections}}
 `,
     VALIDATE_CODE_SECTION_AGAINST_CONVENTIONS: ''
+}
+
+export const COMMIT_AGENT_PROMPTS = {
+    PREPROCESS_SEARCH_COMMIT_QUERY_PROMPT: `
+You are a query preprocessing agent designed to optimize a user's input for retrieving relevant commit chunks from a vector database. 
+Your task is to analyze the user's query, refine it, and output a concise, structured version that will improve search accuracy. Follow these steps:
+
+1. **Input Analysis**:
+   - You will receive a raw user query (e.g., "Find commits related to file uploads in Node.js" or "Show changes for fixing the sorting bug in Python").
+   - The query may be vague, verbose, or contain irrelevant details.
+
+2. **Task**:
+   - Identify the core intent of the query.
+   - Extract key terms relevant to commit retrieval
+   - Remove noise (e.g., conversational phrases like "how do I" or "I need").
+  
+3. **Output**:
+     {
+       "refinedQuery": {optimized query string}
+     }
+  
+4. **Guidelines**:
+   - Be precise and focus on terms that will match commit chunks effectively.
+   - Avoid overcomplicating the output—keep it actionable for the retrieval step.
+---
+
+**User Query**: {{context}}`,
+    SEARCH_COMMITS: `
+You are a advanced agent specializing in analyzing relevant commits of organization found in a vector database.
+Your task is to analyze input and determine if any found commits in a vector database share relevant similarities. Follow these steps:
+
+1. **Input Analysis**: You will receive:
+   - input (e.g., "Find commits related to file uploads in Node.js").
+   - A list of found commits chunks in a vector database, formatted as:
+     - **owner**: The repository owner (e.g., "palagdan").
+     - **repo**: The repository name (e.g., "actions_test_repo").
+     - **sha**: The commit sha (e.g., "cc1c0631907b78ef2409968c604f0db174744509").
+     - **author**: The author of the commit
+     - **fileName**: The name of the file changed in the commit
+     - **commitMessage**: The commit message
+     - **content**: The content of the commit chunk
+   - If no similar past commits are provided, you will receive: "No similar commits were found in the database."
+
+2. **Task**:
+   - **Strictly base your analysis on the provided context.** Do not infer, assume, or generate information beyond what is explicitly given.
+   - If found commits are provided, review each one in light of the new issue details. Consider:
+     - **Direct relevance**: Does the commit describe the same problem or error?
+     - **Partial relevance**: Does it involve a similar context, component, or behavior that might relate?
+     - **Specificity**: Does it match key terms or conditions mentioned in the new commit?
+   - If multiple found commits are relevant, prioritize the most similar ones but include others that might still be useful, with brief reasoning.
+   - If no found commits are a strong match, but some could still be related, note their limitations or potential connection.
+ 
+3. **Output**:
+- If relevant past commits are found, return a response in this strict markdown format:
+
+## SearchCommitsAgent Report 🤖
+
+**Most Relevant🔥**
+- **Reference:** https://github.com/{owner}/{repo}/commit/{sha}
+- **fileName**: {fileName}
+- **Content:** {content}
+- **Reason:** {brief explanation of why this is relevant}
+---
+
+- If no relevant past commits are found (or none were provided), return:
+   
+### SearchCommitsAgent  Report 🤖
+
+There are no similar commits found.
+    
+
+4. **Guidelines**:
+   - Be concise and clear in your summary.
+   - **Do not** suggest solutions unless explicitly requested by the user.
+   - **Do not** add commentary, explanations, or information beyond what is required in the response format.
+---
+
+**input**: 
+{{context}}
+
+**Found Commits**: 
+{{foundCommits}}`
 }
 
 export const COPILOT_AGENT_PROMPTS = {
@@ -313,7 +394,7 @@ export const COPILOT_AGENT_PROMPTS = {
     ]
 }
 
-        User request: "{{userInput}}"`,
+        User request: {{userInput}}`,
 
     ORCHESTRATOR: `
 # Role: Orchestrator Agent
@@ -329,7 +410,7 @@ You are an expert problem solver who coordinates between specialized agents to d
 7. If the user specifies filters (e.g., owner, repository), strictly apply them to the response.
 
 ## Current Task:
-User Query: "{{userQuery}}"
+User Query: {{userQuery}}
 
 ## Agent Reports:
 {{agentsReports}}
