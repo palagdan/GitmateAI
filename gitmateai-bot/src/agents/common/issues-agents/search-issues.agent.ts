@@ -28,7 +28,7 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
         });
 
         this.agentLogger.info({
-            codeSectionsCount: issues.data?.length || 0
+            issuesChunksCount: issues.data?.length || 0
         }, "Search completed successfully");
 
 

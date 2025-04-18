@@ -1,4 +1,4 @@
 
 export interface  BaseAgent<I, O> {
-    handleEvent(event: I): Promise<O>
+    handleEvent(input: I): Promise<O>
 }

@@ -8,3 +8,13 @@ export interface Issue {
     repo: string;
     issueNumber: number;
 }
+
+export interface Commit {
+    content: string,
+    fileName: string,
+    commitMessage: string,
+    owner: string,
+    repo: string,
+    sha: string,
+    author: string
+}

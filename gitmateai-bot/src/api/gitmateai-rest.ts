@@ -1,5 +1,13 @@
 import api from "./api.js";
-import {Content, CreateCodeChunks, CreateIssueChunks, Issue, IssueComment} from "./types.js";
+import {
+    Commit,
+    Content,
+    CreateCodeChunks,
+    CreateCommitChunks,
+    CreateIssueChunks,
+    Issue,
+    IssueComment
+} from "./types.js";
 import {SearchQuery} from "../agents/common/types.js";
 
 
@@ -89,6 +97,37 @@ const gitmateai = {
         async search(searchConvention: SearchQuery) {
             return await api.post(`/convention-chunks/search`, searchConvention);
         }
+    },
+
+    commitChunks: {
+        async getAll() {
+            return await api.get(`/commit-chunks`);
+        },
+
+        async getByOwnerRepoSha(commit: Commit){
+            return await api.get(`/commit-chunks/${commit.owner}/${commit.repo}/${commit.sha}`);
+        },
+
+        async getByOwnerRepo(owner: string, repo: string) {
+            return await api.get(`/commit-chunks/${owner}/${repo}`);
+        },
+
+        async deleteByOwnerRepoSha(commit: Commit){
+            return await api.delete(`/commit-chunks/${commit.owner}/${commit.repo}/${commit.sha}`);
+        },
+
+        async insert(createCommitChunks: CreateCommitChunks){
+            return await api.post(`/commit-chunks`, createCommitChunks);
+        },
+
+        async update(updateCommitChunks: CreateCommitChunks){
+            return await api.put(`/commit-chunks`, updateCommitChunks);
+        },
+
+        async search(searchCommitChunks: SearchQuery){
+            return await api.post(`/commit-chunks/search`, searchCommitChunks);
+        }
+
     }
 }
 
