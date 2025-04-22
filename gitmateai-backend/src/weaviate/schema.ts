@@ -42,7 +42,10 @@ export const createConventionChunkSchema = (config: {
     ollamaEmbeddingModel: string;
 }) => ({
     name: 'ConventionChunks',
-    properties: [{ name: 'content', dataType: 'text' }],
+    properties: [
+        { name: 'content', dataType: 'text' },
+        { name: 'source', dataType: 'text', skipVectorization: true },
+    ],
     vectorizers: vectorizer.text2VecOllama({
         apiEndpoint: config.ollamaUrl,
         model: config.ollamaEmbeddingModel,

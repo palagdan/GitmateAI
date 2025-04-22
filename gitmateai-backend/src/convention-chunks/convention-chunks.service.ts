@@ -1,5 +1,5 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {ContentDto} from "../common/dto/content.dto";
+import {ConventionDto} from "./dto/convention.dto";
 import { splitText} from "../utils/llm-utils";
 import {ConventionChunksRepository} from "./convention-chunks.repository";
 import {SearchConventionChunksDto} from "./dto/search-convention-chunks.dto";
@@ -21,15 +21,18 @@ export class ConventionChunksService {
         return await this.repository.deleteAll();
     }
 
-    async insert(contentDto: ContentDto){
-        const { content} = contentDto;
+    async insert(contentDto: ConventionDto){
+        const { content, source} = contentDto;
         this.logger.log(`Inserting convention chunks`);
 
         const chunks = await splitText(content);
         this.logger.log(`Split text into ${chunks.length} chunks`);
 
         for (const chunk of chunks) {
-            await this.repository.insert(chunk);
+            await this.repository.insert({
+                content: chunk,
+                source: source
+            });
         }
 
         this.logger.log('Convention chunks insertion completed');
@@ -43,4 +46,17 @@ export class ConventionChunksService {
         return chunkResult;
     }
 
+    async findBySource(source: string) {
+        this.logger.log(`Finding convention chunks by source: ${source}`);
+        const result: any = await this.repository.findBySource(source);
+        this.logger.log(`Returning ${result.length} convention chunks for source: ${source}`);
+        return result;
+    }
+
+    async deleteBySource(source: string) {
+        this.logger.log(`Deleting convention chunks by source: ${source}`);
+        const result: any = await this.repository.deleteBySource(source);
+        this.logger.log(`Deleted ${result.length} convention chunks for source: ${source}`);
+        return result;
+    }
 }

@@ -1,5 +1,7 @@
 import {Injectable, OnModuleInit} from "@nestjs/common";
 import {WeaviateService} from "../weaviate/weaviate.service";
+import {ConventionChunk} from "./types";
+import {Filters} from "weaviate-client";
 
 @Injectable()
 export class ConventionChunksRepository implements OnModuleInit {
@@ -26,9 +28,11 @@ export class ConventionChunksRepository implements OnModuleInit {
        );
    }
 
-    async insert(content: string) {
+    async insert(conventionChunk: ConventionChunk) {
+        const { content, source } = conventionChunk;
         return await this.conventionChunksCollection.data.insert({
             content: content,
+            source: source
         });
     }
 
@@ -42,6 +46,26 @@ export class ConventionChunksRepository implements OnModuleInit {
             limit: finalLimit,
             returnMetadata: "all"
         });
+        return result.objects;
+    }
+
+    async findBySource(source: string) {
+        const result = await this.conventionChunksCollection.query.fetchObjects({
+            filters: Filters.and(
+                this.conventionChunksCollection.filter.byProperty('source').equal(source)
+            ),
+            returnMetadata: "all"
+        })
+        return result.objects;
+    }
+
+    async deleteBySource(source: string) {
+        const result = await this.conventionChunksCollection.query.deleteMany({
+            filters: Filters.and(
+                this.conventionChunksCollection.filter.byProperty('source').equal(source)
+            ),
+            returnMetadata: "all"
+        })
         return result.objects;
     }
 }
