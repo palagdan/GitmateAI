@@ -127,21 +127,10 @@ export class IssueChunksService {
         const {content, limit, fields} = searchIssueChunksDto;
         this.logger.log(`Searching issue chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 
-        const chunks: string[] = await splitText(content);
-        this.logger.log(`Split search content into ${chunks.length} chunks`);
+        const result: any = await this.repository.search(content, {limit, fields});
 
-        let allResults: any = [];
-        for (const chunk of chunks) {
-            const chunkResult: any = await this.repository.search(chunk, {limit, fields});
-            allResults.push(...chunkResult);
-        }
-
-        const sortedResults = Array.from(new Map(allResults.map(r => [r.uuid, r])).values())
-            .sort((a: any, b: any) => a.metadata.distance - b.metadata.distance)
-            .slice(0, limit);
-
-        this.logger.log(`Returning ${sortedResults.length} search results`);
-        return sortedResults;
+        this.logger.log(`Returning ${result.length} search results`);
+        return result;
     }
 
 }

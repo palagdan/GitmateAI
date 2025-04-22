@@ -65,11 +65,7 @@ export class CodeChunksService {
 
         const result: any = await this.repository.search(content, { limit, fields });
 
-        const sortedResults = Array.from(new Map(result.map(r => [r.uuid, r])).values())
-            .sort((a: any, b: any) => a.metadata.distance - b.metadata.distance)
-            .slice(0, limit);
-
-        this.logger.log(`Returning ${sortedResults.length} search results`);
-        return sortedResults;
+        this.logger.log(`Returning ${result.length} search results`);
+        return result;
     }
 }
