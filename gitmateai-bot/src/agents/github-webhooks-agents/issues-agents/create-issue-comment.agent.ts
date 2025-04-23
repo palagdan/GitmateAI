@@ -1,10 +1,11 @@
 import {BaseAgent} from "../../base.agent.js";
 import {Context} from "probot";
-import {commandsButton} from "../../../config/config.js";
+import {issueCommandsButton, prCommandsButton} from "../../../config/config.js";
 
 interface CreateIssueComment {
     context: Context,
-    value: string
+    value: string,
+    pullRequest?: boolean,
 }
 
 
@@ -22,6 +23,8 @@ class CreateIssueCommentAgent implements BaseAgent<CreateIssueComment, void> {
             return comment.user?.login === `${process.env.APP_NAME.toLowerCase()}[bot]`;
         });
 
+        const commandsButton = event.pullRequest ? prCommandsButton : issueCommandsButton;
+
         if (botComments.length > 0) {
             const botCommentBody = botComments[0].body || "";
             const bodyWithoutCommandsButton = botCommentBody.replace(commandsButton, "").trim();
@@ -34,7 +37,6 @@ class CreateIssueCommentAgent implements BaseAgent<CreateIssueComment, void> {
             });
             return;
         }
-
 
         const body = `${event.value}\n\n${commandsButton}`;
         await event.context.octokit.issues.createComment({

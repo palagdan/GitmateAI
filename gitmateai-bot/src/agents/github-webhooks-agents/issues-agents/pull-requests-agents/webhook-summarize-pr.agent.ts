@@ -1,18 +1,21 @@
-import { Context } from "probot";
-import {LLMAgent} from "../../LLMAgent.js";
-import SummarizeIssueAgent from "../../common/summarize-issue.agent.js";
-import logger from "../../../logger.js";
-import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
+import {LLMAgent} from "../../../LLMAgent.js";
+import {Context} from "probot";
+import CreateIssueCommentAgent from "../create-issue-comment.agent.js";
 
+export class WebhookSummarizePRAgent extends LLMAgent<Context<"issues">, void> {
 
-export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void> {
-    async handleEvent(event: Context<"issues">): Promise<void> {
+    async handleEvent(event: Context<"pull_request">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
-            const issue = event.payload.issue;
+            const pr = event.payload.pull_request;
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
-            const issue_number = issue.number;
+
+            const files = await event.octokit.pulls.listFiles({
+                owner,
+                repo,
+                pull_number: pr.number
+            });
 
             const { data: comments } = await event.octokit.issues.listComments({
                 owner,

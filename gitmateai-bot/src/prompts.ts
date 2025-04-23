@@ -62,7 +62,7 @@ Your task is to analyze input and determine if any found issues in a vector data
 
 - If no relevant past issues are found (or none were provided), return:
    
-### SearchIssuesAgent  Report 🤖
+## SearchIssuesAgent  Report 🤖
 
 There are no similar issues found.
     
@@ -87,7 +87,13 @@ There are no similar issues found.
         Provide a concise summary of the issue, including:
         1. The main problem or feature request.
         2. Key points discussed in the comments.
-        3. Any proposed solutions or next steps.`,
+        3. Any proposed solutions or next steps.
+        
+        Response Format:
+        ## SummarizeIssueAgent Report 🤖
+        
+        your summary 
+        `,
 
     LABEL_ISSUE: `
         You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
@@ -106,6 +112,76 @@ There are no similar issues found.
 
         Please provide your response strictly in the specified format, with a list of labels that should be added to the issue. If no labels are appropriate, return an empty list.
         `,
+}
+
+export const PR_AGENT_PROMPTS = {
+    LABEL_PR: `
+You are a GitHub assistant tasked with determining appropriate labels for a new pull request by analyzing:
+1. The PR title and description
+2. The files changed
+3. The nature of code changes
+
+PR Details:
+{{context}}
+
+
+Available Labels: {{availableLabels}}
+
+Guidelines:
+1. Consider both the textual context and code changes when selecting labels
+2. For code changes, pay attention to:
+   - File types changed (source, tests, docs, config)
+   - Change magnitude (small fix vs. major feature)
+   - Patterns (bugfix, refactor, dependency update)
+3. Prefer specific labels over generic ones when applicable
+
+Response Format:
+{
+    "labels": ["label1", "label2", ...],
+}
+
+If no labels are appropriate, return:
+{
+    "labels": [],
+}`,
+    SUMMARIZE_PR:
+`Summarize the following GitHub Pull Request by analyzing both the code changes (diff) and discussion threads. 
+Provide a comprehensive technical report with clear sections.
+
+{{context}}
+
+Analyze these components:
+
+1. **Diff Analysis**
+   - Type of changes (features/bugfixes/refactors/docs)
+   - Notable file patterns (which directories/modules affected)
+   - Significant code changes (highlight critical modifications)
+   - Potential impact assessment
+
+2. **Discussion Analysis**
+   - Key conversation threads (extract technical debates/resolutions)
+   - Requested changes and implementation status
+   - Remaining questions/blockers
+   - Approval status and CI results
+
+Response Format:
+## SummarizePRAgent Report 🤖
+### PR Metadata
+- Title: {{title}}
+- Author: {{author}}
+- Base: {{base}} ← Head: {{head}}
+
+### 🧐 Diff Summary
+[concise bullet points about code changes]
+
+### 💬 Discussion Highlights
+[extracted key conversations with participants]
+
+### ⚡️ Change Impact
+[risk/benefit analysis]
+
+### ✅ Final Verdict (Experimental)
+[ready-to-merge status with any caveats]`
 }
 
 export const CONVENTION_AGENT_PROMPTS = {
@@ -339,7 +415,7 @@ Your task is to analyze input and determine if any found commits in a vector dat
 
 - If no relevant past commits are found (or none were provided), return:
    
-### SearchCommitsAgent  Report 🤖
+## SearchCommitsAgent  Report 🤖
 
 There are no similar commits found.
     

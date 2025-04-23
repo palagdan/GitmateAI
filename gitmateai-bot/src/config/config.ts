@@ -14,7 +14,9 @@ const replacePrefix = (button: string, prefix: string): string => {
 
 export const helpMessage = load("HelpMessage.md");
 
-export const commandsButton = replacePrefix(load("CommandsButton.md"), process.env.PREFIX);
+export const issueCommandsButton = replacePrefix(load("IssueCommandsButton.md"), process.env.PREFIX);
+
+export const prCommandsButton = replacePrefix(load("PRCommandsButton.md"), process.env.PREFIX);
 
 export const prompts = JSON.parse(load("prompts.json"));
 
