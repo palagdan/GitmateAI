@@ -23,13 +23,17 @@ export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues">, void> 
 
             await createIssueCommentAgent.handleEvent({
                 context: event,
-                value: response
+                value: response,
+                pullRequest: false,
+                agentId: this.constructor.name
             })
         } catch (error) {
             logger.error(`Error in SimilarIssuesDetectorAgent: ${(error as Error).message}`);
             await createIssueCommentAgent.handleEvent({
                 context: event,
-                value: getErrorMsg(this.constructor.name, error)
+                value: getErrorMsg(this.constructor.name, error),
+                pullRequest: false,
+                agentId: this.constructor.name
             })
         }
     }

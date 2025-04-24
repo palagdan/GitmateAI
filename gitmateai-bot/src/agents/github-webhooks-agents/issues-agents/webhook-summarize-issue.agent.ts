@@ -2,10 +2,13 @@ import { Context } from "probot";
 import {LLMAgent} from "../../LLMAgent.js";
 import SummarizeIssueAgent from "../../common/summarize-issue.agent.js";
 import logger from "../../../logger.js";
+import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
+import {getErrorMsg} from "../../../messages/messages.js";
 
 
 export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void> {
     async handleEvent(event: Context<"issues">): Promise<void> {
+        const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
             const issue = event.payload.issue;
             const owner = event.payload.repository.owner.login;
@@ -27,10 +30,21 @@ export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void
             const context = `${issueTitle}\n${issueDescription}\n${commentsText}`;
 
             const summarizeIssueAgent = new SummarizeIssueAgent();
-            await summarizeIssueAgent.handleEvent(context);
-
+            const response = await summarizeIssueAgent.handleEvent(context);
+            await createIssueCommentAgent.handleEvent({
+                context: event,
+                value: response,
+                pullRequest: false,
+                agentId: this.constructor.name
+            });
         } catch (error) {
             logger.error(`Error in WebhookSummarizeIssueAgent: ${(error as Error).message}`);
+            await createIssueCommentAgent.handleEvent({
+                context: event,
+                value: getErrorMsg(this.constructor.name, error),
+                pullRequest: false,
+                agentId: this.constructor.name
+            });
         }
     }
 }

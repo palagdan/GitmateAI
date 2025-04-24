@@ -14,7 +14,7 @@ class Command {
      * Regular expression to match slash commands.
      */
     get matcher(): RegExp {
-        return new RegExp(`^\/${process.env.PREFIX}\\s+([\\w]+)\\b *(.*)?$`, 'm');
+        return new RegExp(`^\/${process.env.PREFIX}\\s+([\\w-]+)\\b *(.*)?$`, 'm');
     }
 
     /**
@@ -31,7 +31,7 @@ class Command {
 }
 
 
-type AllowedEvents = 'issue_comment.created' | 'issues.opened' | 'pull_request.opened';
+type AllowedEvents = 'issue_comment.created' | 'issue_comment.edited';
 
 /**
  * Probot extension to abstract the pattern for receiving slash commands in comments.

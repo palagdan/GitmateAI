@@ -62,7 +62,7 @@ Your task is to analyze input and determine if any found issues in a vector data
 
 - If no relevant past issues are found (or none were provided), return:
    
-### SearchIssuesAgent  Report 🤖
+## SearchIssuesAgent  Report 🤖
 
 There are no similar issues found.
     
@@ -87,13 +87,20 @@ There are no similar issues found.
         Provide a concise summary of the issue, including:
         1. The main problem or feature request.
         2. Key points discussed in the comments.
-        3. Any proposed solutions or next steps.`,
+        3. Any proposed solutions or next steps.
+        
+        Response Format:
+        ## SummarizeIssueAgent Report 🤖
+        
+        your summary 
+        `,
 
     LABEL_ISSUE: `
         You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
         The issue details are:
     
-        {{context}}
+        title: {{title}}
+        description: {{description}}
 
         Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
 
@@ -101,11 +108,54 @@ There are no similar issues found.
 
         Response Format:
         {
-            "labels": ["label1", "label2", ...]
+            "labels": ["label1", "label2", ...],
+            "explanation": "Concise justification for the selected labels or empty list."
         }
 
         Please provide your response strictly in the specified format, with a list of labels that should be added to the issue. If no labels are appropriate, return an empty list.
         `,
+}
+
+export const PR_AGENT_PROMPTS = {
+    LABEL_PR: `
+You are a GitHub assistant tasked with determining the appropriate labels for a new PR.
+The issue details are:
+
+PR Details:
+title: {{title}}
+description: {{description}}
+Changes: {{changes}}
+
+Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
+If none of the labels are appropriate based on the issue details, respond with an empty list: []
+
+Response Format:
+{
+    "labels": ["label1", "label2", ...],
+    "explanation": "Concise justification for the selected labels or empty list."
+}
+`,
+
+    SUMMARIZE_PR:
+`Summarize the following GitHub Pull Request by analyzing title, description, and the code changes (diff). 
+Provide a comprehensive technical report with clear sections.
+
+title: {{title}}
+description: {{description}}
+diff: {{diff}}
+
+Response Format:
+## SummarizePRAgent Report 🤖
+### 🔍 PR Overview
+
+### 🧐 Diff Summary
+[concise bullet points about code changes]
+
+### ⚡️ Change Impact
+[risk/benefit analysis]
+
+### ✅ Final Verdict (Experimental)
+[ready-to-merge status with any caveats]`
 }
 
 export const CONVENTION_AGENT_PROMPTS = {
@@ -339,7 +389,7 @@ Your task is to analyze input and determine if any found commits in a vector dat
 
 - If no relevant past commits are found (or none were provided), return:
    
-### SearchCommitsAgent  Report 🤖
+## SearchCommitsAgent  Report 🤖
 
 There are no similar commits found.
     
