@@ -22,33 +22,25 @@ export class WebhookPRLabelAgent extends LLMAgent<Context<"pull_request">, void>
                 pull_number: pr.number
             });
 
-            const context = `
-PR Title: ${pr.title}
-PR Description: ${pr.body || ""}
-                
-Files Changed:
-${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff summary: ${summarizeDiff(file.patch)}`).join('\n')}
-`;
+            const changes = `${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff summary: ${summarizeDiff(file.patch)}`).join('\n')}`;
 
             const availableLabels = await event.octokit.issues.listLabelsForRepo({
                 owner,
                 repo,
             });
 
-            let message: string;
-
             const prompt = this.createPrompt(PR_AGENT_PROMPTS.LABEL_PR, {
-                context: context,
+                title: pr.title,
+                description: pr.body,
+                changes: changes,
                 availableLabels: availableLabels.data.map((label) => label.name).join(", ")
             });
 
-            console.log(prompt)
             const llmQueryAgent = new LLMQueryAgent();
             const labels = await llmQueryAgent.handleEvent(prompt);
             const parsedLabels = JSON.parse(labels);
-
-            console.log(parsedLabels)
             const retrievedLabels = parsedLabels.labels;
+            const explanation = parsedLabels.explanation;
 
             if (retrievedLabels.length > 0) {
                 await event.octokit.issues.addLabels({
@@ -58,28 +50,25 @@ ${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff sum
                     labels: retrievedLabels,
                 });
                 this.agentLogger.info(`Labels added: ${retrievedLabels.join(", ")}`);
-                message = formatMessage(`
-          ### PRLabelAgent Report🤖
-          Following labels were added based on the PR information and changes: ${retrievedLabels
-                    .map((label) => `**${label}**`)
-                    .join(", ")}
-        `);
+
             } else {
                 this.agentLogger.info("No labels suggested to add. A comment was added to the PR.");
-                message = formatMessage(`
-          ### PRLabelAgent Report🤖
-          No labels were added based on the PR information and changes.
-        `);
             }
 
             await createIssueCommentAgent.handleEvent({
                 context: event,
-                value: message,
-                pullRequest: true
+                value: `## LabelPRAgent Report 🤖\n${explanation}`,
+                pullRequest: true,
+                agentId: this.constructor.name
             });
         } catch (error) {
             this.agentLogger.error(`Error occurred: ${(error as Error).message}`);
-            getErrorMsg(this.constructor.name, error);
+            await createIssueCommentAgent.handleEvent({
+                context: event,
+                value: getErrorMsg(this.constructor.name, error),
+                pullRequest: true,
+                agentId: this.constructor.name
+            })
         }
     }
 

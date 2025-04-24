@@ -99,7 +99,8 @@ There are no similar issues found.
         You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
         The issue details are:
     
-        {{context}}
+        title: {{title}}
+        description: {{description}}
 
         Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
 
@@ -107,7 +108,8 @@ There are no similar issues found.
 
         Response Format:
         {
-            "labels": ["label1", "label2", ...]
+            "labels": ["label1", "label2", ...],
+            "explanation": "Concise justification for the selected labels or empty list."
         }
 
         Please provide your response strictly in the specified format, with a list of labels that should be added to the issue. If no labels are appropriate, return an empty list.
@@ -116,66 +118,38 @@ There are no similar issues found.
 
 export const PR_AGENT_PROMPTS = {
     LABEL_PR: `
-You are a GitHub assistant tasked with determining appropriate labels for a new pull request by analyzing:
-1. The PR title and description
-2. The files changed
-3. The nature of code changes
+You are a GitHub assistant tasked with determining the appropriate labels for a new PR.
+The issue details are:
 
 PR Details:
-{{context}}
+title: {{title}}
+description: {{description}}
+Changes: {{changes}}
 
-
-Available Labels: {{availableLabels}}
-
-Guidelines:
-1. Consider both the textual context and code changes when selecting labels
-2. For code changes, pay attention to:
-   - File types changed (source, tests, docs, config)
-   - Change magnitude (small fix vs. major feature)
-   - Patterns (bugfix, refactor, dependency update)
-3. Prefer specific labels over generic ones when applicable
+Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
+If none of the labels are appropriate based on the issue details, respond with an empty list: []
 
 Response Format:
 {
     "labels": ["label1", "label2", ...],
+    "explanation": "Concise justification for the selected labels or empty list."
 }
+`,
 
-If no labels are appropriate, return:
-{
-    "labels": [],
-}`,
     SUMMARIZE_PR:
-`Summarize the following GitHub Pull Request by analyzing both the code changes (diff) and discussion threads. 
+`Summarize the following GitHub Pull Request by analyzing title, description, and the code changes (diff). 
 Provide a comprehensive technical report with clear sections.
 
-{{context}}
-
-Analyze these components:
-
-1. **Diff Analysis**
-   - Type of changes (features/bugfixes/refactors/docs)
-   - Notable file patterns (which directories/modules affected)
-   - Significant code changes (highlight critical modifications)
-   - Potential impact assessment
-
-2. **Discussion Analysis**
-   - Key conversation threads (extract technical debates/resolutions)
-   - Requested changes and implementation status
-   - Remaining questions/blockers
-   - Approval status and CI results
+title: {{title}}
+description: {{description}}
+diff: {{diff}}
 
 Response Format:
 ## SummarizePRAgent Report 🤖
-### PR Metadata
-- Title: {{title}}
-- Author: {{author}}
-- Base: {{base}} ← Head: {{head}}
+### 🔍 PR Overview
 
 ### 🧐 Diff Summary
 [concise bullet points about code changes]
-
-### 💬 Discussion Highlights
-[extracted key conversations with participants]
 
 ### ⚡️ Change Impact
 [risk/benefit analysis]

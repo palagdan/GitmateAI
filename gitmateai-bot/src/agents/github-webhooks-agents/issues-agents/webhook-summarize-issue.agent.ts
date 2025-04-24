@@ -3,6 +3,7 @@ import {LLMAgent} from "../../LLMAgent.js";
 import SummarizeIssueAgent from "../../common/summarize-issue.agent.js";
 import logger from "../../../logger.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
+import {getErrorMsg} from "../../../messages/messages.js";
 
 
 export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void> {
@@ -33,9 +34,17 @@ export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void
             await createIssueCommentAgent.handleEvent({
                 context: event,
                 value: response,
+                pullRequest: false,
+                agentId: this.constructor.name
             });
         } catch (error) {
             logger.error(`Error in WebhookSummarizeIssueAgent: ${(error as Error).message}`);
+            await createIssueCommentAgent.handleEvent({
+                context: event,
+                value: getErrorMsg(this.constructor.name, error),
+                pullRequest: false,
+                agentId: this.constructor.name
+            });
         }
     }
 }

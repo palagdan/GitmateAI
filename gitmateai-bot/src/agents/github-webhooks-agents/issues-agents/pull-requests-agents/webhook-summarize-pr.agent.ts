@@ -1,13 +1,17 @@
 import {LLMAgent} from "../../../LLMAgent.js";
 import {Context} from "probot";
 import CreateIssueCommentAgent from "../create-issue-comment.agent.js";
+import {summarizeDiff} from "./utils.js";
+import {PR_AGENT_PROMPTS} from "../../../../prompts.js";
+import LLMQueryAgent from "../../../common/llm-query.agent.js";
+import {getErrorMsg} from "../../../../messages/messages.js";
 
-export class WebhookSummarizePRAgent extends LLMAgent<Context<"issues">, void> {
+export class WebhookSummarizePRAgent extends LLMAgent<Context<"issue_comment.created">, void> {
 
-    async handleEvent(event: Context<"pull_request">): Promise<void> {
+    async handleEvent(event: Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
-            const pr = event.payload.pull_request;
+            const pr = event.payload.issue;
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
 
@@ -17,28 +21,42 @@ export class WebhookSummarizePRAgent extends LLMAgent<Context<"issues">, void> {
                 pull_number: pr.number
             });
 
-            const { data: comments } = await event.octokit.issues.listComments({
-                owner,
-                repo,
-                issue_number,
+            const context = `
+PR Title: ${pr.title}
+PR Description: ${pr.body || ""}
+                
+Files Changed:
+${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff summary: ${summarizeDiff(file.patch)}`).join('\n')}
+`;
+
+            const prTitle = pr.title;
+            const prDescription = pr.body || "";
+
+            const prompt = this.createPrompt(PR_AGENT_PROMPTS.SUMMARIZE_PR, {
+                title: prTitle,
+                description: prDescription,
+                diff: context
             });
 
-            const issueTitle = issue.title;
-            const issueDescription = issue.body || "";
-            const commentsText = comments
-                .map((comment) => `Comment by ${comment.user.login}: ${comment.body}`)
-                .join("\n");
+            const llmQueryAgent = new LLMQueryAgent();
+            const result = await llmQueryAgent.handleEvent(prompt);
 
-            const context = `${issueTitle}\n${issueDescription}\n${commentsText}`;
-
-            const summarizeIssueAgent = new SummarizeIssueAgent();
-            const response = await summarizeIssueAgent.handleEvent(context);
             await createIssueCommentAgent.handleEvent({
                 context: event,
-                value: response,
+                value: result,
+                pullRequest: true,
+                agentId: this.constructor.name
             });
         } catch (error) {
-            logger.error(`Error in WebhookSummarizeIssueAgent: ${(error as Error).message}`);
+            this.agentLogger.error(`Error in WebhookSummarizeIssueAgent: ${(error as Error).message}`);
+            await createIssueCommentAgent.handleEvent({
+                context: event,
+                value: getErrorMsg(error, this.constructor.name),
+                pullRequest: true,
+                agentId: this.constructor.name
+            });
         }
     }
 }
+
+export default WebhookSummarizePRAgent;

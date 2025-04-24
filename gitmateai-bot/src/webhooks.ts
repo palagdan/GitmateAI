@@ -21,6 +21,8 @@ import {Context} from "probot";
 import WebhookPRLabelAgent
     from "./agents/github-webhooks-agents/issues-agents/pull-requests-agents/webhook-pr-label-agent.js";
 import {isPullRequest} from "./utils/github-utils.js";
+import WebhookSummarizePRAgent
+    from "./agents/github-webhooks-agents/issues-agents/pull-requests-agents/webhook-summarize-pr.agent.js";
 
 const issueLabelAgent = new WebhookIssueLabelAgent();
 const helpAgent = new HelpWebhookAgent();
@@ -34,6 +36,7 @@ const saveIssueCommentAgent = new WebhookSaveIssueCommentAgent();
 const updateIssueAgent = new WebhookUpdateIssueAgent()
 const deleteIssueCommentAgent = new WebhookDeleteIssueCommentAgent();
 const prLabelAgent = new WebhookPRLabelAgent();
+const summarizePRAgent = new WebhookSummarizePRAgent();
 
 const webhooks = (app) => {
 
@@ -66,7 +69,8 @@ const webhooks = (app) => {
         await prLabelAgent.handleEvent(context);
     });
 
-    command(app, ["issue_comment.created"], "summarize", async (context: Context) => {
+
+    command(app, ["issue_comment.created", "issue_comment.edited"], "summarize", async (context: Context) => {
         if(isPullRequest(context)) {
             await summarizePRAgent.handleEvent(context);
         }else{
@@ -74,19 +78,11 @@ const webhooks = (app) => {
         }
     })
 
-    command(app, ["issue_comment.created"], "find-similar-issues", async (context: Context) => {
-        if(isPullRequest(context)){
-
-        }else{
+    command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-issues", async (context: Context) => {
+        if(!isPullRequest(context)){
             await similarIssuesAgent.handleEvent(context);
         }
     });
-
-
-
-
-
-
 
 }
 
