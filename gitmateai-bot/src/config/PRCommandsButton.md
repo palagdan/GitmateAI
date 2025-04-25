@@ -5,10 +5,10 @@
 
 ### 🤖 PR Command List
 
-| Command               | Description                                          |
-|-----------------------|------------------------------------------------------|
+| Command               | Description                                           |
+|-----------------------|-------------------------------------------------------|
 | `/[prefix] summarize` | Generates a concise summary of the current PR changes |
-| `/[prefix] review  `  | Review current PR                                    |
+| `/[prefix] review  `  | Review current PR (unavailable)                       |
     
      
 
