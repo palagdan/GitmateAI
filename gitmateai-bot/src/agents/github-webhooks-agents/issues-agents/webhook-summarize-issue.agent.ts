@@ -6,8 +6,8 @@ import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 
 
-export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void> {
-    async handleEvent(event: Context<"issues">): Promise<void> {
+export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issue_comment.created">, void> {
+    async handleEvent(event: Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
             const issue = event.payload.issue;
@@ -48,3 +48,5 @@ export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues">, void
         }
     }
 }
+
+export default WebhookSummarizeIssueAgent
