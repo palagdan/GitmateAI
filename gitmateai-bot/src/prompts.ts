@@ -97,22 +97,19 @@ There are no similar issues found.
 
     LABEL_ISSUE: `
         You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
+        
         The issue details are:
-    
         title: {{title}}
         description: {{description}}
 
-        Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
-
+        Based on the title and body, choose one or more labels only from the following available labels: {{availableLabels}}
         If none of the labels are appropriate based on the issue details, respond with an empty list: []
+        Don't return labels that are not in the available labels list.
 
         Response Format:
         {
             "labels": ["label1", "label2", ...],
             "explanation": "Concise justification for the selected labels or empty list."
-        }
-
-        Please provide your response strictly in the specified format, with a list of labels that should be added to the issue. If no labels are appropriate, return an empty list.
         `,
 }
 
@@ -126,8 +123,9 @@ title: {{title}}
 description: {{description}}
 Changes: {{changes}}
 
-Based on the title and body, choose one or more labels from the following available labels: {{availableLabels}}
+Based on the title and body, choose one or more labels only from the following available labels: {{availableLabels}}
 If none of the labels are appropriate based on the issue details, respond with an empty list: []
+Don't return labels that are not in the available labels list.
 
 Response Format:
 {

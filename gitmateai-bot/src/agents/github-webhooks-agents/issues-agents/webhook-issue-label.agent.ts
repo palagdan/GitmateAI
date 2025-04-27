@@ -23,7 +23,7 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues">, void> {
             const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.LABEL_ISSUE, {
                 title: issue.title,
                 description: issue.body,
-                availableLabels: availableLabels.data.join(", ")
+                availableLabels: availableLabels.data.map(label => label.name).join(", ")
             });
 
             const llmQueryAgent = new LLMQueryAgent();
