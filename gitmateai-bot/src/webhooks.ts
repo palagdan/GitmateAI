@@ -22,10 +22,11 @@ import {isPullRequest} from "./utils/github-utils.js";
 import WebhookSummarizePRAgent
     from "./agents/github-webhooks-agents/issues-agents/pull-requests-agents/webhook-summarize-pr.agent.js";
 import WebhookSearchCommitsAgent from "./agents/github-webhooks-agents/issues-agents/webhook-search-commits.agent.js";
+import {servicesConfig} from "./config/config.js";
 
 const issueLabelAgent = new WebhookIssueLabelAgent();
 const summarizeIssueAgent = new WebhookSummarizeIssueAgent();
-const similarIssuesAgent = new WebhookSearchIssuesAgent();
+const searchIssuesAgent = new WebhookSearchIssuesAgent();
 const deleteIssueAgent = new WebhookDeleteIssueAgent();
 const saveIssueAgent = new WebhookSaveIssueAgent();
 const updateIssueCommentAgent = new WebhookUpdateIssueCommentAgent();
@@ -38,35 +39,53 @@ const searchCommitsAgent = new WebhookSearchCommitsAgent();
 
 const webhooks = (app) => {
 
-    app.on(["issues.opened"], async (context: Context) => {
-        await issueLabelAgent.handleEvent(context);
+    // Issues ---------------------------------------------------------------------
+    app.on(["issues.opened"], async (context: Context<"issues.opened">) => {
+        await run(context, issueLabelAgent);
+        await run(context, summarizeIssueAgent);
+        await run(context, searchIssuesAgent);
+        await run(context, searchCommitsAgent);
+
         await saveIssueAgent.handleEvent(context);
     });
 
-    app.on(["issues.edited"], async (context: Context) => {
+    app.on(["issues.edited"], async (context: Context<"issues.edited">) => {
         await updateIssueAgent.handleEvent(context);
     });
 
-    app.on(["issues.deleted"], async (context: Context) => {
+    app.on(["issues.deleted"], async (context: Context<"issues.deleted">) => {
         await deleteIssueAgent.handleEvent(context);
     })
 
-    app.on(["issue_comment.created"], async (context: Context) => {
+    app.on(["issue_comment.created", ], async (context: Context<"issue_comment.created">) => {
         await saveIssueCommentAgent.handleEvent(context);
     });
 
-    app.on(["issue_comment.edited"], async (context: Context) => {
+    app.on(["issue_comment.edited"], async (context: Context<"issue_comment.edited">) => {
         await updateIssueCommentAgent.handleEvent(context);
     });
 
-    app.on(["issue_comment.deleted"], async (context: Context) => {
+    app.on(["issue_comment.deleted"], async (context: Context<"issue_comment.deleted">) => {
         await deleteIssueCommentAgent.handleEvent(context);
     });
 
-    app.on(["pull_request.opened"], async (context: Context) => {
-        await prLabelAgent.handleEvent(context);
+    // PRs ---------------------------------------------------------------------
+
+    app.on(["pull_request.opened"], async (context: Context<"pull_request.opened">) => {
+        await run(context, prLabelAgent);
+        await run(context, summarizePRAgent);
     });
-    ``
+
+    // commands ---------------------------------------------------------------------
+
+    command(app, ["issue_comment.created", "issue_comment.edited"], "label", async (context: Context) => {
+        if(isPullRequest(context)){
+            await prLabelAgent.handleEvent(context);
+        }else{
+            await issueLabelAgent.handleEvent(context);
+        }
+    });
+
     command(app, ["issue_comment.created", "issue_comment.edited"], "summarize", async (context: Context) => {
         if(isPullRequest(context)) {
             await summarizePRAgent.handleEvent(context);
@@ -75,18 +94,37 @@ const webhooks = (app) => {
         }
     })
 
-    command(app, ["issue_comment.created", "issue_comment.edited"], "find-relevant-issues", async (context: Context) => {
+    command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-issues", async (context: Context) => {
         if(!isPullRequest(context)){
-            await similarIssuesAgent.handleEvent(context);
+            await searchIssuesAgent.handleEvent(context);
         }
     });
 
-    command(app, ["issue_comment.created", "issue_comment.edited"], "find-relevant-commits", async(context: Context)=> {
+    command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-commits", async(context: Context)=> {
         if(!isPullRequest(context)){
             await searchCommitsAgent.handleEvent(context);
         }
     })
 
+    command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-code", async(context: Context)=> {
+        if(!isPullRequest(context)){
+            await searchCommitsAgent.handleEvent(context);
+        }
+    })
+
+    command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-pull-requests", async(context: Context)=> {
+        if(!isPullRequest(context)){
+            await searchCommitsAgent.handleEvent(context);
+        }
+    })
+}
+
+
+const run = async (context: Context, agent) => {
+    const repo = context.repo();
+    if(servicesConfig[repo.owner][repo.repo] && servicesConfig[repo.owner][repo.repo].automatedServices.includes(agent.getService())){
+        await agent.handleEvent(context);
+    }
 }
 
 export default webhooks;

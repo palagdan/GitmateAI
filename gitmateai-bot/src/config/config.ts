@@ -20,5 +20,4 @@ export const prCommandsButton = replacePrefix(load("PRCommandsButton.md"), proce
 
 export const prompts = JSON.parse(load("prompts.json"));
 
-
-
+export const servicesConfig = JSON.parse(load("services.conf.json"));

@@ -4,11 +4,12 @@ import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import SearchCommitsAgent from "../../common/commits-agents/search-commits-agent.js";
 
-export class WebhookSearchCommitsAgent extends LLMAgent<Context<"issue_comment.created">, void> {
+export class WebhookSearchCommitsAgent extends LLMAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
 
-    async handleEvent(event: Context<"issue_comment.created">): Promise<void> {
+    async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
+
             const issue = event.payload.issue;
 
             const issueText = `${issue.title}\n\n${issue.body || ""}`;
@@ -35,6 +36,10 @@ export class WebhookSearchCommitsAgent extends LLMAgent<Context<"issue_comment.c
                 agentId: this.constructor.name
             })
         }
+    }
+
+    getService(): string {
+        return "issue-commit-search";
     }
 }
 

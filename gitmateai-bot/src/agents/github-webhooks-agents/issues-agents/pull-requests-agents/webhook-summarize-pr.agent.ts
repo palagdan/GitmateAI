@@ -6,14 +6,22 @@ import {PR_AGENT_PROMPTS} from "../../../../prompts.js";
 import LLMQueryAgent from "../../../common/llm-query.agent.js";
 import {getErrorMsg} from "../../../../messages/messages.js";
 
-export class WebhookSummarizePRAgent extends LLMAgent<Context<"issue_comment.created">, void> {
+export class WebhookSummarizePRAgent extends LLMAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
 
-    async handleEvent(event: Context<"issue_comment.created">): Promise<void> {
+    async handleEvent(event:  Context<"pull_request"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
-            const pr = event.payload.issue;
+
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
+
+            let pr: any;
+
+            if ("pull_request" in event.payload) {
+                pr = event.payload.pull_request
+            } else {
+                pr = event.payload.issue;
+            }
 
             const files = await event.octokit.pulls.listFiles({
                 owner,
@@ -56,6 +64,10 @@ ${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff sum
                 agentId: this.constructor.name
             });
         }
+    }
+
+    getService(): string {
+        return "pr-summarize";
     }
 }
 

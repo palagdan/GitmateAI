@@ -6,14 +6,22 @@ import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../../common/llm-query.agent.js";
 
-export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues">, void> {
-    async handleEvent(event: Context<"issues">): Promise<void> {
+export class WebhookIssueLabelAgent extends LLMAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
+    async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
             const issue = event.payload.issue;
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
 
+            if (issue.labels && issue.labels.length > 0) {
+                await event.octokit.issues.removeAllLabels({
+                    owner,
+                    repo,
+                    issue_number: issue.number,
+                });
+                this.agentLogger.info(`Removed existing labels from issue #${issue.number}`);
+            }
 
             const availableLabels = await event.octokit.issues.listLabelsForRepo({
                 owner,
@@ -59,4 +67,9 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues">, void> {
             });
         }
     }
+
+    getService(): string {
+        return "issue-label";
+    }
+
 }

@@ -36,19 +36,21 @@ Your task is to analyze input and determine if any found issues in a vector data
      - **repo**: The repository name (e.g., "actions_test_repo").
      - **issueNumber**: The issue ID (e.g., "59").
      - **author**: The author of the issue or a comment to the issue
-     - **Type: The type of the issue chunk(title, description, comment)** 
+     - **Type**: The type of the issue chunk (title, description, comment)
      - **content**: The content of the issue chunk
    - If no similar past issues are provided, you will receive: "No similar issues were found in the database."
 
 2. **Task**:
+   - **Group all chunks by their issueNumber** before analysis to avoid duplicate entries.
    - **Strictly base your analysis on the provided context.** Do not infer, assume, or generate information beyond what is explicitly given.
    - If found issues are provided, review each one in light of the new issue details. Consider:
      - **Direct relevance**: Does the issue describe the same problem or error?
      - **Partial relevance**: Does it involve a similar context, component, or behavior that might relate?
      - **Specificity**: Does it match key terms or conditions mentioned in the new issue?
+   - For grouped issues, combine the most relevant content from all chunks.
    - If multiple found issues are relevant, prioritize the most similar ones but include others that might still be useful, with brief reasoning.
    - If no found issues are a strong match, but some could still be related, note their limitations or potential connection.
- 
+
 3. **Output**:
 - If relevant past issues are found, return a response in this strict markdown format:
 
@@ -56,22 +58,18 @@ Your task is to analyze input and determine if any found issues in a vector data
 
 **Most Relevant🔥**
 - **Reference:** https://github.com/{owner}/{repo}/issues/{issueNumber}
-- **Content:** {content}
-- **Reason:** {brief explanation of why this is relevant}
+- **Content:** {combined most relevant content from all chunks of this issue}
+- **Reason:** {brief explanation of why this is relevant, considering all chunks}
 ---
+
+[Repeat for other relevant issues if needed]
 
 - If no relevant past issues are found (or none were provided), return:
    
-## SearchIssuesAgent  Report 🤖
+## SearchIssuesAgent Report 🤖
 
 There are no similar issues found.
     
-
-4. **Guidelines**:
-   - Be concise and clear in your summary.
-   - **Do not** suggest solutions unless explicitly requested by the user.
-   - **Do not** add commentary, explanations, or information beyond what is required in the response format.
----
 
 **input**: 
 {{context}}
@@ -279,39 +277,37 @@ Your goal is to analyze the provided code sections and determine their relevance
    - If no code sections are found, you will receive: "No code sections were found in the database."
 
 2. **Task**:
-- If code sections are provided, review each one in light of the user query/context.
-- Identify code section(s) that are **relevant or potentially helpful** to the query. Consider:
-  - **Direct relevance**: Does the code address the functionality or purpose described?
-  - **Partial relevance**: Could the code be adapted or provide insight for the problem?
-  - **Quality and clarity**: Is the code readable and reasonably structured?
-  - **Contextual alignment**: Does it fit the language, framework, or general domain implied by the query?
-- If multiple sections are worth mentioning, prioritize the most relevant ones but include others that might still be useful, with brief reasoning.
-- If no code sections are a strong match, but some could still be helpful, include them with a note about their limitations or potential adaptation.
-- If nothing is even remotely relevant, state that explicitly.
+   - **Group all code sections by their FilePath** before analysis to avoid duplicate entries.
+   - If code sections are provided, review each grouped file in light of the user query/context. Consider:
+     - **Direct relevance**: Does the code address the functionality or purpose described?
+     - **Partial relevance**: Could the code be adapted or provide insight for the problem?
+     - **Quality and clarity**: Is the code readable and reasonably structured?
+     - **Contextual alignment**: Does it fit the language, framework, or general domain implied by the query?
+   - For grouped files, combine the most relevant content from all snippets of the same file.
+   - If multiple files are worth mentioning, prioritize the most relevant ones but include others that might still be useful, with brief reasoning.
+   - If no code sections are a strong match, but some could still be helpful, include them with a note about their limitations or potential adaptation.
+   - If nothing is even remotely relevant, state that explicitly.
 
 3. **Output**:
 
- 
 ## SearchCodeAgent Report 🤖
+
 **Most Relevant:**
 - **Reference:** https://github.com/{owner}/{repo}/blob/main/{filePath}
-- **Owner** : {owner}
-- **Repo** : {repo}
-- **Content:** {content}
-- **Reason:** {brief explanation of why this is relevant}
+- **Owner:** {owner}
+- **Repo:** {repo}
+- **File:** {filePath}
+- **Combined Content:** {most relevant combined content from all snippets of this file}
+- **Reason:** {brief explanation of why this is relevant, considering all snippets from this file}
 ---
 
-[Optional additional relevant sections with the same format]
+[Optional additional relevant files with the same format]
     
 - If no relevant code sections are found (or none were retrieved), return:
      
-No relevant code sections were found in the database for your query "{context}".
-     
+## SearchCodeAgent Report 🤖
 
-4. **Guidelines**:
-   - Be concise but clear in your explanations.
-   - Avoid speculating or inventing details not present in the code sections.
-   - If the query is ambiguous, make a reasonable assumption about the user's intent and state it.
+No relevant code sections were found in the database for your query "{context}".
 
 ---
 
@@ -349,7 +345,7 @@ Your task is to analyze the user's query, refine it, and output a concise, struc
 
 **User Query**: {{context}}`,
     SEARCH_COMMITS: `
-You are a advanced agent specializing in analyzing relevant commits of organization found in a vector database.
+You are an advanced agent specializing in analyzing relevant commits of an organization found in a vector database.
 Your task is to analyze input and determine if any found commits in a vector database share relevant similarities. Follow these steps:
 
 1. **Input Analysis**: You will receive:
@@ -365,14 +361,16 @@ Your task is to analyze input and determine if any found commits in a vector dat
    - If no similar past commits are provided, you will receive: "No similar commits were found in the database."
 
 2. **Task**:
+   - **Group all chunks by their sha** before analysis to avoid duplicate entries.
    - **Strictly base your analysis on the provided context.** Do not infer, assume, or generate information beyond what is explicitly given.
-   - If found commits are provided, review each one in light of the new issue details. Consider:
-     - **Direct relevance**: Does the commit describe the same problem or error?
+   - If found commits are provided, review each grouped commit in light of the input. Consider:
+     - **Direct relevance**: Does the commit describe the same problem or solution?
      - **Partial relevance**: Does it involve a similar context, component, or behavior that might relate?
-     - **Specificity**: Does it match key terms or conditions mentioned in the new commit?
+     - **Specificity**: Does it match key terms or conditions mentioned in the input?
+   - For grouped commits, combine the most relevant content from all chunks (prioritizing commitMessage and key content).
    - If multiple found commits are relevant, prioritize the most similar ones but include others that might still be useful, with brief reasoning.
    - If no found commits are a strong match, but some could still be related, note their limitations or potential connection.
- 
+
 3. **Output**:
 - If relevant past commits are found, return a response in this strict markdown format:
 
@@ -380,23 +378,20 @@ Your task is to analyze input and determine if any found commits in a vector dat
 
 **Most Relevant🔥**
 - **Reference:** https://github.com/{owner}/{repo}/commit/{sha}
-- **fileName**: {fileName}
-- **Content:** {content}
-- **Reason:** {brief explanation of why this is relevant}
+- **Files Changed:** {list of relevant fileNames}
+- **Commit Message:** {commitMessage}
+- **Content:** {combined most relevant content from all chunks of this commit}
+- **Reason:** {brief explanation of why this is relevant, considering all chunks}
 ---
+
+[Repeat for other relevant commits if needed]
 
 - If no relevant past commits are found (or none were provided), return:
    
-## SearchCommitsAgent  Report 🤖
+## SearchCommitsAgent Report 🤖
 
 There are no similar commits found.
     
-
-4. **Guidelines**:
-   - Be concise and clear in your summary.
-   - **Do not** suggest solutions unless explicitly requested by the user.
-   - **Do not** add commentary, explanations, or information beyond what is required in the response format.
----
 
 **input**: 
 {{context}}

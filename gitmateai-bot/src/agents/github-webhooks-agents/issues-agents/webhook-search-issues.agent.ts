@@ -4,9 +4,9 @@ import {getErrorMsg} from "../../../messages/messages.js";
 import SearchIssuesAgent from "../../common/issues-agents/search-issues.agent.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 
-export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues">, void> {
+export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
 
-    async handleEvent(event: Context<"issue_comment.created">): Promise<void> {
+    async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
             const issue = event.payload.issue;
@@ -35,5 +35,10 @@ export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues">, void> 
                 agentId: this.constructor.name
             })
         }
+    }
+
+
+    getService(): string {
+        return "issue-find-similar-issues";
     }
 }

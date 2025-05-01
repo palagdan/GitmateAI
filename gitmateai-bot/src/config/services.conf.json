@@ -1,0 +1,12 @@
+{
+  "owner": {
+    "repo": {
+      "automatedServices": [
+        "issue-summarize",
+        "issue-find-similar-issues",
+        "issue-find-similar-pull-requests",
+        "pr-label"
+      ]
+    }
+  }
+}

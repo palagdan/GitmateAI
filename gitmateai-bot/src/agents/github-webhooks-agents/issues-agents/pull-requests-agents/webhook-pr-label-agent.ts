@@ -7,14 +7,32 @@ import LLMQueryAgent from "../../../common/llm-query.agent.js";
 import {formatMessage, getErrorMsg} from "../../../../messages/messages.js";
 import CreateIssueCommentAgent from "../create-issue-comment.agent.js";
 
-export class WebhookPRLabelAgent extends LLMAgent<Context<"pull_request">, void> {
+export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Context<"issue_comment.created">, void> {
 
-    async handleEvent(event: Context<"pull_request">): Promise<void> {
+    async handleEvent(event: Context<"pull_request"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
         try {
-            const pr = event.payload.pull_request;
+
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
+
+            let pr: any;
+
+            if ("pull_request" in event.payload) {
+                pr = event.payload.pull_request
+            } else {
+                pr = event.payload.issue;
+            }
+
+
+            if (pr.labels && pr.labels.length > 0) {
+                await event.octokit.issues.removeAllLabels({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                });
+                this.agentLogger.info(`Removed existing labels from PR #${pr.number}`);
+            }
 
             const files = await event.octokit.pulls.listFiles({
                 owner,
@@ -72,6 +90,9 @@ export class WebhookPRLabelAgent extends LLMAgent<Context<"pull_request">, void>
         }
     }
 
+    getService(): string {
+        return "pr-label";
+    }
 }
 
 export default WebhookPRLabelAgent;
