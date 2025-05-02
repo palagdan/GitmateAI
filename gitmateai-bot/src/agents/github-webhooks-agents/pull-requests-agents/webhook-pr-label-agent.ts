@@ -1,11 +1,11 @@
 import {Context} from "probot";
 
 import {summarizeDiff} from "./utils.js";
-import {LLMAgent} from "../../../LLMAgent.js";
-import {PR_AGENT_PROMPTS} from "../../../../prompts.js";
-import LLMQueryAgent from "../../../common/llm-query.agent.js";
-import {formatMessage, getErrorMsg} from "../../../../messages/messages.js";
-import CreateIssueCommentAgent from "../create-issue-comment.agent.js";
+import {LLMAgent} from "../../LLMAgent.js";
+import {PR_AGENT_PROMPTS} from "../../../prompts.js";
+import LLMQueryAgent from "../../common/llm-query.agent.js";
+import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
+import CreateIssueCommentAgent from "../issues-agents/create-issue-comment.agent.js";
 
 export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Context<"issue_comment.created">, void> {
 

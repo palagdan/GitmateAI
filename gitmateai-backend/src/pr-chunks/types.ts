@@ -14,6 +14,7 @@ export enum PRContentType {
     Title = 'title',
     Description = 'description',
     Comment = 'comment',
+    Changes = 'changes',
 }
 
 export interface PRChunk {

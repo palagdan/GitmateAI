@@ -66,8 +66,6 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
                 agentsReports: messages.filter(m => m.role === "agent").map(m => m.content).join("\n\n"),
             });
 
-            console.log(prompt)
-
             const response = await llmQueryAgent.handleEvent(prompt);
 
             res.write(createTextEvent(response))

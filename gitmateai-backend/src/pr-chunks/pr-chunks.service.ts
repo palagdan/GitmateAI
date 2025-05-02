@@ -5,8 +5,6 @@ import {PRCommentDto} from "./dto/pr-comment.dto";
 import {CreatePRChunksDto} from "./dto/create-pr-chunks.dto";
 import {splitText} from "../utils/llm-utils";
 import {SearchChunksDto} from "../common/dto/search-chunks.dto";
-import {CreateIssueChunksDto} from "../issue-chunks/dto/create-issue-chunks.dto";
-import {IssueContentType} from "../issue-chunks/types";
 import {PRContentType} from "./types";
 
 @Injectable()
@@ -124,13 +122,13 @@ export class PRChunksService {
                 commentId: createPRChunksDto.commentId
             });
         } else if (createPRChunksDto.type == PRContentType.Title) {
-            await this.repository.deleteDescriptionByOwnerRepoPR({
+            await this.repository.deleteTitleByOwnerRepoPR({
                 owner: createPRChunksDto.owner,
                 repo: createPRChunksDto.repo,
                 prNumber: createPRChunksDto.prNumber
             });
         } else if (createPRChunksDto.type == PRContentType.Description) {
-            await this.repository.deleteTitleByOwnerRepoPR({
+            await this.repository.deleteDescriptionByOwnerRepoPR({
                 owner: createPRChunksDto.owner,
                 repo: createPRChunksDto.repo,
                 prNumber: createPRChunksDto.prNumber

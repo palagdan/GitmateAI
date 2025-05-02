@@ -57,7 +57,7 @@ export class PRChunksController {
     }
 
     @Put()
-    async update(updatePRChunksDto: CreatePRChunksDto) {
+    async update(@Body() updatePRChunksDto: CreatePRChunksDto) {
         return await this.prChunkService.update(updatePRChunksDto);
     }
 }

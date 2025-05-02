@@ -1,7 +1,6 @@
 import {Injectable, OnModuleInit} from "@nestjs/common";
 import {WeaviateService} from "../weaviate/weaviate.service";
 import {Filters} from "weaviate-client";
-import {Issue, IssueChunk, IssueComment, IssueContentType} from "../issue-chunks/types";
 import {PR, PRChunk, PRComment, PRContentType} from "./types";
 
 
@@ -98,7 +97,7 @@ export class PRChunksRepository implements OnModuleInit {
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
                 this.collection.filter.byProperty('prNumber').equal(prNumber),
-                this.collection.filter.byProperty('type').equal(IssueContentType.Title),
+                this.collection.filter.byProperty('type').equal(PRContentType.Title),
             ),
         );
     }
@@ -110,7 +109,7 @@ export class PRChunksRepository implements OnModuleInit {
                 this.collection.filter.byProperty('owner').equal(owner),
                 this.collection.filter.byProperty('repo').equal(repo),
                 this.collection.filter.byProperty('prNumber').equal(prNumber),
-                this.collection.filter.byProperty('type').equal(IssueContentType.Description),
+                this.collection.filter.byProperty('type').equal(PRContentType.Description),
             ),
         );
     }

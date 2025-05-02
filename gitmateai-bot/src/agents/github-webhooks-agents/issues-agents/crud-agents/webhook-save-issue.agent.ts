@@ -10,13 +10,13 @@ class WebhookSaveIssueAgent implements BaseAgent<Context<"issues">, void> {
             const issue = event.payload.issue;
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
-            const issue_number = issue.number;
+            const issueNumber = issue.number;
 
             await gitmateai.issueChunks.insert({
                 content: issue.title,
                 owner,
                 repo,
-                issueNumber: issue_number,
+                issueNumber: issueNumber,
                 author: issue.user.login,
                 type: IssueContentType.Title,
             });
@@ -24,12 +24,12 @@ class WebhookSaveIssueAgent implements BaseAgent<Context<"issues">, void> {
                 content: issue.body || "",
                 owner,
                 repo,
-                issueNumber: issue_number,
+                issueNumber: issueNumber,
                 author: issue.user.login,
                 type: IssueContentType.Description,
             });
 
-            logger.info(`Chunks for ${owner}/${repo}/${issue_number} of type ${IssueContentType.Title} and ${IssueContentType.Description} are inserted successfully!`);
+            logger.info(`Chunks for issue ${owner}/${repo}/${issueNumber} of type ${IssueContentType.Title} and ${IssueContentType.Description} are inserted successfully!`);
         } catch (error) {
             logger.error(`Error occurred: ${(error as Error).message}`);
         }

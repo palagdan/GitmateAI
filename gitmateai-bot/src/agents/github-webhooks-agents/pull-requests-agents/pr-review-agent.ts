@@ -1,7 +1,7 @@
-import {LLMAgent} from "../../../LLMAgent.js";
+import {LLMAgent} from "../../LLMAgent.js";
 import {Context} from "probot";
-import {isPullRequest} from "../../../../utils/github-utils.js";
-import {getErrorMsg} from "../../../../messages/messages.js";
+import {isPullRequest} from "../../../utils/github-utils.js";
+import {getErrorMsg} from "../../../messages/messages.js";
 
 
 function sleep(ms: number): Promise<void> {

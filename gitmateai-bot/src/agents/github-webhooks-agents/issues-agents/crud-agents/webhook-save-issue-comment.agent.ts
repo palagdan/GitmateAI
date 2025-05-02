@@ -11,7 +11,6 @@ class WebhookSaveIssueCommentAgent implements BaseAgent<Context<"issue_comment">
         const comment = event.payload.comment;
         const {owner, repo, issue_number} = event.issue();
         try{
-
             await gitmateai.issueChunks.insert({
                 content: comment.body,
                 owner: owner,
@@ -21,7 +20,7 @@ class WebhookSaveIssueCommentAgent implements BaseAgent<Context<"issue_comment">
                 type: IssueContentType.Comment,
                 commentId: comment.id
             });
-            logger.info(`Chunks for ${owner}/${repo}/${issue_number} of type ${IssueContentType.Comment} are saved successfully!`);
+            logger.info(`Chunks for issue ${owner}/${repo}/${issue_number} of type ${IssueContentType.Comment} are saved successfully!`);
         }catch (error){
             logger.error(`Error occurred: ${(error as Error).message}`);
         }

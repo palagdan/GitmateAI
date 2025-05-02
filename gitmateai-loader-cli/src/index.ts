@@ -3,7 +3,7 @@ import "dotenv/config";
 import { loadGitmateIgnore } from "./gitmate-ignore.js";
 import { fetchAndPushRepoContent } from "./github-code-loader.js";
 import logger from "./logger.js";
-import {fetchAndPushIssues} from "./github-issues-loader.js";
+import {fetchAndPushIssuesAndPRs} from "./github-issues-loader.js";
 import {getOrgRepositories, getRepositoriesForUser} from "./github-repos-loader.js";
 import {fetchAndPushCommits} from "./github-commits-loader.js";
 
@@ -30,7 +30,7 @@ program
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${orgName}/${repo}`);
             await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns);
-            await fetchAndPushIssues(orgName, repo);
+            await fetchAndPushIssuesAndPRs(orgName, repo);
             await fetchAndPushCommits(orgName, repo);
         }
     });
@@ -51,7 +51,7 @@ program
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${username}/${repo}`);
             await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
-            await fetchAndPushIssues(username, repo);
+            await fetchAndPushIssuesAndPRs(username, repo);
             await fetchAndPushCommits(username, repo);
         }
     });
@@ -65,8 +65,8 @@ program
         const ignorePatterns = loadGitmateIgnore();
         logger.info("Loaded .gitmateignore:", ignorePatterns);
         logger.info(`📂 Processing repository: ${username}/${repo}`);
-       // await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
-       // await fetchAndPushIssues(username, repo);
+        await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+        await fetchAndPushIssuesAndPRs(username, repo);
         await fetchAndPushCommits(username, repo);
     });
 

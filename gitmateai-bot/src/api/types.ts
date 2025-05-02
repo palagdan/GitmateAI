@@ -47,3 +47,28 @@ export interface CreateCommitChunks extends CreateRepoChunks {
     fileName: string,
     commitMessage: string,
 }
+
+export interface PR {
+    owner: string;
+    repo: string;
+    prNumber: number;
+}
+
+export interface PRComment extends PR {
+    commentId: number | undefined;
+}
+
+export interface CreatePRChunks extends CreateRepoChunks {
+    prNumber: number
+    type: PRContentType,
+    author: string,
+    commentId?: number ,
+}
+
+export enum PRContentType {
+    Title = 'title',
+    Description = 'description',
+    Comment = 'comment',
+    Changes = 'changes',
+}
+

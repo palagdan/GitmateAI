@@ -5,7 +5,7 @@ import {
     createCodeChunksSchema,
     createCommitChunksSchema,
     createConventionChunkSchema,
-    createIssueChunkSchema
+    createIssueChunkSchema, createPRChunkSchema
 } from "./schema";
 
 
@@ -46,6 +46,7 @@ export class WeaviateService implements OnModuleInit {
             createCodeChunksSchema(config),
             createConventionChunkSchema(config),
             createCommitChunksSchema(config),
+            createPRChunkSchema(config)
         ];
 
         for (const schema of schemas) {

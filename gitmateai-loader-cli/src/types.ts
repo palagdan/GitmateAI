@@ -1,7 +1,7 @@
 
 export interface Issue {
     content: string;
-    type: string;
+    type: IssueContentType;
     author: string;
     commentId: number;
     owner: string
@@ -19,5 +19,26 @@ export interface Commit {
     author: string
 }
 
-export interface PR extends Issue{
+export interface PR {
+    content: string;
+    type: PRContentType
+    author: string;
+    commentId: number;
+    owner: string
+    repo: string;
+    prNumber: number;
+}
+
+
+export enum IssueContentType {
+    Title = 'title',
+    Description = 'description',
+    Comment = 'comment',
+}
+
+export enum PRContentType {
+    Title = 'title',
+    Description = 'description',
+    Comment = 'comment',
+    Changes = 'changes',
 }

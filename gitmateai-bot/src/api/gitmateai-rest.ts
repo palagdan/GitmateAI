@@ -4,9 +4,9 @@ import {
     Content,
     CreateCodeChunks,
     CreateCommitChunks,
-    CreateIssueChunks,
+    CreateIssueChunks, CreatePRChunks,
     Issue,
-    IssueComment
+    IssueComment, PR, PRComment
 } from "./types.js";
 import {SearchQuery} from "../agents/common/types.js";
 
@@ -41,6 +41,36 @@ const gitmateai = {
             return await api.put('issue-chunks', updateIssueChunks);
         },
 
+    },
+
+    prChunks: {
+        async getAll() {
+            return await api.get("/pr-chunks");
+        },
+
+        async getByOwnerRepoIssue (pr: PR)  {
+            return await api.get(`/pr-chunks/${pr.prNumber}/${pr.prNumber}/${pr.prNumber}`);
+        },
+
+        async deleteByOwnerRepoIssue(pr: PR){
+            return await api.delete(`/pr-chunks/${pr.owner}/${pr.repo}/${pr.prNumber}`);
+        },
+
+        async deleteCommentByOwnerRepoIssueCommentId(prComment: PRComment){
+            return await api.delete(`/pr-chunks/${prComment.owner}/${prComment.repo}/${prComment.prNumber}/comments/${prComment.commentId}`);
+        },
+
+        async insert(createPRChunks: CreatePRChunks){
+            return await api.post('pr-chunks', createPRChunks);
+        },
+
+        async search(searchChunks: SearchQuery) {
+            return await api.post('pr-chunks/search', searchChunks);
+        },
+
+        async update(updatePRChunks: CreatePRChunks){
+            return await api.put('pr-chunks', updatePRChunks);
+        },
     },
 
     codeChunks: {
@@ -127,7 +157,6 @@ const gitmateai = {
         async search(searchCommitChunks: SearchQuery){
             return await api.post(`/commit-chunks/search`, searchCommitChunks);
         }
-
     }
 }
 

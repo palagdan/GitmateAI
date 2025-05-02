@@ -14,7 +14,7 @@ export class WebhookDeleteIssueAgent implements BaseAgent<Context<"issues">, voi
                 repo: repo,
                 issueNumber: issue_number,
             });
-            logger.info(`Chunks for ${owner}/${repo}/${issue_number} are deleted successfully!`);
+            logger.info(`Chunks for issue ${owner}/${repo}/${issue_number} are deleted successfully!`);
         }catch (error){
             logger.error(`Error occurred: ${(error as Error).message}`);
         }
