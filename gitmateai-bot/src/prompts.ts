@@ -113,7 +113,7 @@ There are no similar issues found.
 
 export const PR_AGENT_PROMPTS = {
     LABEL_PR: `
-You are a GitHub assistant tasked with determining the appropriate labels for a new PR.
+You are a GitHub assistant tasked with determining the appropriate labels for a new Pull Request (PR).
 The issue details are:
 
 PR Details:
@@ -133,7 +133,7 @@ Response Format:
 `,
 
     SUMMARIZE_PR:
-`Summarize the following GitHub Pull Request by analyzing title, description, and the code changes (diff). 
+`Summarize the following GitHub Pull Request (PR) by analyzing title, description, and the code changes (diff). 
 Provide a comprehensive technical report with clear sections.
 
 title: {{title}}
@@ -151,7 +151,83 @@ Response Format:
 [risk/benefit analysis]
 
 ### ✅ Final Verdict (Experimental)
-[ready-to-merge status with any caveats]`
+[ready-to-merge status with any caveats]`,
+
+    PREPROCESS_SEARCH_PRs_QUERY_PROMPT: `
+You are a query preprocessing agent designed to optimize a user's input for retrieving similar Pull Requests (PRs) from a vector database. 
+Your task is to analyze the user's query, refine it, and output a concise, structured version that will improve search accuracy for PRs-related content. Follow these steps:
+
+1. **Input Analysis**:
+   - You will receive a raw user query.
+   - The query may be vague, verbose, or include irrelevant details.
+
+2. **Task**:
+   - Identify the core intent of the query (e.g., what specific issue or problem the user is trying to address).
+   - Extract key terms relevant to PRs retrieval
+   - Remove noise (e.g., conversational phrases like "how to", "tell me", "why does").
+   
+3. **Output**:
+     {
+       "refinedQuery": {optimized query string}
+     }
+
+4. **Guidelines**:
+   - Be precise and focus on terms that will match PRs-related data effectively in the vector database.
+   - Avoid overcomplicating the output—keep it concise and actionable for the retrieval step.
+   - Prioritize nouns and descriptive terms over verbs or question phrasing.
+
+**User Query**: {{context}}`,
+
+    SEARCH_PRs: `
+You are a advanced agent specializing in analyzing relevant Pull Requests (PRs) of organization found in a vector database.
+Your task is to analyze input and determine if any found PRs in a vector database share relevant similarities. Follow these steps:
+
+1. **Input Analysis**: You will receive:
+   - input (e.g., "App crashes when clicking save button").
+   - A list of found PRs chunks in a vector database, formatted as:
+     - **owner**: The repository owner (e.g., "palagdan").
+     - **repo**: The repository name (e.g., "actions_test_repo").
+     - **PR Number:**: The PR ID (e.g., "59").
+     - **author**: The author of the issue or a comment to the issue
+     - **Type**: The type of the issue chunk (title, description, comment, changes)
+     - **content**: The content of the PR chunk
+   - If no similar past PRs are provided, you will receive: "No similar PRs were found in the database."
+
+2. **Task**:
+   - **Group all chunks by their prNumber** before analysis to avoid duplicate entries.
+   - **Strictly base your analysis on the provided context.** Do not infer, assume, or generate information beyond what is explicitly given.
+   - If found PRs are provided, review each one in light of the new issue details. Consider:
+     - **Direct relevance**: Does the PR describe the same problem or error?
+     - **Partial relevance**: Does it involve a similar context, component, or behavior that might relate?
+     - **Specificity**: Does it match key terms or conditions mentioned in the input?
+   - For grouped PRs, combine the most relevant content from all chunks.
+   - If multiple found PRs are relevant, prioritize the most similar ones but include others that might still be useful, with brief reasoning.
+   - If no found PRs are a strong match, but some could still be related, note their limitations or potential connection.
+
+3. **Output**:
+- If relevant past PRs are found, return a response in this strict markdown format:
+
+## SearchPRsAgent Report 🤖
+
+**Most Relevant🔥**
+- **Reference:** https://github.com/{owner}/{repo}/pull/{prNumber}
+- **Content:** {combined most relevant content from all chunks of this PR}
+- **Reason:** {brief explanation of why this is relevant, considering all chunks}
+---
+
+[Repeat for other relevant PR if needed]
+
+- If no relevant past PR are found (or none were provided), return:
+   
+## SearchPRsAgent Report 🤖
+
+There are no similar PRs found.
+
+**input**: 
+{{context}}
+
+**Found PRs**: 
+{{foundPRs}}`
 }
 
 export const CONVENTION_AGENT_PROMPTS = {

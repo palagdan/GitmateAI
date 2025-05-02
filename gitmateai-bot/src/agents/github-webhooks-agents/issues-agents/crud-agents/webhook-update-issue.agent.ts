@@ -8,11 +8,13 @@ class WebhookUpdateIssueAgent implements BaseAgent<Context<"issues">, void>{
 
     async handleEvent(event: Context<"issues">): Promise<void> {
         try{
-            const {owner, repo, issue_number} = event.issue();
-            const issue: any = await event.octokit.issues.get({ owner, repo, issue_number });
+            const issue = event.payload.issue;
+            const owner = event.payload.repository.owner.login;
+            const repo = event.payload.repository.name;
+            const issue_number = issue.number
 
             await gitmateai.issueChunks.update({
-                content: issue.data.title,
+                content: issue.title,
                 owner: owner,
                 repo: repo,
                 issueNumber: issue_number,
@@ -20,7 +22,7 @@ class WebhookUpdateIssueAgent implements BaseAgent<Context<"issues">, void>{
                 type: IssueContentType.Title,
             });
             await gitmateai.issueChunks.update({
-                content: issue.data.description,
+                content: issue.body,
                 owner: owner,
                 repo: repo,
                 issueNumber: issue_number,
@@ -28,7 +30,7 @@ class WebhookUpdateIssueAgent implements BaseAgent<Context<"issues">, void>{
                 type: IssueContentType.Description,
             });
 
-            logger.info(`Chunks for ${owner}/${repo}/${issue_number} of type ${IssueContentType.Title} and ${IssueContentType.Description} are updated successfully!`);
+            logger.info(`Chunks for issue ${owner}/${repo}/${issue_number} of type ${IssueContentType.Title} and ${IssueContentType.Description} are updated successfully!`);
         }catch (error){
             logger.error(`Error occurred: ${(error as Error).message}`);
         }

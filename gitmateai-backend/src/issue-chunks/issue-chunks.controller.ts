@@ -30,8 +30,8 @@ export class IssueChunksController {
     }
 
     @Get(':owner/:repo/:issueNumber/comments/:commentId')
-    async getByOwnerRepoIssueCommentId(@Param() issue: IssueCommentDto) {
-        return this.issueChunkService.findByOwnerRepoIssueCommentId(issue);
+    async getByOwnerRepoIssueCommentId(@Param() commentDto: IssueCommentDto) {
+        return this.issueChunkService.findByOwnerRepoIssueCommentId(commentDto);
     }
 
     @Get(':owner/:repo/:issueNumber/title')

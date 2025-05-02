@@ -1,10 +1,10 @@
-import {LLMAgent} from "../../../LLMAgent.js";
+import {LLMAgent} from "../../LLMAgent.js";
 import {Context} from "probot";
-import CreateIssueCommentAgent from "../create-issue-comment.agent.js";
+import CreateIssueCommentAgent from "../issues-agents/create-issue-comment.agent.js";
 import {summarizeDiff} from "./utils.js";
-import {PR_AGENT_PROMPTS} from "../../../../prompts.js";
-import LLMQueryAgent from "../../../common/llm-query.agent.js";
-import {getErrorMsg} from "../../../../messages/messages.js";
+import {PR_AGENT_PROMPTS} from "../../../prompts.js";
+import LLMQueryAgent from "../../common/llm-query.agent.js";
+import {getErrorMsg} from "../../../messages/messages.js";
 
 export class WebhookSummarizePRAgent extends LLMAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
 
