@@ -21,7 +21,7 @@ export class PRChunksController {
     }
 
     @Get(':owner/:repo/:prNumber/comments/:commentId')
-    async getByOwnerRepoPRCommentId(prCommentDto: PRCommentDto) {
+    async getByOwnerRepoPRCommentId(@Param() prCommentDto: PRCommentDto) {
         return await this.prChunkService.findByOwnerRepoPRCommentId(prCommentDto);
     }
 
