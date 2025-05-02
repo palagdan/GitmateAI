@@ -50,7 +50,7 @@ export class PRChunksController {
         return await this.prChunkService.insert(createPRChunksDto);
     }
 
-    @Post()
+    @Post("/search")
     async search(@Body() searchPRChunksDto: SearchChunksDto) {
         return await this.prChunkService.search(searchPRChunksDto);
 
