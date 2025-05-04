@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run copy-config && tsc",
     "start": "node ./dist/index.js",
-    "copy-config": "../scripts/copy_files_by_format.sh . dist/ .gitmateignore",
+    "copy-config": "../scripts/copy_files_by_format.sh . dist/ .gitmateaiignore",
     "clean": "rm -rf node_modules && rm -rf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

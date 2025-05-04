@@ -1,5 +1,5 @@
 import {octokit, api} from "./api.js";
-import {shouldIgnore} from "./gitmate-ignore.js";
+import {shouldIgnore} from "./gitmateai-ignore.js";
 import logger from "./logger.js";
 
 export async function fetchAndPushFileContent(owner: string, repo: string, filePath: string) {

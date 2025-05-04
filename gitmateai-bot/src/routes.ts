@@ -9,7 +9,6 @@ const routes = (app, getRouter) => {
 
     routerBot.post("/copilot", express.json(), async (req: Request, res: Response) => {
         const copilotOrchestratorAgent= new CopilotOrchestratorAgent();
-     //   res.setHeader('Content-Type', 'text/plain');
         res.setHeader('Content-Type', 'text/html');
         res.write(createAckEvent());
         await copilotOrchestratorAgent.handleEvent({req, res})

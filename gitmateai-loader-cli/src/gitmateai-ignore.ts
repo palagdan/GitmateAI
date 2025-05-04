@@ -3,10 +3,10 @@ import fs from "fs";
 import logger from "./logger.js";
 
 
-export function loadGitmateIgnore(): string[] {
-    const ignoreFilePath = path.resolve(".gitmateignore");
+export function loadGitmateAIIgnore(): string[] {
+    const ignoreFilePath = path.resolve(".gitmateaiignore");
     if (!fs.existsSync(ignoreFilePath)) {
-        logger.info(".gitmateignore not found, proceeding without ignore rules.");
+        logger.info(".gitmateaiignore not found, proceeding without ignore rules.");
         return [];
     }
 

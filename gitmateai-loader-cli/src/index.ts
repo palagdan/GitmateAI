@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import "dotenv/config";
-import { loadGitmateIgnore } from "./gitmate-ignore.js";
+import { loadGitmateAIIgnore } from "./gitmateai-ignore.js";
 import { fetchAndPushRepoContent } from "./github-code-loader.js";
 import logger from "./logger.js";
 import {fetchAndPushIssuesAndPRs} from "./github-issues-loader.js";
@@ -21,8 +21,8 @@ program
     .action(async (orgName) => {
         logger.info(`Fetching repositories for organization: ${orgName}`);
 
-        const ignorePatterns = loadGitmateIgnore();
-        logger.info("Loaded .gitmateignore:", ignorePatterns);
+        const ignorePatterns = loadGitmateAIIgnore();
+        logger.info("Loaded .gitmateaiignore:", ignorePatterns);
 
         const repositories = await getOrgRepositories(orgName);
         logger.info(`Found ${repositories.length} repositories.`);
@@ -42,8 +42,8 @@ program
     .action(async (username) => {
         logger.info(`Fetching repositories for user: ${username}`);
 
-        const ignorePatterns = loadGitmateIgnore();
-        logger.info("Loaded .gitmateignore:", ignorePatterns);
+        const ignorePatterns = loadGitmateAIIgnore();
+        logger.info("Loaded .gitmateaiignore:", ignorePatterns);
 
         const repositories = await getRepositoriesForUser(username);
         logger.info(`Found ${repositories.length} repositories.`);
@@ -62,8 +62,8 @@ program
     .argument("<name>", "Organization name or the user's username")
     .argument("<repoName>", "The repository name")
     .action(async (username, repo) => {
-        const ignorePatterns = loadGitmateIgnore();
-        logger.info("Loaded .gitmateignore:", ignorePatterns);
+        const ignorePatterns = loadGitmateAIIgnore();
+        logger.info("Loaded .gitmateaiignore:", ignorePatterns);
         logger.info(`📂 Processing repository: ${username}/${repo}`);
         await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
         await fetchAndPushIssuesAndPRs(username, repo);
