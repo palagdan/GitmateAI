@@ -127,15 +127,31 @@ export class IssueChunksRepository implements OnModuleInit {
     }
 
     async search(content: string, filters) {
-        const { limit, fields } = filters;
+        const { limit, fields, exclude } = filters;
         const finalLimit = limit ?? 10;
         const returnProperties = fields ?? ['content', 'owner', 'repo', 'issueNumber', 'commentId', 'type', 'author'];
 
-        const result = await this.collection.query.nearText(content, {
-            returnProperties: returnProperties,
-            limit: finalLimit,
-            returnMetadata: "all"
-        });
+        let result;
+
+        if(exclude){
+             result = await this.collection.query.nearText(content, {
+                returnProperties: returnProperties,
+                limit: finalLimit,
+                returnMetadata: "all",
+                filters:  Filters.or(
+                    this.collection.filter.byProperty('owner').notEqual(exclude.owner),
+                    this.collection.filter.byProperty('repo').notEqual(exclude.repo),
+                    this.collection.filter.byProperty('issueNumber').notEqual(exclude.issueNumber)
+                )
+            });
+        }else{
+            result = await this.collection.query.nearText(content, {
+                returnProperties: returnProperties,
+                limit: finalLimit,
+                returnMetadata: "all",
+            });
+        }
+
         return result.objects;
     }
 }

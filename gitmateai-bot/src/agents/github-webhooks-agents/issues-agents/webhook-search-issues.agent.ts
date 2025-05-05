@@ -17,7 +17,12 @@ export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues"> | Conte
 
             const response = await searchIssuesAgent.handleEvent({
                 content: issueText,
-                limit: 20
+                limit: 20,
+                exclude: {
+                    owner: event.payload.repository.owner.login,
+                    repo: event.payload.repository.name,
+                    issueNumber: issue.number
+                }
             });
 
             await createIssueCommentAgent.handleEvent({

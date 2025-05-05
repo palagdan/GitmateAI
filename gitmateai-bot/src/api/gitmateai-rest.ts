@@ -8,7 +8,7 @@ import {
     Issue,
     IssueComment, PR, PRComment
 } from "./types.js";
-import {SearchQuery} from "../agents/common/types.js";
+import {SearchIssueQuery, SearchQuery} from "../agents/common/types.js";
 
 
 const gitmateai = {
@@ -33,7 +33,7 @@ const gitmateai = {
             return await api.post('issue-chunks', createIssueChunks);
         },
 
-        async search(searchChunks: SearchQuery) {
+        async search(searchChunks: SearchIssueQuery) {
             return await api.post('issue-chunks/search', searchChunks);
         },
 

@@ -6,6 +6,7 @@ import {IssueDto} from './dto/issue.dto';
 import {SearchChunksDto} from "../common/dto/search-chunks.dto";
 import {IssueContentType} from "./types";
 import {IssueCommentDto} from "./dto/issue-comment.dto";
+import {SearchIssueChunksDto} from "./dto/search-issue-chunks.dto";
 
 @Injectable()
 export class IssueChunksService {
@@ -123,10 +124,10 @@ export class IssueChunksService {
         return await this.insert(createIssueChunksDto);
     }
 
-    async search(searchIssueChunksDto: SearchChunksDto) {
-        const {content, limit, fields} = searchIssueChunksDto;
+    async search(searchIssueChunksDto: SearchIssueChunksDto) {
+        const {content, limit, fields, exclude} = searchIssueChunksDto;
         this.logger.log(`Searching issue chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
-        const result  = await this.repository.search(content, {limit, fields});
+        const result  = await this.repository.search(content, {limit, fields, exclude});
         this.logger.log(`Returning ${result.length} search results`);
         return result;
     }

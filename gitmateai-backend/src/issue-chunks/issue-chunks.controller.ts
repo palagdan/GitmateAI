@@ -5,6 +5,7 @@ import {IssueDto} from "./dto/issue.dto";
 import {SearchChunksDto} from "../common/dto/search-chunks.dto";
 import {ApiBody, ApiOperation, ApiParam, ApiResponse} from "@nestjs/swagger";
 import {IssueCommentDto} from "./dto/issue-comment.dto";
+import {SearchIssueChunksDto} from "./dto/search-issue-chunks.dto";
 
 
 @Controller('issue-chunks')
@@ -72,7 +73,7 @@ export class IssueChunksController {
     @ApiBody({ type: SearchChunksDto, description: 'Search criteria' })
     @ApiResponse({ status: 200, description: 'Search results' })
     @Post('search')
-    async search(@Body() searchIssueChunksDto: SearchChunksDto ) {
+    async search(@Body() searchIssueChunksDto: SearchIssueChunksDto ) {
         return await this.issueChunkService.search(searchIssueChunksDto);
     }
 

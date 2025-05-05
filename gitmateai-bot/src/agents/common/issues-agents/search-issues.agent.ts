@@ -2,12 +2,12 @@ import {LLMAgent} from "../../LLMAgent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
-import {SearchQuery} from "../types.js";
+import {SearchIssueQuery, SearchQuery} from "../types.js";
 
 class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
 
-    async handleEvent(input: SearchQuery): Promise<string> {
-        const {content, limit, fields} = input;
+    async handleEvent(input: SearchIssueQuery): Promise<string> {
+        const {content, limit, fields, exclude} = input;
         const preprocessSearchIssuePrompt = this.createPrompt(ISSUE_AGENT_PROMPTS.PREPROCESS_SEARCH_ISSUES_QUERY_PROMPT, {context: content});
         const llmQueryAgent = new LLMQueryAgent();
         const response = await llmQueryAgent.handleEvent(preprocessSearchIssuePrompt);
@@ -17,7 +17,8 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
         const issues = await gitmateai.issueChunks.search({
             content: refinedQuery,
             limit: limit,
-            fields: fields
+            fields: fields,
+            exclude: exclude
         });
 
         const formattedIssues = this.formatSimilarIssues(issues.data);
