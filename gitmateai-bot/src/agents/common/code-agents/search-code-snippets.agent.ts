@@ -1,10 +1,10 @@
-import {LLMAgent} from "../../LLMAgent.js";
+import {LlmAgent} from "../../llm-agent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {CODE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 import {SearchQuery} from "../types.js";
 
-class SearchCodeSnippetsAgent extends LLMAgent<SearchQuery, string> {
+class SearchCodeSnippetsAgent extends LlmAgent<SearchQuery, string> {
 
     async handleEvent(input: SearchQuery): Promise<string> {
         const {content, limit, fields} = input;

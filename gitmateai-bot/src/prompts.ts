@@ -18,11 +18,6 @@ Your task is to analyze the user's query, refine it, and output a concise, struc
        "refinedQuery": {optimized query string}
      }
 
-4. **Guidelines**:
-   - Be precise and focus on terms that will match issue-related data effectively in the vector database.
-   - Avoid overcomplicating the output—keep it concise and actionable for the retrieval step.
-   - Prioritize nouns and descriptive terms over verbs or question phrasing.
-
 **User Query**: {{context}}`,
 
     SEARCH_ISSUES: `
@@ -108,6 +103,7 @@ There are no similar issues found.
         {
             "labels": ["label1", "label2", ...],
             "explanation": "Concise justification for the selected labels or empty list."
+        }
         `,
 }
 

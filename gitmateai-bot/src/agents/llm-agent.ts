@@ -1,7 +1,7 @@
 import {BaseAgent} from "./base.agent.js";
 import logger from "../logger.js";
 
-export abstract class LLMAgent<I, O> implements BaseAgent<I, O> {
+export abstract class LlmAgent<I, O> implements BaseAgent<I, O> {
 
     protected agentLogger = logger.child({ agent: this.constructor.name });
 

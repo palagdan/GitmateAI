@@ -1,9 +1,9 @@
-import {LLMAgent} from "../../LLMAgent.js";
+import {LlmAgent} from "../../llm-agent.js";
 import {CODE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 
 
-class PreprocessSearchCodeQueryAgent extends LLMAgent<string, string>{
+class PreprocessSearchCodeQueryAgent extends LlmAgent<string, string>{
 
     async handleEvent(query: string): Promise<string> {
         const prompt = this.createPrompt(CODE_AGENT_PROMPTS.PREPROCESS_SEARCH_CODE_QUERY_PROMPT, {query: query});

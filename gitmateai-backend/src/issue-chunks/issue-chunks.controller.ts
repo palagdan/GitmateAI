@@ -61,9 +61,9 @@ export class IssueChunksController {
         return await this.issueChunkService.deleteCommentByOwnerRepoIssueCommentId(issueCommentDto);
     }
 
-    @ApiOperation({ summary: 'Insert a new issue chunks' })
-    @ApiBody({ type: CreateIssueChunksDto, description: 'Issue chunk data' })
-    @ApiResponse({ status: 201, description: 'Issue chunk created' })
+    @ApiOperation({ summary: 'Insert issue data' })
+    @ApiBody({ type: CreateIssueChunksDto, description: 'Issue data' })
+    @ApiResponse({ status: 201, description: 'Issue chunks created' })
     @Post()
     async insert(@Body() createIssueChunksDto: CreateIssueChunksDto) {
         return await this.issueChunkService.insert(createIssueChunksDto);

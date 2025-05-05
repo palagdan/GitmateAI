@@ -1,10 +1,10 @@
 import {Context} from "probot";
-import {LLMAgent} from "../../LLMAgent.js";
+import {LlmAgent} from "../../llm-agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import SearchIssuesAgent from "../../common/issues-agents/search-issues.agent.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 
-export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
+export class WebhookSearchIssuesAgent extends LlmAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
 
     async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();

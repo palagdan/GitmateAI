@@ -1,4 +1,4 @@
-import {LLMAgent} from "../../LLMAgent.js";
+import {LlmAgent} from "../../llm-agent.js";
 import {Context} from "probot";
 import {isPullRequest} from "../../../utils/github-utils.js";
 import {getErrorMsg} from "../../../messages/messages.js";
@@ -8,7 +8,7 @@ function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export class PrReviewAgent extends LLMAgent<Context, void> {
+export class PrReviewAgent extends LlmAgent<Context, void> {
 
     async handleEvent(event): Promise<void> {
         const {owner, repo, issue_number} = event.issue();

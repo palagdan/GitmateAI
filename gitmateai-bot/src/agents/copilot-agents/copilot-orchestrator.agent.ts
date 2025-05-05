@@ -6,13 +6,13 @@ import CopilotAgentsFactory from "./copilot-agents-factory.js";
 import logger from "../../logger.js";
 import {CopilotOrchestratorAgentInput} from "./types.js";
 import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
-import {LLMAgent} from "../LLMAgent.js";
+import {LlmAgent} from "../llm-agent.js";
 import LLMQueryAgent from "../common/llm-query.agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 
 
 
-class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, void> {
+class CopilotOrchestratorAgent extends LlmAgent<CopilotOrchestratorAgentInput, void> {
 
     async handleEvent(input: CopilotOrchestratorAgentInput): Promise<void> {
         const {req, res} = input;

@@ -1,10 +1,10 @@
-import {LLMAgent} from "../LLMAgent.js";
+import {LlmAgent} from "../llm-agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
 import LLMQueryAgent from "../common/llm-query.agent.js";
 
 
-class CopilotRetrieveAgentsAgent extends LLMAgent<string, any> {
+class CopilotRetrieveAgentsAgent extends LlmAgent<string, any> {
 
     async handleEvent(input: string): Promise<any> {
         try {
