@@ -4,7 +4,7 @@ import {CODE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 import {SearchQuery} from "../types.js";
 
-class SearchCodeSnippetsAgent extends LlmAgent<SearchQuery, string> {
+class SearchCodeAgent extends LlmAgent<SearchQuery, string> {
 
     async handleEvent(input: SearchQuery): Promise<string> {
         const {content, limit, fields} = input;
@@ -51,4 +51,4 @@ class SearchCodeSnippetsAgent extends LlmAgent<SearchQuery, string> {
     }
 }
 
-export default SearchCodeSnippetsAgent;
+export default SearchCodeAgent;

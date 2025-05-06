@@ -3,9 +3,9 @@ import {Context} from "probot";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import SearchCodeAgent from "../../common/code-agents/search-code.agent.js";
-import SearchCommitsAgent from "../../common/commits-agents/search-commits-agent.js";
 
-export class WebhookSearchCommitsAgent extends LlmAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
+
+export class WebhookSearchCodeAgent extends LlmAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
 
     async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
@@ -15,9 +15,9 @@ export class WebhookSearchCommitsAgent extends LlmAgent<Context<"issues"> | Cont
 
             const issueText = `${issue.title}\n\n${issue.body || ""}`;
 
-            const searchCommitsAgent = new SearchCommitsAgent();
+            const searchCodeAgent = new SearchCodeAgent();
 
-            const response = await searchCommitsAgent.handleEvent({
+            const response = await searchCodeAgent.handleEvent({
                 content: issueText,
                 limit: 20
             });
@@ -44,4 +44,4 @@ export class WebhookSearchCommitsAgent extends LlmAgent<Context<"issues"> | Cont
     }
 }
 
-export default WebhookSearchCommitsAgent;
+export default WebhookSearchCodeAgent;

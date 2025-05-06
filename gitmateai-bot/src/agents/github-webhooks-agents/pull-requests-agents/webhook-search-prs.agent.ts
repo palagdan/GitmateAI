@@ -37,7 +37,6 @@ export class WebhookSearchPRsAgent extends LlmAgent<Context<"issues"> | Context<
         }
     }
 
-
     getService(): string {
         return "issue-find-similar-pull-requests";
     }

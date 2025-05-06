@@ -1,6 +1,6 @@
 import {LlmAgent} from "../llm-agent.js";
 import {CopilotAgentInput} from "./types.js";
-import SearchCodeSnippetsAgent from "../common/code-agents/search-code-snippets.agent.js";
+import SearchCodeAgent from "../common/code-agents/search-code.agent.js";
 import {getErrorMsg} from "../../messages/messages.js";
 
 class CopilotSearchCodeAgent extends LlmAgent<CopilotAgentInput, string> {
@@ -8,7 +8,7 @@ class CopilotSearchCodeAgent extends LlmAgent<CopilotAgentInput, string> {
     async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{
             const {content} = input;
-            const codeSnippetsAgent: SearchCodeSnippetsAgent = new SearchCodeSnippetsAgent();
+            const codeSnippetsAgent: SearchCodeAgent = new SearchCodeAgent();
             return  await codeSnippetsAgent.handleEvent({
                 content: content,
                 limit: 20

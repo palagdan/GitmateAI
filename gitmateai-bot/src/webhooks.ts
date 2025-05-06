@@ -35,7 +35,7 @@ import WebhookUpdatePRCommentAgent
 import WebhookDeletePRCommentAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/crud-agents/webhook-delete-pr-comment.agent.js";
 import logger from "./logger.js";
-import searchCodeSnippetsAgent from "./agents/common/code-agents/search-code-snippets.agent.js";
+import {WebhookSearchCodeAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-search-code.agent.js";
 
 const issueLabelAgent = new WebhookIssueLabelAgent();
 const summarizeIssueAgent = new WebhookSummarizeIssueAgent();
@@ -55,6 +55,7 @@ const searchPRsAgent = new WebhookSearchPRsAgent()
 const savePRCommentAgent = new WebhookSavePRCommentAgent();
 const updatePRCommentAgent = new WebhookUpdatePRCommentAgent();
 const deletePRCommentAgent = new WebhookDeletePRCommentAgent();
+const searchCodeAgent = new WebhookSearchCodeAgent();
 
 const webhooks = (app) => {
 
@@ -144,7 +145,7 @@ const webhooks = (app) => {
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-code", async(context: Context)=> {
         if(!isPullRequest(context)){
-            //await searchCodeSnippetsAgent.handleEvent(context);
+            await searchCodeAgent.handleEvent(context);
         }
     })
 
