@@ -20,6 +20,8 @@ services:
       LLM_MODEL_NAME: "${LLM_API_NAME:-gpt-4o-mini}"
       PREFIX: "${PREFIX:-gitmateai}"
     restart: unless-stopped
+    volumes:
+      - ./github-config.json:/app/dist/config/github-config.json
 
   gitmateai-backend:
     image: ghcr.io/palagdan/gitmateai-backend:latest
