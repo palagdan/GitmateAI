@@ -1,6 +1,6 @@
 <!-- commands_button -->
 <details>
-<summary>📋 Click to see available commands</summary>
+<summary><h4>📋 Click to see available commands</h4></summary>
 
 ### 🤖 Issue Command List
 
