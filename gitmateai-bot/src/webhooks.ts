@@ -22,7 +22,7 @@ import {isPullRequest} from "./utils/github-utils.js";
 import WebhookSummarizePRAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/webhook-summarize-pr.agent.js";
 import WebhookSearchCommitsAgent from "./agents/github-webhooks-agents/issues-agents/webhook-search-commits.agent.js";
-import {servicesConfig} from "./config/config.js";
+import {githubConfig} from "./config/config.js";
 import WebhookSavePRAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/crud-agents/webhook-save-pr.agent.js";
 import WebhookUpdatePRAgent
@@ -160,14 +160,14 @@ const webhooks = (app) => {
 const run = async (context: Context, agent) => {
     const repo = context.repo();
     try {
-        if (!servicesConfig[repo.owner] ||
-            !servicesConfig[repo.owner][repo.repo] ||
-            !servicesConfig[repo.owner][repo.repo].automatedServices) {
+        if (!githubConfig[repo.owner] ||
+            !githubConfig[repo.owner][repo.repo] ||
+            !githubConfig[repo.owner][repo.repo].automatedServices) {
             logger.info(`No configuration found for ${repo.owner}/${repo.repo}`);
             return;
         }
 
-        const repoConfig = servicesConfig[repo.owner][repo.repo];
+        const repoConfig = githubConfig[repo.owner][repo.repo];
         if (repoConfig.automatedServices.includes(agent.getService())) {
             await agent.handleEvent(context);
         }
