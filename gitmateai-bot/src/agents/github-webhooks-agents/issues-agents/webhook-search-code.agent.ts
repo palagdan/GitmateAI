@@ -40,7 +40,7 @@ export class WebhookSearchCodeAgent extends LlmAgent<Context<"pull_request"> | C
     }
 
     getService(): string {
-        return "issue-commit-search";
+        return "issue-code-search";
     }
 }
 

@@ -44,6 +44,6 @@ export class WebhookSearchIssuesAgent extends LlmAgent<Context<"issues"> | Conte
 
 
     getService(): string {
-        return "issue-find-similar-issues";
+        return "issue-issues-search";
     }
 }

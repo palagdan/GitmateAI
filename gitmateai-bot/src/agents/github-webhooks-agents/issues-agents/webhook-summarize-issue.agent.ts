@@ -49,7 +49,7 @@ export class WebhookSummarizeIssueAgent extends LlmAgent<Context<"issues"> | Con
     }
 
     getService(): string {
-        return "issue_summarize";
+        return "issue-summarize";
     }
 }
 

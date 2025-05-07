@@ -9,11 +9,11 @@ the development process.
 
 Application consists of 5 modules:
 
-- `gitmateai-backend` - Manages information chunks for issues, pull requests (PRs), code base, rules, and conventions.
+- `gitmateai-backend` - Manages information chunks for issues, pull requests (PRs), commits, code base, and conventions.
 - `gitmateai-bot` - Github bot that assists issue tracking, pull request management, and code reviews, streamlining the
   development process.
 - `gitmateai-loader-cli` - A CLI tool that retrieves content from specific organizations, repositories, or users and
-  populates the backend database with this information.
+  populates the vector database with this information.
 - `weaviate` - An open-source vector database that stores both objects and vectors, enabling the combination of vector
   search with structured filtering. It offers the fault tolerance and scalability of a cloud-native database.
 - `ollama` - : A lightweight, extensible framework for building and running language models on a local machine. It
@@ -69,29 +69,73 @@ npm run start
 4. After registering your GitHub App, you'll be redirected to install the app on any repositories. At the same time, you
    can check your local .env and notice it will be populated with values GitHub sends us in the course of that redirect.
 5. Stop the server in your terminal
-6. Configure environment variables in `.env`. Most of the variables will be set automatically when you register your bot with Probot, 
-but some of the following variables need to be set manually:
+6. Configure environment variables in `.env`. Most of the variables will be set automatically when you register your bot
+   with Probot,
+   but some of the following variables need to be set manually:
 
    <a id="gitmateai-bot-env"></a>
 
-   | Variable Name          | Description                                                                                   |
-   |------------------------|-----------------------------------------------------------------------------------------------|
-   | `WEBHOOK_PROXY_URL`    | URL for tunneling GitHub webhooks(it is needed only for development)                          |
-   | `WEBHOOK_SECRET`       | Secret key for webhook validation                                                             | 
-   | `APP_ID`               | GitHub App identifier                                                                         | 
-   | `APP_NAME`             | Name of the GitHub App                                                                        | 
-   | `PRIVATE_KEY`          | Private key for GitHub App auth                                                               | 
-   | `GITHUB_CLIENT_ID`     | GitHub OAuth client ID                                                                        | 
-   | `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret                                                                    | 
-   | `LLM_API_KEY`          | API key for the LLM service                                                                   | 
-   | `LLM_MODEL_NAME`       | Name of the LLM model                                                                         | 
-   | `BACKEND_URL`          | URL for the backend API                                                                       | 
-   | `PREFIX`               | This prefix will be used for bot specific commands(e.g. /gitmateai help, prefix is gitmateai) | 
+   | Variable Name            | Description                                                                                   |
+   |--------------------------|-----------------------------------------------------------------------------------------------|
+   | `WEBHOOK_PROXY_URL`      | URL for tunneling GitHub webhooks(it is needed only for development)                          |
+   | `WEBHOOK_SECRET`         | Secret key for webhook validation                                                             | 
+   | `APP_ID`                 | GitHub App identifier                                                                         | 
+   | `APP_NAME`               | Name of the GitHub App                                                                        | 
+   | `ORGANIZATION_NAME`      | GitHub Organization name                                                                      |
+   | `PRIVATE_KEY`            | Private key for GitHub App auth                                                               | 
+   | `GITHUB_CLIENT_ID`       | GitHub OAuth client ID                                                                        | 
+   | `GITHUB_CLIENT_SECRET`   | GitHub OAuth client secret                                                                    | 
+   | `LLM_API_KEY`            | API key for the LLM service                                                                   | 
+   | `LLM_MODEL_NAME`         | Name of the LLM model                                                                         | 
+   | `BACKEND_URL`            | URL for the backend API                                                                       | 
+   | `PREFIX`                 | This prefix will be used for bot specific commands(e.g. /gitmateai help, prefix is gitmateai) | 
 
 7. Start the server in you terminal with `npm run start`:
 
+#### Guide to enable automated task for organization repositories
+[`github-config.json`](./github-config.json) file contains the configuration for the bot. You can set automated tasks for each repository.
+To do this, you need to replace the owner with your organization name, repo with the repository name for what you want to configure automated tasks
+and `automatedServices` property with the list of automated tasks from the tasks list. 
+
+```json
+{
+  "owner": {
+    "repo": {
+      "automatedServices": [
+        "task name"
+      ]
+    }
+  }
+}
+```
+
+Issue automated tasks:
+
+| Task                  | Description                     |
+|-----------------------|---------------------------------|
+| `issue-label`         | Assign a label to the issue     |
+| `issue-code-search`   | Search similar to issue code    |
+| `issue-commit-search` | Search similar to issue commits |
+| `issue-pr-search`     | Search similar to issue PRs     |
+| `issue-issues-search` | Search similar to issue issues  |
+| `issue-summarize`     | Summarize issue                 |
+
+
+Pull Request automated tasks:
+
+| Task           | Description              |
+|----------------|--------------------------|
+| `pr-label`     | Assign a label to the PR |
+| `pr-summarize` | Summarize Pull Request   |
+
+
+
+
+
 #### Guide to enable copilot assistance for the bot
-1. Visit `Settings -> Developer settings -> GitHub Apps -> Your GitHub App -> General` and find Callback URL. Put https://github.com/ to it.
+
+1. Visit `Settings -> Developer settings -> GitHub Apps -> Your GitHub App -> General` and find Callback URL.
+   Put https://github.com/ to it.
 2. Visit `Permissions and events -> Account permissions -> Copilot` and set to read-only.
 3. Visit `Copilot` and enable it by clicking on checkboxes.
 4. Set `Add Type` to agent
@@ -152,8 +196,11 @@ If you wish to exclude specific file extensions from being retrieved and stored,
 
 ## Production Setup
 
-1. You should create `.env` file in the root directory and set the environment variables from [gitmateai-bot](#gitmateai-bot-env) and [gitmateai-backend](#gitmateai-backend-env) sections.
-2. Then use [`docker-compose.prod.yml`](./docker-compose.prod.yml), which sets up all necessary services. Run the following command:
+1. You should create `.env` file in the root directory and set the environment variables
+   from [gitmateai-bot](#gitmateai-bot-env) and [gitmateai-backend](#gitmateai-backend-env) sections.
+2. Then use [`docker-compose.prod.yml`](./docker-compose.prod.yml), which sets up all necessary services. Run the
+   following command:
+
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
