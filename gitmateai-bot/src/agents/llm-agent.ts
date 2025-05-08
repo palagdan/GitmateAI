@@ -1,5 +1,7 @@
 import {BaseAgent} from "./base.agent.js";
 import logger from "../logger.js";
+import OpenAI from "openai";
+import llmClient from "../llm-client.js";
 
 export abstract class LLMAgent<I, O> implements BaseAgent<I, O> {
 
@@ -24,5 +26,15 @@ export abstract class LLMAgent<I, O> implements BaseAgent<I, O> {
         }
 
         return prompt;
+    }
+
+    protected async generateCompletion(prompt: string): Promise<string> {
+        const params: OpenAI.Chat.ChatCompletionCreateParams = {
+            messages: [{ role: "user", content: prompt }],
+            model: process.env.LLM_MODEL_NAME || "gpt-4o-mini",
+        };
+
+        const chatCompletion = await llmClient.chat.completions.create(params);
+        return chatCompletion.choices[0]?.message?.content?.trim() || "{}";
     }
 }

@@ -3,7 +3,6 @@ import { LLMAgent } from "../../llm-agent.js";
 import {  getErrorMsg } from "../../../messages/messages.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
-import LLMQueryAgent from "../../common/llm-query.agent.js";
 
 export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
     async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
@@ -33,8 +32,8 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues"> | Context
                 availableLabels: availableLabels.data.map(label => label.name).join(", ")
             });
 
-            const llmQueryAgent = new LLMQueryAgent();
-            const result = await llmQueryAgent.handleEvent(prompt);
+
+            const result = await this.generateCompletion(prompt);
             const parsedResult = JSON.parse(result);
             const retrievedLabels = parsedResult.labels;
             const explanation = parsedResult.explanation;

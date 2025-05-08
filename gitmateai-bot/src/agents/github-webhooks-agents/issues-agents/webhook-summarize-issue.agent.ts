@@ -1,9 +1,10 @@
 import { Context } from "probot";
 import {LLMAgent} from "../../llm-agent.js";
-import SummarizeIssueAgent from "../../common/summarize-issue.agent.js";
+
 import logger from "../../../logger.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
+import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 
 
 export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
@@ -29,8 +30,12 @@ export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues"> | Con
 
             const context = `${issueTitle}\n${issueDescription}\n${commentsText}`;
 
-            const summarizeIssueAgent = new SummarizeIssueAgent();
-            const response = await summarizeIssueAgent.handleEvent(context);
+            const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.SUMMARIZE_ISSUE, {
+                context: context
+            });
+
+            const response = await this.generateCompletion(prompt);
+
             await createIssueCommentAgent.handleEvent({
                 context: event,
                 value: response,

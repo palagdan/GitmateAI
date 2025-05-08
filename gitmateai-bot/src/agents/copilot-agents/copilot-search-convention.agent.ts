@@ -1,6 +1,5 @@
 import {CopilotAgentInput} from "./types.js";
 import SearchConventionAgent from "../common/conventions-agents/search-convention.agent.js";
-import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import {getErrorMsg} from "../../messages/messages.js";
 import {LLMAgent} from "../llm-agent.js";
 

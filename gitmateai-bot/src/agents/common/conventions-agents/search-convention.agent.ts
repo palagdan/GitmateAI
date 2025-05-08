@@ -1,19 +1,18 @@
 import {LLMAgent} from "../../llm-agent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {CONVENTION_AGENT_PROMPTS} from "../../../prompts.js";
-import LLMQueryAgent from "../llm-query.agent.js";
 import {SearchQuery} from "../types.js";
 
 class SearchConventionAgent extends LLMAgent<SearchQuery, string>{
 
     async handleEvent(input: SearchQuery): Promise<string> {
         const {content, limit, fields} = input;
-        const llmQueryAgent = new LLMQueryAgent();
+
 
         const preprocessedSearchConvention = this.createPrompt(CONVENTION_AGENT_PROMPTS.PREPROCESS_SEARCH_CONVENTION_QUERY_PROMPT, {
             userQuery: content
         })
-        const response = await llmQueryAgent.handleEvent(preprocessedSearchConvention);
+        const response = await this.generateCompletion(preprocessedSearchConvention);
         const parsedResponse = JSON.parse(response);
         const refinedQuery = parsedResponse.refinedQuery;
 
@@ -34,7 +33,7 @@ class SearchConventionAgent extends LLMAgent<SearchQuery, string>{
             codeSectionsCount: conventions.data?.length || 0
         }, "Search completed successfully");
 
-        return await llmQueryAgent.handleEvent(prompt);
+        return await this.generateCompletion(prompt);
     }
 
     private formatConventions(conventions: any[]): string {

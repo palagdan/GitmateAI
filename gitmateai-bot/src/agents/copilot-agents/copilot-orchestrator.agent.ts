@@ -7,7 +7,6 @@ import logger from "../../logger.js";
 import {CopilotOrchestratorAgentInput} from "./types.js";
 import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
 import {LLMAgent} from "../llm-agent.js";
-import LLMQueryAgent from "../common/llm-query.agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 
 
@@ -59,14 +58,12 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
 
             }
 
-            const llmQueryAgent = new LLMQueryAgent();
-
             const prompt = this.createPrompt(COPILOT_AGENT_PROMPTS.ORCHESTRATOR, {
                 userQuery: content,
                 agentsReports: messages.filter(m => m.role === "agent").map(m => m.content).join("\n\n"),
             });
 
-            const response = await llmQueryAgent.handleEvent(prompt);
+            const response = await this.generateCompletion(prompt);
 
             res.write(createTextEvent(response))
         } catch (error) {

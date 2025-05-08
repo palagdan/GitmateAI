@@ -3,8 +3,7 @@ import {Context} from "probot";
 import {summarizeDiff} from "./utils.js";
 import {LLMAgent} from "../../llm-agent.js";
 import {PR_AGENT_PROMPTS} from "../../../prompts.js";
-import LLMQueryAgent from "../../common/llm-query.agent.js";
-import {formatMessage, getErrorMsg} from "../../../messages/messages.js";
+import {getErrorMsg} from "../../../messages/messages.js";
 import CreateIssueCommentAgent from "../issues-agents/create-issue-comment.agent.js";
 
 export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Context<"issue_comment.created">, void> {
@@ -54,8 +53,7 @@ export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Con
                 availableLabels: availableLabels.data.map((label) => label.name).join(", ")
             });
 
-            const llmQueryAgent = new LLMQueryAgent();
-            const labels = await llmQueryAgent.handleEvent(prompt);
+            const labels = await this.generateCompletion(prompt);
             const parsedLabels = JSON.parse(labels);
             const retrievedLabels = parsedLabels.labels;
             const explanation = parsedLabels.explanation;
