@@ -1,10 +1,10 @@
 
 import OpenAI from "openai";
 import llmClient from "../../llm-client.js";
-import {LlmAgent} from "../llm-agent.js";
+import {LLMAgent} from "../llm-agent.js";
 
 
-class LLMQueryAgent extends LlmAgent<string, string> {
+class LLMQueryAgent extends LLMAgent<string, string> {
 
     async handleEvent(prompt: string): Promise<string> {
 

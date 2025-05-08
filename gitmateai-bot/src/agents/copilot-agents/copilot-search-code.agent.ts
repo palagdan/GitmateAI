@@ -1,9 +1,9 @@
-import {LlmAgent} from "../llm-agent.js";
+import {LLMAgent} from "../llm-agent.js";
 import {CopilotAgentInput} from "./types.js";
 import SearchCodeAgent from "../common/code-agents/search-code.agent.js";
 import {getErrorMsg} from "../../messages/messages.js";
 
-class CopilotSearchCodeAgent extends LlmAgent<CopilotAgentInput, string> {
+class CopilotSearchCodeAgent extends LLMAgent<CopilotAgentInput, string> {
 
     async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{

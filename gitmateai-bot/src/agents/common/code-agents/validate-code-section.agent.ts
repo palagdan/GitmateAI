@@ -1,4 +1,4 @@
-import {LlmAgent} from "../../llm-agent.js";
+import {LLMAgent} from "../../llm-agent.js";
 import {CODE_AGENT_PROMPTS, CONVENTION_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 
@@ -8,7 +8,7 @@ interface CodeSectionValidatorAgentInput {
     conventions: string;
 }
 
-class ValidateCodeSectionAgent extends LlmAgent<CodeSectionValidatorAgentInput, string> {
+class ValidateCodeSectionAgent extends LLMAgent<CodeSectionValidatorAgentInput, string> {
 
     async handleEvent(input: CodeSectionValidatorAgentInput): Promise<string> {
         const { content, conventions } = input;

@@ -1,8 +1,8 @@
-import {LlmAgent} from "../llm-agent.js";
+import {LLMAgent} from "../llm-agent.js";
 import {CopilotAgentInput} from "./types.js";
 import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
 
-class CopilotListAvailableAgentsAgent extends LlmAgent<CopilotAgentInput, any> {
+class CopilotListAvailableAgentsAgent extends LLMAgent<CopilotAgentInput, any> {
     async handleEvent(input: CopilotAgentInput): Promise<any> {
         try {
             return `## CopilotListAvailableServicesAgent Report 🤖` + "\n\n" +

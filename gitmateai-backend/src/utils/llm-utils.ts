@@ -9,7 +9,6 @@ export const splitText = async (text: string, chunkSize = 512, chunkOverlap = 50
         chunkSize,
         chunkOverlap,
     });
-    console.log(splitter.separators);
     return await splitter.splitText(text);
 }
 

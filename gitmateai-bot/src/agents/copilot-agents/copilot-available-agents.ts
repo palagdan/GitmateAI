@@ -20,10 +20,11 @@ export const copilotAvailableAgents = {
     },
     SEARCH_CONVENTIONS_AGENT: {
         name: "search_conventions_agent",
-        description: "Retrieves coding rules, style guidelines, or conventions relevant to a project or language based on the user’s query. " +
-            "Useful for ensuring compliance with standards or understanding organization best practices.",
+        description: `Finds documented rules, conventions, guidelines, or standard practices in ${process.env.ORGANIZATION_NAME} organization. ` +
+            "Use this when looking for how things are supposed to be done, official processes, or agreed-upon ways of working. " +
+            "Helpful for questions about roles, approvals, workflows, coding standards, or any established procedures.",
         arguments: []
-    },
+    }  ,
     LIST_AVAILABLE_AGENTS_AGENT: {
         name: "list_available_agents_agent",
         description: "Provides a list of all available agents along with their names and descriptions. Helps users understand what functionalities " +

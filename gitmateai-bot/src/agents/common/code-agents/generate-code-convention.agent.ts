@@ -1,10 +1,10 @@
-import {LlmAgent} from "../../llm-agent.js";
+import {LLMAgent} from "../../llm-agent.js";
 import {CONVENTION_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 
 
 
-class GenerateCodeConventionAgent extends LlmAgent<string, string> {
+class GenerateCodeConventionAgent extends LLMAgent<string, string> {
 
     async handleEvent(content: string): Promise<string> {
         const prompt = this.createPrompt(CONVENTION_AGENT_PROMPTS.RETRIEVE_CODE_CONVENTIONS, {

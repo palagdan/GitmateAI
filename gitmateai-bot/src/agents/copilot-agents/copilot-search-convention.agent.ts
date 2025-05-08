@@ -2,9 +2,9 @@ import {CopilotAgentInput} from "./types.js";
 import SearchConventionAgent from "../common/conventions-agents/search-convention.agent.js";
 import {createTextEvent} from "@copilot-extensions/preview-sdk";
 import {getErrorMsg} from "../../messages/messages.js";
-import {LlmAgent} from "../llm-agent.js";
+import {LLMAgent} from "../llm-agent.js";
 
-class CopilotSearchConventionAgent extends LlmAgent<CopilotAgentInput, string> {
+class CopilotSearchConventionAgent extends LLMAgent<CopilotAgentInput, string> {
 
     async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{

@@ -6,31 +6,29 @@ import {Filters} from "weaviate-client";
 @Injectable()
 export class ConventionChunksRepository implements OnModuleInit {
 
-    private conventionChunksCollection: any;
+    private collection: any;
 
     constructor(private readonly weaviateService: WeaviateService) {
     }
 
     async onModuleInit() {
-        this.conventionChunksCollection = this.weaviateService.getClient().collections.get('ConventionChunks');
+        this.collection = this.weaviateService.getClient().collections.get('ConventionChunks');
     }
 
    async findAll() {
-       const result = await this.conventionChunksCollection.query.fetchObjects({
+       const result = await this.collection.query.fetchObjects({
            returnMetadata: "all"
        })
        return result.objects;
    }
 
    async deleteAll() {
-       await this.weaviateService.getClient().collections.deleteMany(
-           this.findAll()
-       );
+
    }
 
     async insert(conventionChunk: ConventionChunk) {
         const { content, source } = conventionChunk;
-        return await this.conventionChunksCollection.data.insert({
+        return await this.collection.data.insert({
             content: content,
             source: source
         });
@@ -39,9 +37,9 @@ export class ConventionChunksRepository implements OnModuleInit {
     async search(content: string, filters){
         const { limit, fields } = filters;
         const finalLimit = limit ?? 10;
-        const returnProperties = fields ?? ['content'];
+        const returnProperties = fields ?? undefined;
 
-        const result = await this.conventionChunksCollection.query.nearText(content, {
+        const result = await this.collection.query.nearText(content, {
             returnProperties: returnProperties,
             limit: finalLimit,
             returnMetadata: "all"
@@ -50,9 +48,9 @@ export class ConventionChunksRepository implements OnModuleInit {
     }
 
     async findBySource(source: string) {
-        const result = await this.conventionChunksCollection.query.fetchObjects({
+        const result = await this.collection.query.fetchObjects({
             filters: Filters.and(
-                this.conventionChunksCollection.filter.byProperty('source').equal(source)
+                this.collection.filter.byProperty('source').equal(source)
             ),
             returnMetadata: "all"
         })
@@ -60,9 +58,9 @@ export class ConventionChunksRepository implements OnModuleInit {
     }
 
     async deleteBySource(source: string) {
-        const result = await this.conventionChunksCollection.query.deleteMany({
+        const result = await this.collection.query.deleteMany({
             filters: Filters.and(
-                this.conventionChunksCollection.filter.byProperty('source').equal(source)
+                this.collection.filter.byProperty('source').equal(source)
             ),
             returnMetadata: "all"
         })

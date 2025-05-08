@@ -1,11 +1,11 @@
-import {LlmAgent} from "../../llm-agent.js";
+import {LLMAgent} from "../../llm-agent.js";
 import {SearchQuery} from "../types.js";
 import { COMMIT_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 
 
-class SearchCommitsAgent extends LlmAgent<SearchQuery, string> {
+class SearchCommitsAgent extends LLMAgent<SearchQuery, string> {
 
     async handleEvent(input: SearchQuery) : Promise<string> {
         const {content, limit, fields} = input;

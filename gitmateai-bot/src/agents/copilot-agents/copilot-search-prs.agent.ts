@@ -1,10 +1,10 @@
 
-import {LlmAgent} from "../llm-agent.js";
+import {LLMAgent} from "../llm-agent.js";
 import {CopilotAgentInput} from "./types.js";
 import {getErrorMsg} from "../../messages/messages.js";
 import SearchPRsAgent from "../common/pull-requests-agents/search-prs.agent.js";
 
-export class CopilotSearchPRsAgent extends LlmAgent<CopilotAgentInput, string> {
+export class CopilotSearchPRsAgent extends LLMAgent<CopilotAgentInput, string> {
 
     async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{

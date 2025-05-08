@@ -1,10 +1,10 @@
-import {LlmAgent} from "../../llm-agent.js";
+import {LLMAgent} from "../../llm-agent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {CONVENTION_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 import {SearchQuery} from "../types.js";
 
-class SearchConventionAgent extends LlmAgent<SearchQuery, string>{
+class SearchConventionAgent extends LLMAgent<SearchQuery, string>{
 
     async handleEvent(input: SearchQuery): Promise<string> {
         const {content, limit, fields} = input;
@@ -40,8 +40,8 @@ class SearchConventionAgent extends LlmAgent<SearchQuery, string>{
     private formatConventions(conventions: any[]): string {
          return conventions
              .map((chunk, index) => {
-                 const {owner, repo, filePath, content} = chunk.properties || {};
-                 return `**${index + 1}.**Content:** ${content || "No content available"}`;
+                 const {content, source} = chunk.properties || {};
+                 return `**${index + 1}.**Content:** ${content || "No content available"}\n**Source:** ${source || "No source available"}`;
              })
              .join("\n\n");
     }

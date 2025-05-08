@@ -1,10 +1,10 @@
-import {LlmAgent} from "../llm-agent.js";
+import {LLMAgent} from "../llm-agent.js";
 import {CopilotAgentInput} from "./types.js";
 import {getErrorMsg} from "../../messages/messages.js";
 import SearchCommitsAgent from "../common/commits-agents/search-commits-agent.js";
 
 
-export class CopilotSearchCommitsAgent extends LlmAgent<CopilotAgentInput, string> {
+export class CopilotSearchCommitsAgent extends LLMAgent<CopilotAgentInput, string> {
 
     async handleEvent(input: CopilotAgentInput): Promise<string> {
         try{

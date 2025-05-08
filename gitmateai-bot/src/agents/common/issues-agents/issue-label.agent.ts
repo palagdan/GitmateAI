@@ -1,4 +1,4 @@
-import {LlmAgent} from "../../llm-agent.js";
+import {LLMAgent} from "../../llm-agent.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import LLMQueryAgent from "../llm-query.agent.js";
 
@@ -8,7 +8,7 @@ interface LabelContext {
     availableLabels: string[],
 }
 
-export class IssueLabelAgent extends LlmAgent<LabelContext, string[]> {
+export class IssueLabelAgent extends LLMAgent<LabelContext, string[]> {
 
     async handleEvent(context: LabelContext): Promise<string[]> {
         const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.LABEL_ISSUE, {
