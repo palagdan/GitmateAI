@@ -6,6 +6,7 @@ import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
@@ -35,7 +36,7 @@ export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues"> | Con
                 context: context
             });
 
-            const response = await this.generateCompletion(prompt);
+            const response = await llmClient.generateCompletion(prompt);
 
             await createIssueCommentAgent.handleEvent({
                 context: event,

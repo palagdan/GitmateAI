@@ -10,6 +10,7 @@ import {LLMAgent} from "../llm-agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 import {Agent} from "../../agent.decorator.js";
 import {Inject} from "typedi";
+import {llmClient} from "../../llm-client.js";
 
 
 @Agent()
@@ -67,7 +68,7 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
                 agentsReports: messages.filter(m => m.role === "agent").map(m => m.content).join("\n\n"),
             });
 
-            const response = await this.generateCompletion(prompt);
+            const response = await llmClient.generateCompletion(prompt);
 
             res.write(createTextEvent(response))
         } catch (error) {

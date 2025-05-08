@@ -4,6 +4,7 @@ import {  getErrorMsg } from "../../../messages/messages.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
@@ -37,7 +38,7 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues"> | Context
             });
 
 
-            const result = await this.generateCompletion(prompt);
+            const result = await llmClient.generateCompletion(prompt);
             const parsedResult = JSON.parse(result);
             const retrievedLabels = parsedResult.labels;
             const explanation = parsedResult.explanation;

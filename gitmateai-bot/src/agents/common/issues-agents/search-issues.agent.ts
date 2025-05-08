@@ -3,6 +3,7 @@ import gitmateai from "../../../api/gitmateai-rest.js";
 import {ISSUE_AGENT_PROMPTS} from "../../../prompts.js";
 import {SearchIssueQuery, SearchQuery} from "../types.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
@@ -10,7 +11,7 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
     async handleEvent(input: SearchIssueQuery): Promise<string> {
         const {content, limit, fields, exclude} = input;
         const preprocessSearchIssuePrompt = this.createPrompt(ISSUE_AGENT_PROMPTS.PREPROCESS_SEARCH_ISSUES_QUERY_PROMPT, {context: content});
-        const response = await this.generateCompletion(preprocessSearchIssuePrompt);
+        const response = await llmClient.generateCompletion(preprocessSearchIssuePrompt);
         const parsedResponse = JSON.parse(response);
         const refinedQuery = parsedResponse.refinedQuery;
 
@@ -33,7 +34,7 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
         }, "Search completed successfully");
 
 
-        return await this.generateCompletion(prompt);
+        return await llmClient.generateCompletion(prompt);
     }
 
     private formatSimilarIssues(similarIssues: any[]): string {

@@ -2,6 +2,7 @@ import {LLMAgent} from "../llm-agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
 import {Agent} from "../../agent.decorator.js";
+import {llmClient} from "../../llm-client.js";
 
 @Agent()
 class CopilotRetrieveAgentsAgent extends LLMAgent<string, any> {
@@ -13,7 +14,7 @@ class CopilotRetrieveAgentsAgent extends LLMAgent<string, any> {
                 userInput: input
             });
 
-            const response = await this.generateCompletion(prompt);
+            const response = await llmClient.generateCompletion(prompt);
             const result = JSON.parse(response);
             this.agentLogger.info(`Matched ${result.agents.length} agent(s)`);
             return result.agents;

@@ -3,6 +3,7 @@ import {SearchQuery} from "../types.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {PR_AGENT_PROMPTS} from "../../../prompts.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 class SearchPRsAgent extends LLMAgent<SearchQuery, string> {
@@ -11,7 +12,7 @@ class SearchPRsAgent extends LLMAgent<SearchQuery, string> {
         const {content, limit, fields} = input;
         const preprocessSearchIssuePrompt = this.createPrompt(PR_AGENT_PROMPTS.PREPROCESS_SEARCH_PRs_QUERY_PROMPT, {context: content});
 
-        const response = await this.generateCompletion(preprocessSearchIssuePrompt);
+        const response = await llmClient.generateCompletion(preprocessSearchIssuePrompt);
         const parsedResponse = JSON.parse(response);
         const refinedQuery = parsedResponse.refinedQuery;
 
@@ -33,7 +34,7 @@ class SearchPRsAgent extends LLMAgent<SearchQuery, string> {
         }, "Search completed successfully");
 
 
-        return await this.generateCompletion(prompt);
+        return await llmClient.generateCompletion(prompt);
     }
 
     private formatSimilarPRs(similarPRs: any[]): string {

@@ -6,6 +6,7 @@ import {PR_AGENT_PROMPTS} from "../../../prompts.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import CreateIssueCommentAgent from "../issues-agents/create-issue-comment.agent.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Context<"issue_comment.created">, void> {
@@ -55,7 +56,7 @@ export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Con
                 availableLabels: availableLabels.data.map((label) => label.name).join(", ")
             });
 
-            const labels = await this.generateCompletion(prompt);
+            const labels = await llmClient.generateCompletion(prompt);
             const parsedLabels = JSON.parse(labels);
             const retrievedLabels = parsedLabels.labels;
             const explanation = parsedLabels.explanation;

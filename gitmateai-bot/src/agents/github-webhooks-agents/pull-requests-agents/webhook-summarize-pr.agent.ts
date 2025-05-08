@@ -5,6 +5,7 @@ import {summarizeDiff} from "./utils.js";
 import {PR_AGENT_PROMPTS} from "../../../prompts.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 export class WebhookSummarizePRAgent extends LLMAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
@@ -47,7 +48,7 @@ ${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff sum
                 diff: context
             });
 
-            const result = await this.generateCompletion(prompt);
+            const result = await llmClient.generateCompletion(prompt);
 
             await createIssueCommentAgent.handleEvent({
                 context: event,

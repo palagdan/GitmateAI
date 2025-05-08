@@ -3,6 +3,7 @@ import gitmateai from "../../../api/gitmateai-rest.js";
 import {CODE_AGENT_PROMPTS} from "../../../prompts.js";
 import {SearchQuery} from "../types.js";
 import {Agent} from "../../../agent.decorator.js";
+import {llmClient} from "../../../llm-client.js";
 
 @Agent()
 class SearchCodeAgent extends LLMAgent<SearchQuery, string> {
@@ -10,7 +11,7 @@ class SearchCodeAgent extends LLMAgent<SearchQuery, string> {
     async handleEvent(input: SearchQuery): Promise<string> {
         const {content, limit, fields} = input;
         const preprocessedSearchCodeSnippets = this.createPrompt(CODE_AGENT_PROMPTS.PREPROCESS_SEARCH_CODE_QUERY_PROMPT, {context: content});
-        const response = await this.generateCompletion(preprocessedSearchCodeSnippets);
+        const response = await llmClient.generateCompletion(preprocessedSearchCodeSnippets);
         const parsedResponse = JSON.parse(response);
         const refinedQuery = parsedResponse.refinedQuery;
 
@@ -30,7 +31,7 @@ class SearchCodeAgent extends LLMAgent<SearchQuery, string> {
             codeChunksCount: codeSnippets.data?.length || 0
         }, "Search completed successfully");
 
-        return await this.generateCompletion(prompt);
+        return await llmClient.generateCompletion(prompt);
     }
 
     private formatCodeSections(codeSections: any[]): string {
