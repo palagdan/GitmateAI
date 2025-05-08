@@ -38,7 +38,6 @@ export const copilotAvailableAgents = {
             "given problem description provided by the user. ",
         arguments: []
     },
-
 };
 
 export const availableCopilotAgentsToString = () => {
@@ -46,7 +45,45 @@ export const availableCopilotAgentsToString = () => {
     Object.values(copilotAvailableAgents).forEach(agent => {
         result += `**Agent**: ${agent.name}\n\n`;
         result += `**Description**: ${agent.description}\n\n`;
-        result += `**Arguments**: ${agent.arguments} \n\n`;
+        result += `---\n\n`
+    });
+    return result.trim();
+}
+
+
+export const availableHelpers = {
+    PR_SEARCH: {
+        name: "🔍 Pull Request Explorer",
+        description: "Find existing PRs related to your task → see how teammates solved similar problems",
+    },
+    ISSUE_SEARCH: {
+        name: "🐞 Issue Investigator",
+        description: "Discover similar bugs & reported issues → avoid duplicating work",
+    },
+    CODE_SEARCH: {
+        name: "💻 Code Snippet Finder",
+        description: "Get relevant examples from our codebase → perfect for \"how-to\" questions",
+    },
+    GUIDELINES_SEARCH: {
+        name: "📜 Team Playbook",
+        description: "Find coding standards & workflows → the official way we do things",
+    },
+    COMMIT_SEARCH: {
+        name: "🕰️ Change Historian",
+        description: "See how past fixes were implemented → learn from commit history",
+    },
+    HELP_MENU: {
+        name: "❓ Help Center",
+        description: "See everything I can help with → your quick reference guide",
+    }
+};
+
+
+export const availableHelpersToString = () => {
+    let result = '';
+    Object.values(availableHelpers).forEach(helper => {
+        result += `**${helper.name}**\n\n`;
+        result += `${helper.description}\n\n`;
         result += `---\n\n`
     });
     return result.trim();

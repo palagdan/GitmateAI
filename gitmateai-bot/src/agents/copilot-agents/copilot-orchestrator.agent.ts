@@ -5,7 +5,7 @@ import CopilotRetrieveAgentsAgent from "./copilot-retrieve-agents.agent.js";
 import CopilotAgentsFactory from "./copilot-agents-factory.js";
 import logger from "../../logger.js";
 import {CopilotOrchestratorAgentInput} from "./types.js";
-import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
+import {availableCopilotAgentsToString, availableHelpersToString} from "./copilot-available-agents.js";
 import {LLMAgent} from "../llm-agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
 import {Agent} from "../../agent.decorator.js";
@@ -38,14 +38,13 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
             const retrievedAgents = await this.retrieveAgentsAgent.handleEvent(content);
 
             if(retrievedAgents.length == 0) {
-                res.write(createTextEvent("### Oops! 😔 I couldn’t find any agents matching your request.\n\n"));
-                res.write(createTextEvent(`Available agents are:\n\n${availableCopilotAgentsToString()}`));
+                res.write(createTextEvent("### Sorry, I couldn't find what you're looking for. 😔\n\n"));
+                res.write(createTextEvent(`Here are the available options:\n\n${availableHelpersToString()}\n\n`));
                 return;
             }
 
-            res.write(createTextEvent(`### 🔍 Found ${retrievedAgents.length} matching agent${retrievedAgents.length !== 1 ? 's' : ''}\n\n` +
-                retrievedAgents.map(agent => `- ${agent.name}`).join('\n\n') + '\n\n'));
-
+            res.write(createTextEvent("### 🤖 Working on it...\n\n"));
+            res.write(createTextEvent("Hang tight! I’m gathering the information you need.\n\n"));
 
             const agents = CopilotAgentsFactory.createAgents(retrievedAgents);
             for (const {agent, params} of agents) {
