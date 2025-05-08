@@ -4,7 +4,9 @@ import CreateIssueCommentAgent from "../issues-agents/create-issue-comment.agent
 import {summarizeDiff} from "./utils.js";
 import {PR_AGENT_PROMPTS} from "../../../prompts.js";
 import {getErrorMsg} from "../../../messages/messages.js";
+import {Agent} from "../../../agent.decorator.js";
 
+@Agent()
 export class WebhookSummarizePRAgent extends LLMAgent<Context<"pull_request"> | Context<"issue_comment.created">, void> {
 
     async handleEvent(event:  Context<"pull_request"> | Context<"issue_comment.created">): Promise<void> {

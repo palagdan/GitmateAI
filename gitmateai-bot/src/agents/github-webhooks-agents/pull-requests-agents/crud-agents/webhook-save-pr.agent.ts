@@ -3,7 +3,9 @@ import { Context } from "probot";
 import gitmateai from "../../../../api/gitmateai-rest.js";
 import logger from "../../../../logger.js";
 import {IssueContentType, PRContentType} from "../../../../api/types.js";
+import {Agent} from "../../../../agent.decorator.js";
 
+@Agent()
 class WebhookSavePRAgent implements BaseAgent<Context<"pull_request">, void> {
 
     async handleEvent(event: Context<"pull_request">): Promise<void> {

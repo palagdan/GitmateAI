@@ -3,8 +3,15 @@ import {Context} from "probot";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import SearchCommitsAgent from "../../common/commits-agents/search-commits-agent.js";
+import {Agent} from "../../../agent.decorator.js";
+import {Inject} from "typedi";
 
+
+@Agent()
 export class WebhookSearchCommitsAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
+
+    @Inject()
+    private searchCommitsAgent: SearchCommitsAgent;
 
     async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
@@ -14,9 +21,7 @@ export class WebhookSearchCommitsAgent extends LLMAgent<Context<"issues"> | Cont
 
             const issueText = `${issue.title}\n\n${issue.body || ""}`;
 
-            const searchCommitsAgent = new SearchCommitsAgent();
-
-            const response = await searchCommitsAgent.handleEvent({
+            const response = await this.searchCommitsAgent.handleEvent({
                 content: issueText,
                 limit: 20
             });

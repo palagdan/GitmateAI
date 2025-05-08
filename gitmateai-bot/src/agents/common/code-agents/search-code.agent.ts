@@ -2,7 +2,9 @@ import {LLMAgent} from "../../llm-agent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {CODE_AGENT_PROMPTS} from "../../../prompts.js";
 import {SearchQuery} from "../types.js";
+import {Agent} from "../../../agent.decorator.js";
 
+@Agent()
 class SearchCodeAgent extends LLMAgent<SearchQuery, string> {
 
     async handleEvent(input: SearchQuery): Promise<string> {

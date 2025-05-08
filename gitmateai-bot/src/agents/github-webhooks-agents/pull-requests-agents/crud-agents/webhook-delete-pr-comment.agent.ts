@@ -3,8 +3,10 @@ import {Context} from "probot";
 import gitmateai from "../../../../api/gitmateai-rest.js";
 import {PRContentType} from "../../../../api/types.js";
 import logger from "../../../../logger.js";
+import {Agent} from "../../../../agent.decorator.js";
 
 
+@Agent()
 class WebhookDeletePRCommentAgent implements BaseAgent<Context<"issue_comment.deleted">, void>{
 
     async handleEvent(event: Context<"issue_comment.deleted">): Promise<void> {

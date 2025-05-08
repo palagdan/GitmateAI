@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import webhooks from "./webhooks.js";
 import routes from "./routes.js";
 
+import 'reflect-metadata'
+
 dotenv.config()
 
 

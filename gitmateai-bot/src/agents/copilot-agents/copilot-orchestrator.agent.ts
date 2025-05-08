@@ -8,10 +8,15 @@ import {CopilotOrchestratorAgentInput} from "./types.js";
 import {availableCopilotAgentsToString} from "./copilot-available-agents.js";
 import {LLMAgent} from "../llm-agent.js";
 import {COPILOT_AGENT_PROMPTS} from "../../prompts.js";
+import {Agent} from "../../agent.decorator.js";
+import {Inject} from "typedi";
 
 
-
+@Agent()
 class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, void> {
+
+    @Inject()
+    private retrieveAgentsAgent: CopilotRetrieveAgentsAgent;
 
     async handleEvent(input: CopilotOrchestratorAgentInput): Promise<void> {
         const {req, res} = input;
@@ -22,7 +27,6 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
             const octokit = new Octokit({auth: tokenForUser});
             const copilotMessages = req.body.messages;
 
-            const retrieveAgentsAgent = new CopilotRetrieveAgentsAgent();
             const content = copilotMessages[copilotMessages.length - 1].content;
 
             const messages = [{
@@ -30,7 +34,7 @@ class CopilotOrchestratorAgent extends LLMAgent<CopilotOrchestratorAgentInput, v
                 content: content
             }]
 
-            const retrievedAgents = await retrieveAgentsAgent.handleEvent(content);
+            const retrievedAgents = await this.retrieveAgentsAgent.handleEvent(content);
 
             if(retrievedAgents.length == 0) {
                 res.write(createTextEvent("### Oops! 😔 I couldn’t find any agents matching your request.\n\n"));

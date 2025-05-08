@@ -5,31 +5,32 @@ import CopilotSearchIssuesAgent from "./copilot-search-issues.agent.js";
 import CopilotListAvailableAgentsAgent from "./copilot-list-available-agents.agent.js";
 import CopilotSearchCommitsAgent from "./copilot-search-commits.agent.js";
 import CopilotSearchPRsAgent from "./copilot-search-prs.agent.js";
+import {Container} from "typedi";
 
 
 class CopilotAgentsFactor {
 
-    static createAgent(service: string) {
+    static getAgent(service: string) {
         switch (service) {
             case copilotAvailableAgents.SEARCH_ISSUES_AGENT.name:
-                return new CopilotSearchIssuesAgent();
+                return Container.get(CopilotSearchIssuesAgent)
             case copilotAvailableAgents.SEARCH_CODE_SNIPPETS_AGENT.name:
-                return new CopilotSearchCodeAgent()
+                return Container.get(CopilotSearchCodeAgent)
             case copilotAvailableAgents.SEARCH_CONVENTIONS_AGENT.name:
-                return new CopilotSearchConventionAgent();
+                return Container.get(CopilotSearchConventionAgent)
             case copilotAvailableAgents.LIST_AVAILABLE_AGENTS_AGENT.name:
-                return new CopilotListAvailableAgentsAgent()
+                return Container.get(CopilotListAvailableAgentsAgent)
             case copilotAvailableAgents.SEARCH_COMMITS_AGENT.name:
-                return new CopilotSearchCommitsAgent();
+               return Container.get(CopilotSearchCommitsAgent)
             case copilotAvailableAgents.SEARCH_SEARCH_PRs.name:
-                return new CopilotSearchPRsAgent();
+                return Container.get(CopilotSearchPRsAgent)
         }
         return null;
     }
 
     static createAgents(agents: { name: string; params: any }[]) {
         return agents.map(({name, params}) => ({
-            agent: this.createAgent(name),
+            agent: this.getAgent(name),
             params
         }));
     }

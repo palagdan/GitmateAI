@@ -27,7 +27,7 @@ import WebhookSavePRAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/crud-agents/webhook-save-pr.agent.js";
 import WebhookUpdatePRAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/crud-agents/webhook-update-pr.agent.js";
-import {WebhookSearchPRsAgent} from "./agents/github-webhooks-agents/pull-requests-agents/webhook-search-prs.agent.js";
+import {WebhookSearchPRsAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-search-prs.agent.js";
 import WebhookSavePRCommentAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/crud-agents/webhook-save-pr-comment.agent.js";
 import WebhookUpdatePRCommentAgent
@@ -36,123 +36,116 @@ import WebhookDeletePRCommentAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/crud-agents/webhook-delete-pr-comment.agent.js";
 import logger from "./logger.js";
 import {WebhookSearchCodeAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-search-code.agent.js";
+import {Container} from "typedi";
+import WebhookSummarizePrAgent
+    from "./agents/github-webhooks-agents/pull-requests-agents/webhook-summarize-pr.agent.js";
 
-const issueLabelAgent = new WebhookIssueLabelAgent();
-const summarizeIssueAgent = new WebhookSummarizeIssueAgent();
-const searchIssuesAgent = new WebhookSearchIssuesAgent();
-const deleteIssueAgent = new WebhookDeleteIssueAgent();
-const saveIssueAgent = new WebhookSaveIssueAgent();
-const updateIssueCommentAgent = new WebhookUpdateIssueCommentAgent();
-const saveIssueCommentAgent = new WebhookSaveIssueCommentAgent();
-const updateIssueAgent = new WebhookUpdateIssueAgent()
-const deleteIssueCommentAgent = new WebhookDeleteIssueCommentAgent();
-const prLabelAgent = new WebhookPRLabelAgent();
-const summarizePRAgent = new WebhookSummarizePRAgent();
-const searchCommitsAgent = new WebhookSearchCommitsAgent();
-const savePRAgent = new WebhookSavePRAgent();
-const updatePRAgent = new WebhookUpdatePRAgent();
-const searchPRsAgent = new WebhookSearchPRsAgent()
-const savePRCommentAgent = new WebhookSavePRCommentAgent();
-const updatePRCommentAgent = new WebhookUpdatePRCommentAgent();
-const deletePRCommentAgent = new WebhookDeletePRCommentAgent();
-const searchCodeAgent = new WebhookSearchCodeAgent();
 
 const webhooks = (app) => {
 
     // Issues ---------------------------------------------------------------------
     app.on(["issues.opened"], async (context: Context<"issues.opened">) => {
-        await run(context, issueLabelAgent);
-        await run(context, summarizeIssueAgent);
-        await run(context, searchIssuesAgent);
-        await run(context, searchCommitsAgent);
+        await run(context, Container.get(WebhookIssueLabelAgent));
+        await run(context, Container.get(WebhookSummarizeIssueAgent));
+        await run(context, Container.get(WebhookSearchIssuesAgent));
+        await run(context, Container.get(WebhookSearchCodeAgent));
+        await run(context, Container.get(WebhookSearchCommitsAgent));
+        await run(context, Container.get(WebhookSearchPRsAgent));
 
-        await saveIssueAgent.handleEvent(context);
+        await Container.get(WebhookSaveIssueAgent).handleEvent(context);
     });
 
     app.on(["issues.edited"], async (context: Context<"issues.edited">) => {
-        await updateIssueAgent.handleEvent(context);
+        await Container.get(WebhookUpdateIssueAgent).handleEvent(context);
     });
 
     app.on(["issues.deleted"], async (context: Context<"issues.deleted">) => {
-        await deleteIssueAgent.handleEvent(context);
+        await Container.get(WebhookDeleteIssueAgent).handleEvent(context);
     })
 
     app.on(["issue_comment.created", ], async (context: Context<"issue_comment.created">) => {
         if(isPullRequest(context)){
-            await savePRCommentAgent.handleEvent(context);
+            await Container.get(WebhookSavePRCommentAgent).handleEvent(context);
         }else{
-            await saveIssueCommentAgent.handleEvent(context);
+            await Container.get(WebhookSaveIssueCommentAgent).handleEvent(context);
         }
     });
 
     app.on(["issue_comment.edited"], async (context: Context<"issue_comment.edited">) => {
         if(isPullRequest(context)){
-            await updatePRCommentAgent.handleEvent(context);
+            await Container.get(WebhookUpdatePRCommentAgent).handleEvent(context);
         }else{
-            await updateIssueCommentAgent.handleEvent(context);
+            await Container.get(WebhookUpdateIssueCommentAgent).handleEvent(context);
         }
     });
 
     app.on(["issue_comment.deleted"], async (context: Context<"issue_comment.deleted">) => {
         if(isPullRequest(context)){
-            await deletePRCommentAgent.handleEvent(context);
+            await Container.get(WebhookDeletePRCommentAgent).handleEvent(context);
         }else{
-            await deleteIssueCommentAgent.handleEvent(context);
+            await Container.get(WebhookDeleteIssueCommentAgent).handleEvent(context);
         }
     });
 
     // PRs ---------------------------------------------------------------------
 
     app.on(["pull_request.opened"], async (context: Context<"pull_request.opened">) => {
-        await run(context, prLabelAgent);
-        await run(context, summarizePRAgent);
-        await savePRAgent.handleEvent(context);
+
+        await run(context, Container.get(WebhookPRLabelAgent));
+        await run(context, Container.get(WebhookSummarizePrAgent));
+        await Container.get(WebhookSavePRAgent).handleEvent(context);
     });
 
     app.on(["pull_request.edited"], async (context: Context<"pull_request.edited">) => {
-        await updatePRAgent.handleEvent(context);
+        await Container.get(WebhookUpdatePRAgent).handleEvent(context);
     });
 
     // commands ---------------------------------------------------------------------
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "label", async (context: Context) => {
         if(isPullRequest(context)){
-            await prLabelAgent.handleEvent(context);
+            await Container.get(WebhookPRLabelAgent).handleEvent(context);
         }else{
-            await issueLabelAgent.handleEvent(context);
+            await Container.get(WebhookIssueLabelAgent).handleEvent(context);
         }
     });
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "summarize", async (context: Context) => {
         if(isPullRequest(context)) {
-            await summarizePRAgent.handleEvent(context);
+            await Container.get(WebhookSummarizePRAgent).handleEvent(context);
         }else{
-            await summarizeIssueAgent.handleEvent(context);
+            await Container.get(WebhookSummarizeIssueAgent).handleEvent(context);
         }
     })
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-issues", async (context: Context) => {
         if(!isPullRequest(context)){
-            await searchIssuesAgent.handleEvent(context);
+            await Container.get(WebhookSearchIssuesAgent).handleEvent(context);
         }
     });
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-commits", async(context: Context)=> {
         if(!isPullRequest(context)){
-            await searchCommitsAgent.handleEvent(context);
+            await Container.get(WebhookSearchCommitsAgent).handleEvent(context);
         }
     })
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-code", async(context: Context)=> {
         if(!isPullRequest(context)){
-            await searchCodeAgent.handleEvent(context);
+            await Container.get(WebhookSearchCodeAgent).handleEvent(context);
         }
     })
 
     command(app, ["issue_comment.created", "issue_comment.edited"], "find-similar-pull-requests", async(context: Context)=> {
         if(!isPullRequest(context)){
-            await searchPRsAgent.handleEvent(context);
+            await Container.get(WebhookSearchPRsAgent).handleEvent(context);
         }
+    })
+
+
+    command(app, ["issue_comment.created", "issue_comment.edited"], "test", async(context: Context)=> {
+        const agent = Container.get(WebhookSearchCodeAgent);
+        console.log(agent)
     })
 }
 

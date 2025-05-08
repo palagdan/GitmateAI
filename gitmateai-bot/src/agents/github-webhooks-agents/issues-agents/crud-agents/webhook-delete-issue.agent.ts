@@ -2,8 +2,11 @@ import {BaseAgent} from "../../../base.agent.js";
 import {Context} from "probot";
 import gitmateai from "../../../../api/gitmateai-rest.js";
 import logger from "../../../../logger.js";
+import {Agent} from "../../../../agent.decorator.js";
 
 
+
+@Agent()
 export class WebhookDeleteIssueAgent implements BaseAgent<Context<"issues">, void>{
 
     async handleEvent(event: Context<"issues">): Promise<void> {
