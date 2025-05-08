@@ -2,7 +2,9 @@ import {LLMAgent} from "../../llm-agent.js";
 import gitmateai from "../../../api/gitmateai-rest.js";
 import {CONVENTION_AGENT_PROMPTS} from "../../../prompts.js";
 import {SearchQuery} from "../types.js";
+import {Agent} from "../../../agent.decorator.js";
 
+@Agent()
 class SearchConventionAgent extends LLMAgent<SearchQuery, string>{
 
     async handleEvent(input: SearchQuery): Promise<string> {

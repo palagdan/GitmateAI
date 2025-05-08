@@ -4,7 +4,9 @@ import {Context} from "probot";
 import gitmateai from "../../../../api/gitmateai-rest.js";
 import {IssueContentType} from "../../../../api/types.js";
 import logger from "../../../../logger.js";
+import {Agent} from "../../../../agent.decorator.js";
 
+@Agent()
 class WebhookSaveIssueCommentAgent implements BaseAgent<Context<"issue_comment">, void>{
 
     async handleEvent(event: Context<"issue_comment">): Promise<void> {

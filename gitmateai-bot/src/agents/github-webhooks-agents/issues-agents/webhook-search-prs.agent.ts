@@ -1,10 +1,16 @@
 import {LLMAgent} from "../../llm-agent.js";
 import {Context} from "probot";
-import CreateIssueCommentAgent from "../issues-agents/create-issue-comment.agent.js";
+import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import SearchPRsAgent from "../../common/pull-requests-agents/search-prs.agent.js";
+import {Agent} from "../../../agent.decorator.js";
+import {Inject} from "typedi";
 
+@Agent()
 export class WebhookSearchPRsAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
+
+    @Inject()
+    private searchPRsAgent: SearchPRsAgent;
 
     async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
@@ -13,9 +19,8 @@ export class WebhookSearchPRsAgent extends LLMAgent<Context<"issues"> | Context<
 
             const issueText = `${issue.title}\n\n${issue.body || ""}`;
 
-            const searchPRsAgent = new SearchPRsAgent();
 
-            const response = await searchPRsAgent.handleEvent({
+            const response = await this.searchPRsAgent.handleEvent({
                 content: issueText,
                 limit: 20
             });

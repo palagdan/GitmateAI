@@ -3,8 +3,14 @@ import {LLMAgent} from "../../llm-agent.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import SearchIssuesAgent from "../../common/issues-agents/search-issues.agent.js";
 import CreateIssueCommentAgent from "./create-issue-comment.agent.js";
+import {Agent} from "../../../agent.decorator.js";
+import {Inject} from "typedi";
 
+@Agent()
 export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues"> | Context<"issue_comment.created">, void> {
+
+    @Inject()
+    private searchIssuesAgent: SearchIssuesAgent;
 
     async handleEvent(event:  Context<"issues"> | Context<"issue_comment.created">): Promise<void> {
         const createIssueCommentAgent = new CreateIssueCommentAgent();
@@ -13,9 +19,7 @@ export class WebhookSearchIssuesAgent extends LLMAgent<Context<"issues"> | Conte
 
             const issueText = `${issue.title}\n\n${issue.body || ""}`;
 
-            const searchIssuesAgent = new SearchIssuesAgent();
-
-            const response = await searchIssuesAgent.handleEvent({
+            const response = await this.searchIssuesAgent.handleEvent({
                 content: issueText,
                 limit: 20,
                 exclude: {
