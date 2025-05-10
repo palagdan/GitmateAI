@@ -6,7 +6,7 @@ import logger from "./logger.js";
 import {fetchAndPushIssuesAndPRs} from "./github-issues-loader.js";
 import {getOrgRepositories, getRepositoriesForUser} from "./github-repos-loader.js";
 import {fetchAndPushCommits} from "./github-commits-loader.js";
-
+import {isKnowledgeBase} from "./utils.js";
 const program = new Command();
 
 program
@@ -29,9 +29,13 @@ program
 
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${orgName}/${repo}`);
-            await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns);
-            await fetchAndPushIssuesAndPRs(orgName, repo);
-            await fetchAndPushCommits(orgName, repo);
+            if(isKnowledgeBase(orgName, repo)) {
+                await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns, true);
+            }else{
+                await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns);
+                await fetchAndPushIssuesAndPRs(orgName, repo);
+                await fetchAndPushCommits(orgName, repo);
+            }
         }
     });
 
@@ -50,9 +54,13 @@ program
 
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${username}/${repo}`);
-            await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
-            await fetchAndPushIssuesAndPRs(username, repo);
-            await fetchAndPushCommits(username, repo);
+            if(isKnowledgeBase(username, repo)) {
+                await fetchAndPushRepoContent(username, repo, "", ignorePatterns, true);
+            }else{
+                await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+                await fetchAndPushIssuesAndPRs(username, repo);
+                await fetchAndPushCommits(username, repo);
+            }
         }
     });
 
@@ -65,10 +73,16 @@ program
         const ignorePatterns = loadGitmateAIIgnore();
         logger.info("Loaded .gitmateaiignore:", ignorePatterns);
         logger.info(`📂 Processing repository: ${username}/${repo}`);
-        await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
-        await fetchAndPushIssuesAndPRs(username, repo);
-        await fetchAndPushCommits(username, repo);
+        if(isKnowledgeBase(username, repo)) {
+            await fetchAndPushRepoContent(username, repo, "", ignorePatterns, true);
+        }else{
+            await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+            await fetchAndPushIssuesAndPRs(username, repo);
+            await fetchAndPushCommits(username, repo);
+        }
     });
 
 
 program.parse(process.argv);
+
+
