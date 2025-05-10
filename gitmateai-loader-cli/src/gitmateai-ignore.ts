@@ -3,14 +3,14 @@ import fs from "fs";
 import logger from "./logger.js";
 
 
-export function loadGitmateAIIgnore(): string[] {
-    const ignoreFilePath = path.resolve(".gitmateaiignore");
-    if (!fs.existsSync(ignoreFilePath)) {
-        logger.info(".gitmateaiignore not found, proceeding without ignore rules.");
+export function loadGitmateAIInclude(): string[] {
+    const includeFilePath = path.resolve(".gitmateai-include");
+    if (!fs.existsSync(includeFilePath)) {
+        logger.info(".gitmateai-include not found, proceeding without include rules.");
         return [];
     }
 
-    const content = fs.readFileSync(ignoreFilePath, "utf-8");
+    const content = fs.readFileSync(includeFilePath, "utf-8");
     return content
         .split("\n")
         .map(line => line.trim())
@@ -18,8 +18,8 @@ export function loadGitmateAIIgnore(): string[] {
 }
 
 
-export function shouldIgnore(filePath: string, ignorePatterns: string[]): boolean {
-    return ignorePatterns.some(pattern =>
+export function shouldInclude(filePath: string, includePatterns: string[]): boolean {
+    return includePatterns.some(pattern =>
         filePath === pattern || filePath.endsWith(pattern) || filePath.match(new RegExp(pattern))
     );
 }

@@ -1,5 +1,5 @@
 import {octokit, api} from "./api.js";
-import {shouldIgnore} from "./gitmateai-ignore.js";
+import {shouldInclude} from "./gitmateai-ignore.js";
 import logger from "./logger.js";
 
 export async function fetchAndPushFileContent(owner: string, repo: string, filePath: string) {
@@ -54,7 +54,7 @@ export async function fetchAndPushKnowledgeBaseContent(owner: string, repo: stri
     }
 }
 
-export async function fetchAndPushRepoContent(owner: string, repo: string, path: string = '', ignorePatterns: string[] = [], isKnowledgeBase: boolean = false) {
+export async function fetchAndPushRepoContent(owner: string, repo: string, path: string = '', includePatterns: string[] = [], isKnowledgeBase: boolean = false) {
     try {
         const response = await octokit.rest.repos.getContent({ owner, repo, path });
 
@@ -62,12 +62,12 @@ export async function fetchAndPushRepoContent(owner: string, repo: string, path:
 
         if (Array.isArray(contents)) {
             for (const item of contents) {
-                if (shouldIgnore(item.path, ignorePatterns)) {
+                if (!shouldInclude(item.path, includePatterns)) {
                     logger.info(`Skipping: ${item.path}`);
                     continue;
                 }
                 if (item.type === 'dir') {
-                    await fetchAndPushRepoContent(owner, repo, item.path, ignorePatterns);
+                    await fetchAndPushRepoContent(owner, repo, item.path, includePatterns);
                 } else if (item.type === 'file') {
                     if(isKnowledgeBase){
                         await fetchAndPushKnowledgeBaseContent(owner, repo, item.path);
@@ -77,7 +77,7 @@ export async function fetchAndPushRepoContent(owner: string, repo: string, path:
                 }
             }
         } else if (contents.type === 'file' && contents.content) {
-            if (!shouldIgnore(contents.path, ignorePatterns)) {
+            if (shouldInclude(contents.path, includePatterns)) {
                 const fileContent = Buffer.from(contents.content, 'base64').toString('utf-8');
                 logger.info(`File: ${contents.path}`);
             } else {

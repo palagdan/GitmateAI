@@ -1,12 +1,13 @@
 import { Command } from "commander";
 import "dotenv/config";
-import { loadGitmateAIIgnore } from "./gitmateai-ignore.js";
+
 import { fetchAndPushRepoContent } from "./github-code-loader.js";
 import logger from "./logger.js";
 import {fetchAndPushIssuesAndPRs} from "./github-issues-loader.js";
 import {getOrgRepositories, getRepositoriesForUser} from "./github-repos-loader.js";
 import {fetchAndPushCommits} from "./github-commits-loader.js";
 import {isKnowledgeBase} from "./utils.js";
+import {loadGitmateAIInclude} from "./gitmateai-ignore.js";
 const program = new Command();
 
 program
@@ -21,8 +22,8 @@ program
     .action(async (orgName) => {
         logger.info(`Fetching repositories for organization: ${orgName}`);
 
-        const ignorePatterns = loadGitmateAIIgnore();
-        logger.info("Loaded .gitmateaiignore:", ignorePatterns);
+        const includePatterns = loadGitmateAIInclude();
+        logger.info("Loaded .gitmateai-include:", includePatterns);
 
         const repositories = await getOrgRepositories(orgName);
         logger.info(`Found ${repositories.length} repositories.`);
@@ -30,9 +31,9 @@ program
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${orgName}/${repo}`);
             if(isKnowledgeBase(orgName, repo)) {
-                await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns, true);
+                await fetchAndPushRepoContent(orgName, repo, "", includePatterns, true);
             }else{
-                await fetchAndPushRepoContent(orgName, repo, "", ignorePatterns);
+                await fetchAndPushRepoContent(orgName, repo, "", includePatterns);
                 await fetchAndPushIssuesAndPRs(orgName, repo);
                 await fetchAndPushCommits(orgName, repo);
             }
@@ -46,8 +47,8 @@ program
     .action(async (username) => {
         logger.info(`Fetching repositories for user: ${username}`);
 
-        const ignorePatterns = loadGitmateAIIgnore();
-        logger.info("Loaded .gitmateaiignore:", ignorePatterns);
+        const includePatterns = loadGitmateAIInclude();
+        logger.info("Loaded .gitmateai-include:", includePatterns);
 
         const repositories = await getRepositoriesForUser(username);
         logger.info(`Found ${repositories.length} repositories.`);
@@ -55,9 +56,9 @@ program
         for (const repo of repositories) {
             logger.info(`\n📂 Processing repository: ${username}/${repo}`);
             if(isKnowledgeBase(username, repo)) {
-                await fetchAndPushRepoContent(username, repo, "", ignorePatterns, true);
+                await fetchAndPushRepoContent(username, repo, "", includePatterns, true);
             }else{
-                await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+                await fetchAndPushRepoContent(username, repo, "", includePatterns);
                 await fetchAndPushIssuesAndPRs(username, repo);
                 await fetchAndPushCommits(username, repo);
             }
@@ -70,13 +71,13 @@ program
     .argument("<name>", "Organization name or the user's username")
     .argument("<repoName>", "The repository name")
     .action(async (username, repo) => {
-        const ignorePatterns = loadGitmateAIIgnore();
-        logger.info("Loaded .gitmateaiignore:", ignorePatterns);
+        const includePatterns = loadGitmateAIInclude();
+        logger.info("Loaded .gitmateai-include:", includePatterns);
         logger.info(`📂 Processing repository: ${username}/${repo}`);
         if(isKnowledgeBase(username, repo)) {
-            await fetchAndPushRepoContent(username, repo, "", ignorePatterns, true);
+            await fetchAndPushRepoContent(username, repo, "", includePatterns, true);
         }else{
-            await fetchAndPushRepoContent(username, repo, "", ignorePatterns);
+            await fetchAndPushRepoContent(username, repo, "", includePatterns);
             await fetchAndPushIssuesAndPRs(username, repo);
             await fetchAndPushCommits(username, repo);
         }
