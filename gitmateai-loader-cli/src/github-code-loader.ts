@@ -1,6 +1,7 @@
 import {octokit, api} from "./api.js";
 import {shouldIgnore} from "./gitmateai-ignore.js";
 import logger from "./logger.js";
+import {isMarkdownFile} from "./utils.js";
 
 export async function fetchAndPushFileContent(owner: string, repo: string, filePath: string) {
     try {
@@ -35,7 +36,6 @@ export async function fetchAndPushKnowledgeBaseContent(owner: string, repo: stri
 
         if (!Array.isArray(fileResponse.data) && fileResponse.data.type === 'file' && fileResponse.data.content) {
             const fileContent = Buffer.from(fileResponse.data.content, 'base64').toString('utf-8');
-            logger.info(`File: ${fileResponse.data.path}`);
 
             try {
                 await api.post("/convention-chunks", {
@@ -70,8 +70,14 @@ export async function fetchAndPushRepoContent(owner: string, repo: string, path:
                     await fetchAndPushRepoContent(owner, repo, item.path, ignorePatterns);
                 } else if (item.type === 'file') {
                     if(isKnowledgeBase){
-                        await fetchAndPushKnowledgeBaseContent(owner, repo, item.path);
+                        if(isMarkdownFile(item.path)) {
+                            await fetchAndPushKnowledgeBaseContent(owner, repo, item.path);
+                        }
                     }else{
+                        if (!shouldInclude(item.path, includePatterns)) {
+                            logger.info(`Skipping: ${item.path}`);
+                            continue;
+                        }
                         await fetchAndPushFileContent(owner, repo, item.path);
                     }
                 }
