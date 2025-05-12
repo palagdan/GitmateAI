@@ -14,17 +14,6 @@ yarn.lock
 .svg
 .ico
 
-# Configs
-.yaml
-.yml
-.json
-
-# Documentation files
-.md
-.markdown
-.txt
-.rtf
-
 # Build artifacts
 .dist
 .min.js

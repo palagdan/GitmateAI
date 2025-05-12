@@ -74,7 +74,7 @@ export async function fetchAndPushRepoContent(owner: string, repo: string, path:
                             await fetchAndPushKnowledgeBaseContent(owner, repo, item.path);
                         }
                     }else{
-                        if (!shouldInclude(item.path, includePatterns)) {
+                        if (!shouldIgnore(item.path, ignorePatterns)) {
                             logger.info(`Skipping: ${item.path}`);
                             continue;
                         }
