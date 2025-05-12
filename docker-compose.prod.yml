@@ -19,6 +19,7 @@ services:
       LLM_API_KEY: "${LLM_API_KEY}"
       LLM_MODEL_NAME: "${LLM_API_NAME:-gpt-4o-mini}"
       PREFIX: "${PREFIX:-gitmateai}"
+      APP_NAME: "${APP_NAME:-GitmateAI}"
     restart: unless-stopped
     volumes:
       - ./github-config.json:/app/dist/config/github-config.json
