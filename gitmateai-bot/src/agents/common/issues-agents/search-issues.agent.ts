@@ -17,7 +17,7 @@ class SearchIssuesAgent extends LLMAgent<SearchQuery, string> {
 
         const issues = await gitmateai.issueChunks.search({
             content: refinedQuery,
-            limit: limit,
+            limit: 50,
             fields: fields,
             exclude: exclude
         });

@@ -21,7 +21,7 @@ class SearchConventionAgent extends LLMAgent<SearchQuery, string>{
 
         const conventions = await gitmateai.conventionChunks.search({
             content: refinedQuery,
-            limit: input.limit,
+            limit: 50,
             fields: input.fields
         });
 

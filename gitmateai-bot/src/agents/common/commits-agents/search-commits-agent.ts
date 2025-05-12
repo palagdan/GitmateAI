@@ -17,7 +17,7 @@ class SearchCommitsAgent extends LLMAgent<SearchQuery, string> {
 
         const commits = await gitmateai.commitChunks.search({
             content: refinedQuery,
-            limit: limit,
+            limit: 50,
             fields: fields
         });
 

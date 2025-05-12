@@ -17,7 +17,7 @@ class SearchCodeAgent extends LLMAgent<SearchQuery, string> {
 
         const codeSnippets = await gitmateai.codeChunks.search({
             content: refinedQuery,
-            limit: limit,
+            limit: 50,
             fields: fields
         });
 

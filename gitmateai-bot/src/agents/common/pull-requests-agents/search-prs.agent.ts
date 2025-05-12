@@ -18,13 +18,11 @@ class SearchPRsAgent extends LLMAgent<SearchQuery, string> {
 
         const pullRequests = await gitmateai.prChunks.search({
             content: refinedQuery,
-            limit: limit,
+            limit: 50,
             fields: fields
         });
 
         const formattedPRs = this.formatSimilarPRs(pullRequests.data);
-
-        console.log(formattedPRs)
 
         const prompt = this.createPrompt(PR_AGENT_PROMPTS.SEARCH_PRs, {
             context: content,
