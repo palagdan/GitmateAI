@@ -16,17 +16,19 @@ class SearchPRsAgent extends LLMAgent<SearchQuery, string> {
         const parsedResponse = JSON.parse(response);
         const refinedQuery = parsedResponse.refinedQuery;
 
-        const pullRequests = await gitmateai.issueChunks.search({
+        const pullRequests = await gitmateai.prChunks.search({
             content: refinedQuery,
             limit: limit,
             fields: fields
         });
 
-        const formattedIssues = this.formatSimilarPRs(pullRequests.data);
+        const formattedPRs = this.formatSimilarPRs(pullRequests.data);
+
+        console.log(formattedPRs)
 
         const prompt = this.createPrompt(PR_AGENT_PROMPTS.SEARCH_PRs, {
             context: content,
-            foundPRs: formattedIssues,
+            foundPRs: formattedPRs,
         });
 
         this.agentLogger.info({
@@ -48,7 +50,7 @@ class SearchPRsAgent extends LLMAgent<SearchQuery, string> {
                 return `**${index + 1}.** 
                 **Owner:** ${properties.owner || "Unknown owner"}\n
                 **Repo:** ${properties.repo || "Unknown repo"}\n
-                **PR Number:** ${properties.issueNumber || "Unknown ID"}\n
+                **PR Number:** ${properties.prNumber || "Unknown ID"}\n
                 **author**: ${properties.author || "Unknown author"}\n
                 **Type:** ${properties.type || "Unknown type"}\n
                 **Content:** ${properties.content || "No content available"}\n
