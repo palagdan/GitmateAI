@@ -7,7 +7,7 @@ import {Agent} from "../../../../agent.decorator.js";
 
 
 @Agent()
-export class WebhookDeleteIssueAgent implements BaseAgent<Context<"issues">, void>{
+export class WebhookDeleteIssueAgent implements BaseAgent<Context<"issues"> , void>{
 
     async handleEvent(event: Context<"issues">): Promise<void> {
         try{

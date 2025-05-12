@@ -39,6 +39,7 @@ import {WebhookSearchCodeAgent} from "./agents/github-webhooks-agents/issues-age
 import {Container} from "typedi";
 import WebhookSummarizePrAgent
     from "./agents/github-webhooks-agents/pull-requests-agents/webhook-summarize-pr.agent.js";
+import {WebhookIssueHelpAgent} from "./agents/github-webhooks-agents/issues-agents/webhook-issue-help.agent.js";
 
 
 const webhooks = (app) => {
@@ -143,10 +144,11 @@ const webhooks = (app) => {
     })
 
 
-    command(app, ["issue_comment.created", "issue_comment.edited"], "test", async(context: Context)=> {
-        const agent = Container.get(WebhookSearchCodeAgent);
-        console.log(agent)
+    command(app, ["issue_comment.created", "issue_comment.edited"], "help", async(context: Context)=> {
+        await Container.get(WebhookIssueHelpAgent).handleEvent(context);
     })
+
+
 }
 
 
