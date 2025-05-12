@@ -5,6 +5,7 @@ import {summarizeDiff} from "./utils.js";
 import {PR_AGENT_PROMPTS} from "../../../prompts.js";
 import {getErrorMsg} from "../../../messages/messages.js";
 import {Agent} from "../../../agent.decorator.js";
+import parse from "parse-diff";
 import {llmClient} from "../../../llm-client.js";
 
 @Agent()
@@ -36,7 +37,7 @@ PR Title: ${pr.title}
 PR Description: ${pr.body || ""}
                 
 Files Changed:
-${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff summary: ${summarizeDiff(file.patch)}`).join('\n')}
+${files.data.map(file => summarizeFileByHunks(file)).join("\n")}
 `;
 
             const prTitle = pr.title;
@@ -71,5 +72,22 @@ ${files.data.map(file => `- ${file.filename} (${file.changes} changes)\nDiff sum
         return "pr-summarize";
     }
 }
+
+
+export function summarizeFileByHunks(file: { filename: string, patch?: string, changes?: number }): string {
+    if (!file.patch) {
+        return `- ${file.filename} (no patch)`;
+    }
+
+    const parsedFiles = parse(file.patch);
+    const hunkSummaries = parsedFiles.flatMap(parsedFile =>
+        parsedFile.chunks.map(hunk => {
+           return hunk.content + '\n' + hunk.changes.map(change => change.content).join('\n');
+        })
+    );
+
+    return `- ${file.filename} (${file.changes} changes)\n${hunkSummaries.join('\n')}`;
+}
+
 
 export default WebhookSummarizePRAgent;
