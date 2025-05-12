@@ -102,6 +102,58 @@ async function fetchAndPushIssueComments(owner: string, repo: string, issueNumbe
     }
 }
 
+import parse from "parse-diff";
+import {shouldIgnore} from "./gitmateai-ignore.js";
+
+// Helper to fetch file changes for a PR
+async function fetchPRFiles(owner: string, repo: string, prNumber: number) {
+    const response = await octokit.rest.pulls.listFiles({
+        owner,
+        repo,
+        pull_number: prNumber,
+        per_page: 100,
+    });
+    return response.data;
+}
+
+
+export async function fetchAndPushChanges(owner: string, repo: string, prNumber: number, author: string) {
+    try {
+        const files = await fetchPRFiles(owner, repo, prNumber);
+
+        for (const file of files) {
+            if(shouldIgnore(file.filename)) {
+                continue
+            }
+            if (!file.patch) continue;
+
+            const parsedFiles = parse(file.patch);
+
+            for (const parsedFile of parsedFiles) {
+                for (const hunk of parsedFile.chunks) {
+                    const hunkText = hunk.content + '\n' + hunk.changes.map(change => change.content).join('\n');
+                    await sendPRToBackend({
+                        content: hunkText,
+                        owner,
+                        repo,
+                        author: author,
+                        prNumber,
+                        type: PRContentType.Changes,
+                        commentId: null,
+                    });
+                }
+            }
+        }
+
+        logger.info(`PR changes for #${prNumber} pushed successfully.`);
+    } catch (error) {
+        logger.error({
+            msg: `Failed to fetch or process PR #${prNumber} changes.`,
+            err: error
+        });
+    }
+}
+
 export async function fetchAndPushIssuesAndPRs(owner: string, repo: string): Promise<void> {
     try {
         const issues = await getAllIssuesAndPRs(owner, repo);
@@ -129,6 +181,7 @@ export async function fetchAndPushIssuesAndPRs(owner: string, repo: string): Pro
                 })
 
                 await fetchAndPushIssueComments(owner, repo, issue.number, true);
+                await fetchAndPushChanges(owner, repo, issue.number, issue.user.login);
 
             }else{
                 await sendIssueToBackend({

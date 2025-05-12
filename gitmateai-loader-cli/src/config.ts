@@ -12,7 +12,9 @@ const loadKnowdgeBases =  ()  => {
     }
 
     const fileContents =  fs.readFileSync(knowledgeBasesPath, 'utf-8');
-    return JSON.parse(fileContents);
+    const parsed = JSON.parse(fileContents);
+    return parsed.knowledge_bases;
 }
+
 
 export const knowledgeBases = loadKnowdgeBases();

@@ -18,7 +18,14 @@ export function loadGitmateAIIgnore(): string[] {
 }
 
 
-export function shouldIgnore(filePath: string, ignorePatterns: string[]): boolean {
+const ignorePatterns = loadGitmateAIIgnore();
+
+logger.info("Loaded .gitmateaiignore:", ignorePatterns);
+
+export default ignorePatterns;
+
+
+export function shouldIgnore(filePath: string): boolean {
     return ignorePatterns.some(pattern =>
         filePath === pattern || filePath.endsWith(pattern) || filePath.match(new RegExp(pattern))
     );

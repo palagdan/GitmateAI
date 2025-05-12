@@ -2,6 +2,9 @@
 import { api, octokit } from "./api.js";
 import logger from "./logger.js";
 import { Commit } from "./types.js";
+import parse from "parse-diff";
+import {shouldIgnore} from "./gitmateai-ignore.js";
+
 
 async function getAllCommits(owner: string, repo: string): Promise<any[]> {
     let commits: any[] = [];
@@ -48,6 +51,7 @@ async function sendCommitToBackend(commitData: Commit): Promise<void> {
     }
 }
 
+
 async function fetchAndPushCommitDiffs(owner: string, repo: string, commit: any) {
     try {
         const response = await octokit.rest.repos.getCommit({
@@ -57,17 +61,31 @@ async function fetchAndPushCommitDiffs(owner: string, repo: string, commit: any)
         });
 
         const files = response.data.files || [];
+        const author = response.data.author?.login ?? "unknown"; // commit author
 
         for (const file of files) {
-            await sendCommitToBackend({
-                content: file.patch || "",
-                fileName: file.filename,
-                commitMessage: commit.commit.message,
-                owner,
-                repo,
-                sha: commit.sha,
-                author: commit.author.login,
-            });
+            if(shouldIgnore(file.filename)) {
+                continue;
+            }
+            if (!file.patch) continue;
+
+            const parsedFiles = parse(file.patch);
+
+            for (const parsedFile of parsedFiles) {
+                for (const hunk of parsedFile.chunks) {
+                    const hunkText = hunk.content + '\n' + hunk.changes.map(change => change.content).join('\n');
+
+                    await sendCommitToBackend({
+                        content: hunkText,
+                        fileName: file.filename,
+                        commitMessage: commit.commit.message,
+                        owner,
+                        repo,
+                        sha: commit.sha,
+                        author,
+                    });
+                }
+            }
         }
     } catch (error) {
         logger.error({
@@ -76,6 +94,7 @@ async function fetchAndPushCommitDiffs(owner: string, repo: string, commit: any)
         });
     }
 }
+
 
 export async function fetchAndPushCommits(owner: string, repo: string): Promise<void> {
     try {
