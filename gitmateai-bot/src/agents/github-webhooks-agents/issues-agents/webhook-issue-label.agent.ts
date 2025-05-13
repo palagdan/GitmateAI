@@ -16,6 +16,13 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues"> | Context
             const issue = event.payload.issue;
             const owner = event.payload.repository.owner.login;
             const repo = event.payload.repository.name;
+            const issue_number = issue.number;
+
+            const { data: comments } = await event.octokit.issues.listComments({
+                owner,
+                repo,
+                issue_number,
+            });
 
             if (issue.labels && issue.labels.length > 0) {
                 await event.octokit.issues.removeAllLabels({
@@ -34,15 +41,16 @@ export class WebhookIssueLabelAgent extends LLMAgent<Context<"issues"> | Context
             const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.LABEL_ISSUE, {
                 title: issue.title,
                 description: issue.body,
-                availableLabels: availableLabels.data.map(label => label.name).join(", ")
+                availableLabels: availableLabels.data.map(label => label.name).join(", "),
+                comments: comments
+                    .map((comment) => `Comment by ${comment.user.login}:\n${comment.body}`)
+                    .join("\n\n")
             });
-
 
             const result = await llmClient.generateCompletion(prompt);
             const parsedResult = JSON.parse(result);
             const retrievedLabels = parsedResult.labels;
             const explanation = parsedResult.explanation;
-
 
             if (retrievedLabels.length > 0) {
                 await event.octokit.issues.addLabels({

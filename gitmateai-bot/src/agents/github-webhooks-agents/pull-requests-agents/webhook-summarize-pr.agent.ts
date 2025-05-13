@@ -26,6 +26,12 @@ export class WebhookSummarizePRAgent extends LLMAgent<Context<"pull_request"> | 
                 pr = event.payload.issue;
             }
 
+            const { data: comments } = await event.octokit.issues.listComments({
+                owner,
+                repo,
+                issue_number: pr.number,
+            });
+
             const files = await event.octokit.pulls.listFiles({
                 owner,
                 repo,
@@ -46,6 +52,9 @@ ${files.data.map(file => summarizeFileByHunks(file)).join("\n")}
             const prompt = this.createPrompt(PR_AGENT_PROMPTS.SUMMARIZE_PR, {
                 title: prTitle,
                 description: prDescription,
+                comments: comments
+                    .map((comment) => `Comment by ${comment.user.login}:\n${comment.body}`)
+                    .join("\n\n"),
                 diff: context
             });
 

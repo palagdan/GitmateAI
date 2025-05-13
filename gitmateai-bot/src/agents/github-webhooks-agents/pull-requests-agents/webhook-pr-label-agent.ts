@@ -26,7 +26,6 @@ export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Con
                 pr = event.payload.issue;
             }
 
-
             if (pr.labels && pr.labels.length > 0) {
                 await event.octokit.issues.removeAllLabels({
                     owner,
@@ -35,6 +34,13 @@ export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Con
                 });
                 this.agentLogger.info(`Removed existing labels from PR #${pr.number}`);
             }
+
+            const { data: comments } = await event.octokit.issues.listComments({
+                owner,
+                repo,
+                issue_number: pr.number,
+            });
+
 
             const files = await event.octokit.pulls.listFiles({
                 owner,
@@ -53,6 +59,9 @@ export class WebhookPRLabelAgent extends LLMAgent< Context<"pull_request"> | Con
                 title: pr.title,
                 description: pr.body,
                 changes: changes,
+                comments: comments
+                    .map((comment) => `Comment by ${comment.user.login}:\n${comment.body}`)
+                    .join("\n\n"),
                 availableLabels: availableLabels.data.map((label) => label.name).join(", ")
             });
 

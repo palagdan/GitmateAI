@@ -27,13 +27,13 @@ export class WebhookSummarizeIssueAgent extends LLMAgent<Context<"issues"> | Con
             const issueTitle = issue.title;
             const issueDescription = issue.body || "";
             const commentsText = comments
-                .map((comment) => `Comment by ${comment.user.login}: ${comment.body}`)
-                .join("\n");
-
-            const context = `${issueTitle}\n${issueDescription}\n${commentsText}`;
+                .map((comment) => `Comment by ${comment.user.login}:\n${comment.body}`)
+                .join("\n\n");
 
             const prompt = this.createPrompt(ISSUE_AGENT_PROMPTS.SUMMARIZE_ISSUE, {
-                context: context
+                title: issueTitle,
+                description: issueDescription,
+                comments: commentsText,
             });
 
             const response = await llmClient.generateCompletion(prompt);

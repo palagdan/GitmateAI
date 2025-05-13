@@ -73,53 +73,73 @@ There are no similar issues found.
 {{foundIssues}}`,
 
     SUMMARIZE_ISSUE: `
-        Summarize the following GitHub issue based on its title, description, and comments. Focus on the key points, problems, and solutions discussed.
+Summarize the following GitHub issue based on its title, description, and comments. Focus on the key points, problems, and solutions discussed.
 
-        {{context}}
+Provide a concise summary of the issue, including:
+1. The main problem or feature request.
+2. Key points discussed in the comments.
+3. Any proposed solutions or next steps.
 
-        Provide a concise summary of the issue, including:
-        1. The main problem or feature request.
-        2. Key points discussed in the comments.
-        3. Any proposed solutions or next steps.
+Issue Details:
+
+**Title**: {{title}}
+---
+**Description**: {{description}}
+---
+**Comments**: 
+{{comments}}
+
+  
+Response Format:
+## SummarizeIssueAgent Report 🤖
         
-        Response Format:
-        ## SummarizeIssueAgent Report 🤖
-        
-        your summary 
-        `,
+your summary 
+`,
 
     LABEL_ISSUE: `
-        You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
+You are a GitHub assistant tasked with determining the appropriate labels for a new issue.
+
+Based on the title, description, and comments, choose one or more labels only from the following available labels: {{availableLabels}}
+If none of the labels are appropriate based on the issue details, respond with an empty list: []
+Don't return labels that are not in the available labels list.
         
-        The issue details are:
-        title: {{title}}
-        description: {{description}}
+Issue Details:
+        
+**Title:** {{title}}
+---
+**Description:** {{description}}
+---
+**Comments:** 
+{{comments}}
 
-        Based on the title and body, choose one or more labels only from the following available labels: {{availableLabels}}
-        If none of the labels are appropriate based on the issue details, respond with an empty list: []
-        Don't return labels that are not in the available labels list.
 
-        Response Format:
-        {
-            "labels": ["label1", "label2", ...],
-            "explanation": "Concise justification for the selected labels or empty list."
-        }
-        `,
+Response Format:
+{
+    "labels": ["label1", "label2", ...],
+    "explanation": "Concise justification for the selected labels or empty list."
+}
+`,
 }
 
 export const PR_AGENT_PROMPTS = {
     LABEL_PR: `
 You are a GitHub assistant tasked with determining the appropriate labels for a new Pull Request (PR).
-The issue details are:
+
+Based on the title, description, comments, and changes, choose one or more labels only from the following available labels: {{availableLabels}}.
+If none of the labels are appropriate based on the issue details, return an empty list: [].
+Do not return any labels that are not included in the available labels list.
 
 PR Details:
-title: {{title}}
-description: {{description}}
-Changes: {{changes}}
 
-Based on the title and body, choose one or more labels only from the following available labels: {{availableLabels}}
-If none of the labels are appropriate based on the issue details, respond with an empty list: []
-Don't return labels that are not in the available labels list.
+**Title:** {{title}}
+---
+**Description:** {{description}}
+---
+**Comments**: 
+{{comments}}
+---
+**Changes:** 
+{{changes}}
 
 Response Format:
 {
@@ -129,12 +149,20 @@ Response Format:
 `,
 
     SUMMARIZE_PR:
-`Summarize the following GitHub Pull Request (PR) by analyzing title, description, and the code changes (diff). 
+`Summarize the following GitHub Pull Request (PR) by analyzing title, description, comments and the code changes (diff). 
 Provide a comprehensive technical report with clear sections.
 
-title: {{title}}
-description: {{description}}
-diff: {{diff}}
+PR Details:
+
+**Title:** {{title}}
+---
+**Description:** {{description}}
+---
+**Comments:** 
+{{comments}}
+---
+**Diff:**
+{{diff}}
 
 Response Format:
 ## SummarizePRAgent Report 🤖
