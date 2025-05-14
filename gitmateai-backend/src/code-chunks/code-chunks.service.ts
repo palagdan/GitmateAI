@@ -3,7 +3,6 @@ import { CreateCodeChunksDto } from "./dto/create-code-chunks.dto";
 import { CodeChunksRepository } from "./code-chunks.repository";
 import {splitCode, splitText} from "../utils/llm-utils";
 import {SearchChunksDto} from "../common/dto/search-chunks.dto";
-import {SearchCodeChunksDto} from "./dto/search-code-chunks.dto";
 
 @Injectable()
 export class CodeChunksService {
@@ -59,7 +58,7 @@ export class CodeChunksService {
         return await this.repository.deleteByOwner(owner);
     }
 
-    async search(searchCodeChunksDto: SearchCodeChunksDto) {
+    async search(searchCodeChunksDto: SearchChunksDto) {
         const { content, limit, fields } = searchCodeChunksDto;
         this.logger.log(`Searching code chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
 

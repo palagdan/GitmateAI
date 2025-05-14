@@ -1,8 +1,8 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {ConventionDto} from "./dto/convention.dto";
+import {CreateConventionChunksDto} from "./dto/createConventionChunksDto";
 import { splitText} from "../utils/llm-utils";
 import {ConventionChunksRepository} from "./convention-chunks.repository";
-import {SearchConventionChunksDto} from "./dto/search-convention-chunks.dto";
+import {SearchChunksDto} from "../common/dto/search-chunks.dto";
 
 @Injectable()
 export class ConventionChunksService {
@@ -21,7 +21,7 @@ export class ConventionChunksService {
         return await this.repository.deleteAll();
     }
 
-    async insert(contentDto: ConventionDto){
+    async insert(contentDto: CreateConventionChunksDto){
         const { content, source} = contentDto;
         this.logger.log(`Inserting convention chunks`);
 
@@ -38,7 +38,7 @@ export class ConventionChunksService {
         this.logger.log('Convention chunks insertion completed');
     }
 
-    async search(searchChunksDto: SearchConventionChunksDto){
+    async search(searchChunksDto: SearchChunksDto){
         const { content, limit, fields } = searchChunksDto;
         this.logger.log(`Searching convention chunks with limit: ${limit}, fields: ${JSON.stringify(fields)}`);
         const chunkResult: any = await this.repository.search(content, { limit, fields });

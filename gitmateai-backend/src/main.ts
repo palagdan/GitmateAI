@@ -14,10 +14,9 @@ async function bootstrap() {
   app.setGlobalPrefix('v1');
 
   const config = new DocumentBuilder()
-        .setTitle('GitMate ')
-        .setDescription('GitMate API description')
+        .setTitle('GitmateAI')
+        .setDescription('GitmateAI API description')
         .setVersion('1.0')
-        .addTag('gitmate')
         .build();
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, documentFactory);
