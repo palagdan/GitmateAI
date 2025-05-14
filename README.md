@@ -129,9 +129,6 @@ Pull Request automated tasks:
 | `pr-summarize` | Summarize Pull Request   |
 
 
-
-
-
 #### Guide to enable copilot assistance for the bot
 
 1. Visit `Settings -> Developer settings -> GitHub Apps -> Your GitHub App -> General` and find Callback URL.
@@ -164,6 +161,20 @@ To generate a GitHub access token, follow these steps:
 4. Click Generate new token.
 
 5. Assign this token to the 'GITHUB_TOKEN' variable.
+
+You should also specify which repositories are marked as knowledge bases so the bot can answer questions about them.
+To do this, edit the [`knowledge-bases.json`](./gitmateai-loader-cli/knowledge-bases.json) file and add the repositories you want to mark as knowledge bases, like this:
+
+```json
+{
+   "knowledge_bases": [
+      {
+         "owner": "palagdan",
+         "repo": "palagdan-knowledge-base"
+      }
+   ]
+}
+```
 
 ```markdown
 Usage: gitmate-loader-cli [options] [command]
